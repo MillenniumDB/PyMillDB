@@ -1,4 +1,4 @@
-def GraphSAGE_embedding_generation(V, K, N, W, AGGREGATE, UPDATE, NORM):
+def GraphSAGE_embedding_generation(V, K, N, AGGREGATE, UPDATE, NORM):
     """
     Pseudo-code for GraphSAGE embedding generation
     
@@ -8,7 +8,6 @@ def GraphSAGE_embedding_generation(V, K, N, W, AGGREGATE, UPDATE, NORM):
         V         (Array of nodes) : Array of graph nodes (with previously computed features)
         K         (Number)         : Depth of neighborhood aggregation
         N         (Function)       : Neighborhood function
-        W         (Matrix)         : Weight matrix          (previously trained)
         AGGREGATE (Function)       : Aggregation function
         UPDATE    (Function)       : Update function
         NORM      (Function)       : Normalization function
