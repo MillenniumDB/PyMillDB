@@ -61,3 +61,9 @@ class Edge:
     def __init__(self, id: int, source: int, target: int, type: int = None, properties: dict = None):
         pass
 ```
+
+
+```python
+def get_node(name: str) -> "Node":
+    pass
+```
