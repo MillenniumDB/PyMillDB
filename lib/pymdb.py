@@ -1,7 +1,5 @@
 # This is a design for the MillenniumDB Python API
-# Sources:
-#   neo4j: https://neo4j.com/docs/api/python-driver/current/api.html
-#   MySQL: https://pymysql.readthedocs.io/en/latest/modules/index.html
+
 import socket
 import tempfile
 import pandas as pd
@@ -11,40 +9,66 @@ BUFFER_SIZE = 4096
 END_MASK = 0x80
 STATUS_MASK = 0x7F
 
-class Connection:
+
+class Client:
     def __init__(self, host: str = "localhost", port: int = 8080) -> None:
-        self.host = host
-        self.port = port
-        self._sock = None
-        self._connect()
+        self.address = (host, port)
+        self.is_valid = False
+        self._check_connection()
 
-    def _connect(self) -> None:
+    def _check_connection(self) -> None:
         try:
-            self._sock = socket.create_connection((self.host, self.port))
+            with socket.create_connection(self.address) as _:
+                self.is_valid = True
         except Exception as _:
-            raise ConnectionError(f"Failed to connect to MillenniumDB server at {self.host}:{self.port}")
-
-    def close(self) -> None:
-        self._sock.shutdown(socket.SHUT_RDWR)
-        self._sock.close()
-        self._sock = None
+            raise ConnectionError(
+                f"Couldn't connect Client to MillenniumDB at {self.address}"
+            )
 
     def cursor(self) -> "Cursor":
         return Cursor(self)
 
+    def close(self) -> None:
+        self.address = None
+        self.is_valid = False
+
+    def __enter__(self) -> "Client":
+        return self
+
+    def __exit__(self, *_) -> None:
+        self.close()
+
+
 class Cursor:
-    def __init__(self, connection: "Connection") -> None:
-        self._connection = connection
+    def __init__(self, client: "Client") -> None:
+        self.client = client
         self._binding = list()
         self._rows = list()
         self._rownumber = 0
+        self._sock = None
+
+    def _clear(self) -> None:
+        self._binding = list()
+        self._rows = list()
+        self._rownumber = 0
+
+    def _connect(self) -> None:
+        # Check if client is valid
+        if not self.client.is_valid:
+            raise ConnectionError("Client is not connected to MillenniumDB")
+        try:
+            self._sock = socket.create_connection(self.client.address)
+        except Exception as _:
+            raise ConnectionError(
+                f"Couldn't connect Cursor to MillenniumDB at {self.client.address}"
+            )
 
     def _send_query(self, query: str) -> None:
         query_bytes = query.encode("utf-8")
         size_bytes = len(query_bytes).to_bytes(
             BYTES_FOR_QUERY_LENGTH, byteorder="little"
         )
-        self._connection._sock.send(size_bytes + query_bytes)
+        self._sock.send(size_bytes + query_bytes)
 
     def _parse_file(self, file) -> None:
         file.seek(0)
@@ -65,10 +89,10 @@ class Cursor:
         with tempfile.TemporaryFile() as tmp_file:
             result_buffer = bytearray(BUFFER_SIZE)
             while True:
-                result_buffer = self._connection._sock.recv(BUFFER_SIZE)
+                result_buffer = self._sock.recv(BUFFER_SIZE)
                 reply_length = int.from_bytes(result_buffer[1:3], byteorder="little")
                 # First 3 bytes are used for the status and length of the message
-                tmp_file.write(result_buffer[3:reply_length - 3])
+                tmp_file.write(result_buffer[3 : reply_length - 3])
                 if (result_buffer[0] & END_MASK) != 0:
                     break
             status = result_buffer[0] & STATUS_MASK
@@ -77,17 +101,23 @@ class Cursor:
             self._parse_file(tmp_file)
 
     def execute(self, query: str) -> None:
-        # TODO: Implement a better streaming protocol.
-        self._binding = list()
-        self._rows = list()
-        self._rownumber = 0
+        # Clear previous results
+        self._clear()
+        # Establish connection
+        self._connect()
+        # Send query
         self._send_query(query)
+        # Receive results
         self._recv_result()
+        # Close connection
+        self.close()
 
     def fetchone(self) -> pd.DataFrame or None:
         if self._rownumber < len(self._rows):
             self._rownumber += 1
-            return pd.DataFrame(columns=self._binding, data=[self._rows[self._rownumber - 1]])
+            return pd.DataFrame(
+                columns=self._binding, data=[self._rows[self._rownumber - 1]]
+            )
         return None
 
     def fetchall(self) -> pd.DataFrame or None:
@@ -99,14 +129,20 @@ class Cursor:
     def fetchmany(self, size: int) -> pd.DataFrame or None:
         if self._rownumber < len(self._rows) and size > 0:
             self._rownumber += size
-            return pd.DataFrame(columns=self._binding, data=self._rows[self._rownumber - size:self._rownumber])
+            return pd.DataFrame(
+                columns=self._binding,
+                data=self._rows[self._rownumber - size : self._rownumber],
+            )
         return None
 
     def close(self):
-        pass
+        if self._sock is not None:
+            self._sock.shutdown(socket.SHUT_RDWR)
+            self._sock.close()
+            self._sock = None
 
-    def __enter__(self):
+    def __enter__(self) -> "Cursor":
         return self
 
-    def __exit__(self, *_):
+    def __exit__(self, *_) -> None:
         self.close()
