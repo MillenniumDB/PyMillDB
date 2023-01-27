@@ -45,6 +45,7 @@ class Cursor:
         self.client = client
         self._binding = list()
         self._rows = list()
+        self._described_node = {}
         self._rownumber = 0
         self._sock = None
 
@@ -71,7 +72,7 @@ class Cursor:
         )
         self._sock.send(size_bytes + query_bytes)
 
-    def _parse_file(self, file) -> None:
+    def _parse_query_result(self, file) -> None:
         file.seek(0)
         # Header
         header_str = file.readline().decode("utf-8").strip()
@@ -94,7 +95,7 @@ class Cursor:
                 break
             self._rows.append(line_decoded.split(","))
 
-    def _recv_result(self) -> None:
+    def _recv_result(self, fn_parser) -> None:
         with tempfile.TemporaryFile() as tmp_file:
             result_buffer = bytearray(BUFFER_SIZE)
             while True:
@@ -107,7 +108,8 @@ class Cursor:
             status = result_buffer[0] & STATUS_MASK
             if status != 0:
                 raise Exception(f"Query failed with status code {status}")
-            self._parse_file(tmp_file)
+            # Apply function to parse the result
+            fn_parser(tmp_file)
 
     def _execute(self, query: str) -> None:
         # Establish connection
@@ -115,7 +117,7 @@ class Cursor:
         # Send query
         self._send_query(query)
         # Receive results
-        self._recv_result()
+        self._recv_result(self._parse_query_result)
         # Close connection
         self.close()
 
@@ -174,6 +176,75 @@ class Cursor:
             self._execute(query_in) # This method won't clear previous results
         else:
             raise ValueError("Invalid direction: " + str(direction))
+
+    def _recv_describe_result(self) -> None:
+        with tempfile.TemporaryFile() as tmp_file:
+            result_buffer = bytearray(BUFFER_SIZE)
+            while True:
+                result_buffer = self._sock.recv(BUFFER_SIZE)
+                reply_length = int.from_bytes(result_buffer[1:3], byteorder="little")
+                # First 3 bytes are used for the status and length of the message
+                tmp_file.write(result_buffer[3 : reply_length - 3])
+                if (result_buffer[0] & END_MASK) != 0:
+                    break
+            status = result_buffer[0] & STATUS_MASK
+            if status != 0:
+                raise Exception(f"Query failed with status code {status}")
+
+    def _parse_describe_result(self, file) -> None:
+        ret = {"labels": [], "properties": dict(), "outgoing_connections": [], "incoming_connections": []}
+        file.seek(0)
+        file.readline()  # Skip first separator
+        # Labels
+        while True:
+            line = file.readline().decode("utf-8").strip()
+            if len(line) and line[0] == "-":  # Skip label separator
+                break
+            ret["labels"].append(line[1:-1])
+        # Properties
+        while True:
+            line = file.readline().decode("utf-8").strip()
+            if len(line) and line[0] == "-": # Skip property separator
+                break
+            # TODO: Parse values (e.g. numbers, booleans, etc.)
+            k, v = line.split(",")
+            ret["properties"][k[1:-1]] = v
+        # Outgoing_connections
+        while True:
+            line = file.readline().decode("utf-8").strip()
+            if len(line) and line[0] == "-": # Skip outgoing connection separator
+                break
+            # TODO: Change representation
+            ret["outgoing_connections"].append(line.split(",")[0])
+        # Incoming_connections
+        while True:
+            line = file.readline().decode("utf-8").strip()
+            if len(line) and line[0] == "-": # Skip incoming connection separator
+                break
+            # TODO: Change representation
+            ret["incoming_connections"].append(line.split(",")[0])
+        self._described_node = ret
+    
+    def _describe(self, query: str) -> None:
+        # Establish connection
+        self._connect()
+        # Send query
+        self._send_query(query)
+        # Receive results
+        self._recv_result(self._parse_describe_result)
+        # Close connection
+        self.close()
+        return self._described_node
+
+    def describe(self, node: str) -> pd.DataFrame:
+        # Handle empty node
+        if node == "":
+            raise ValueError("Node can't be empty: " + str(node))
+        # Handle variable node
+        if node[0] == "?":
+            raise ValueError("Node can't be a variable: " + str(node))
+        query = f"DESCRIBE {node}"
+        return self._describe(query)
 
     def close(self):
         if self._sock is not None:
