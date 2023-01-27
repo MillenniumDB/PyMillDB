@@ -1,5 +1,6 @@
 # This is a design for the MillenniumDB Python API
 
+from typing import Literal
 import socket
 import tempfile
 import pandas as pd
@@ -108,9 +109,7 @@ class Cursor:
                 raise Exception(f"Query failed with status code {status}")
             self._parse_file(tmp_file)
 
-    def execute(self, query: str) -> None:
-        # Clear previous results
-        self._clear()
+    def _execute(self, query: str) -> None:
         # Establish connection
         self._connect()
         # Send query
@@ -119,6 +118,12 @@ class Cursor:
         self._recv_result()
         # Close connection
         self.close()
+
+    def execute(self, query: str) -> None:
+        # Clear previous results
+        self._clear()
+        # Execute query
+        self._execute(query)
 
     def fetchone(self) -> pd.DataFrame or None:
         if self._rownumber < len(self._rows):
@@ -142,6 +147,33 @@ class Cursor:
                 data=self._rows[self._rownumber - size : self._rownumber],
             )
         return None
+
+    def neighbors(
+        self, node: str, edge_type: str = "", direction: Literal["ANY", "OUT", "IN"] = "ANY"
+    ) -> pd.DataFrame:
+        # Handle empty node
+        if node == "":
+            raise ValueError("Node can't be empty: " + str(node))
+        # Handle variable node
+        if node[0] == "?":
+            raise ValueError("Node can't be a variable: " + str(node))
+        # Handle non-empty edge type
+        if edge_type != "":
+            edge_type = ":" + str(edge_type)
+        # Handle direction
+        if direction == "OUT":
+            query = f"MATCH ({node})-[{edge_type}]->(?neighbor) RETURN ?neighbor"
+            self.execute(query)
+        elif direction == "IN":
+            query = f"MATCH ({node})<-[{edge_type}]-(?neighbor) RETURN ?neighbor"
+            self.execute(query)
+        elif direction == "ANY":
+            query_out = f"MATCH ({node})-[{edge_type}]->(?neighbor) RETURN ?neighbor"
+            self.execute(query_out)
+            query_in  = f"MATCH ({node})<-[{edge_type}]-(?neighbor) RETURN ?neighbor"
+            self._execute(query_in) # This method won't clear previous results
+        else:
+            raise ValueError("Invalid direction: " + str(direction))
 
     def close(self):
         if self._sock is not None:
