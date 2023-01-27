@@ -73,17 +73,25 @@ class Cursor:
     def _parse_file(self, file) -> None:
         file.seek(0)
         # Header
-        self._binding = file.readline().decode("utf-8").strip().split(",")
-        # Skip separator
-        file.readline()
+        header_str = file.readline().decode("utf-8").strip()
+        file.readline()  # Skip first separator
+        if header_str == "":
+            # Handle empty bindings creating a DataFrame with a single
+            # column valued as None and each row has a None value
+            self._binding = [None]
+            for line in file.readlines():
+                line_decoded = line.decode("utf-8").strip()
+                if len(line_decoded) and line_decoded[0] == "-":  # Skip last separator
+                    break
+                self._rows.append(None)
+        else:
+            self._binding = header_str.split(",")
         # Body
         for line in file.readlines():
             line_decoded = line.decode("utf-8").strip()
-            if line_decoded[0] != "-":
-                self._rows.append(line_decoded.split(","))
-            else:
-                # Skip separator
+            if len(line_decoded) and line_decoded[0] == "-":  # Skip last separator
                 break
+            self._rows.append(line_decoded.split(","))
 
     def _recv_result(self) -> None:
         with tempfile.TemporaryFile() as tmp_file:
