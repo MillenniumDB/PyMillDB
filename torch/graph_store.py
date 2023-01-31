@@ -29,7 +29,7 @@ class MDBGraphStore(GraphStore):
         Args:
             edge_index: The edge index to be added. (CSC format*)
         """
-        pass
+        raise NotImplementedError
 
     def _get_edge_index(self, id: Any) -> Optional[Tuple[torch.Tensor, torch.Tensor]]:
         """
@@ -39,7 +39,7 @@ class MDBGraphStore(GraphStore):
         Args:
             id: An unique identifier for the edge index.
         """
-        pass
+        raise NotImplementedError
 
     def _remove_edge_index(self, id: Any) -> bool:
         """
@@ -49,10 +49,10 @@ class MDBGraphStore(GraphStore):
         Args:
             id: An unique identifier for the edge index.
         """
-        pass
+        raise NotImplementedError
 
     def get_all_edge_attrs(self) -> List[Any]:
         """
         Returns all edge attributes from the graphstore.
         """
-        pass
+        raise NotImplementedError

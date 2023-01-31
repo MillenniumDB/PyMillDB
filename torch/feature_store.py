@@ -37,7 +37,7 @@ class MDBFeatureStore(FeatureStore):
             tensor: The feature tensor to be added.
             id: An unique identifier for the tensor.
         """
-        pass
+        raise NotImplementedError
 
     def _get_tensor(id: Any) -> Optional[torch.Tensor]:
         """
@@ -47,7 +47,7 @@ class MDBFeatureStore(FeatureStore):
         Args:
             id: An unique identifier for the tensor.
         """
-        pass
+        raise NotImplementedError
 
     def _remove_tensor(self, id: Any) -> bool:
         """
@@ -57,7 +57,7 @@ class MDBFeatureStore(FeatureStore):
         Args:
             id: An unique identifier for the tensor.
         """
-        pass
+        raise NotImplementedError
 
     def _get_tensor_size(self, id: Any) -> Optional[int]:
         """
@@ -66,16 +66,16 @@ class MDBFeatureStore(FeatureStore):
         Args:
             id: An unique identifier for the tensor.
         """
-        pass
+        raise NotImplementedError
 
     def get_all_tensor_attrs(self) -> List[Any]:
         """
         Returns all tensor ids from the feature store.
         """
-        pass
+        raise NotImplementedError
 
     def __len__(self) -> int:
         """
         Returns the number of tensors in the feature store.
         """
-        pass
+        raise NotImplementedError
