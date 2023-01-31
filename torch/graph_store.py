@@ -12,11 +12,17 @@ This particular graph store abstraction makes a few key assumptions:
   into the graph store.
 """
 
-
 """
 Notes:
 
 * Must review the id type. Currently it is Any, but it should be a EdgeAttr.
+"""
+
+"""
+Examples:
+
+* https://github.com/pyg-team/pytorch_geometric/blob/master/test/data/test_graph_store.py
+* https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/testing/graph_store.py
 """
 
 

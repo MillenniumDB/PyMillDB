@@ -16,7 +16,6 @@ This particular feature store abstraction makes a few key assumptions:
 Source: https://pytorch-geometric.readthedocs.io/en/latest/_modules/torch_geometric/data/feature_store.html
 """
 
-
 """
 Notes:
 
@@ -24,6 +23,13 @@ Notes:
 * update_tensor      : Can be implemented for better performance.
 * _multi_get_tensor  : Can be implemented for better performance.
 * Must review the id type. Currently it is Any, but it should be a TensorAttr.
+"""
+
+"""
+Examples:
+
+* https://github.com/pyg-team/pytorch_geometric/blob/master/test/data/test_feature_store.py
+* https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/testing/feature_store.py
 """
 
 
