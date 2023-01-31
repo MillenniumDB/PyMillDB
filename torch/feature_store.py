@@ -4,14 +4,26 @@ import torch
 import numpy as np
 from torch_geometric.data.feature_store import FeatureStore
 
+"""
+This particular feature store abstraction makes a few key assumptions:
+* The features we care about storing are node and edge features of a graph.
+  To this end, the attributes that the feature store supports include a
+  `group_name` (e.g. a heterogeneous node name or a heterogeneous edge type),
+  an `attr_name` (e.g. `x` or `edge_attr`), and an index.
+* A feature can be uniquely identified from any associated attributes specified
+  in `TensorAttr`.
+
+Source: https://pytorch-geometric.readthedocs.io/en/latest/_modules/torch_geometric/data/feature_store.html
+"""
+
 
 """
 Notes:
 
-- torch.Tensor types : https://pytorch.org/docs/stable/tensor_attributes.html
-- update_tensor      : Can be implemented for better performance.
-- _multi_get_tensor  : Can be implemented for better performance.
-- Must review the id type. Currently it is Any, but it should be a TensorAttr.
+* torch.Tensor types : https://pytorch.org/docs/stable/tensor_attributes.html
+* update_tensor      : Can be implemented for better performance.
+* _multi_get_tensor  : Can be implemented for better performance.
+* Must review the id type. Currently it is Any, but it should be a TensorAttr.
 """
 
 
@@ -58,7 +70,7 @@ class MDBFeatureStore(FeatureStore):
 
     def get_all_tensor_attrs(self) -> List[Any]:
         """
-        Returns a list of all tensor ids from the feature store.
+        Returns all tensor ids from the feature store.
         """
         pass
 
