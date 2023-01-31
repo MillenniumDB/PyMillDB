@@ -17,12 +17,12 @@ class Cursor:
 ```python
 def get_neighbors(node:      str | int,
                   edge_type: str = None,
-                  direction: str = "outgoing" | "incoming" | "undirected") -> list[typeof(node)]:
+                  direction: str = "OUT" | "IN" | "OUT") -> list[typeof(node)]:
     pass
 def k_hop_neighbors(node:      str | int,
                     k: int,
                     edge_type: str = None,
-                    direction: str = "outgoing" | "incoming" | "undirected") -> list[typeof(node)]:
+                    direction: str = "OUT" | "IN" | "OUT") -> list[typeof(node)]:
     pass
 ```
 
