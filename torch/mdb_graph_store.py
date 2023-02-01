@@ -1,6 +1,8 @@
-from typing import Any, Optional, Tuple, List
-import torch
-from torch_geometric.data.graph_store import GraphStore
+from typing import Any, Dict, List, Optional, Tuple
+
+from torch_geometric.data.graph_store import EdgeAttr, EdgeTensorType, GraphStore
+
+from torch import Tensor
 
 """
 This particular graph store abstraction makes a few key assumptions:
@@ -13,12 +15,6 @@ This particular graph store abstraction makes a few key assumptions:
 """
 
 """
-Notes:
-
-* Must review the id type. Currently it is Any, but it should be a EdgeAttr.
-"""
-
-"""
 Examples:
 
 * https://github.com/pyg-team/pytorch_geometric/blob/master/test/data/test_graph_store.py
@@ -27,38 +23,33 @@ Examples:
 
 
 class MDBGraphStore(GraphStore):
-    def _put_edge_index(edge_index: Tuple[torch.Tensor, torch.Tensor]) -> bool:
-        """
-        Synchronously put an edge index into the graph store.}
-        Returns whether the insertion was successful.
+    def __init__(self):
+        super().__init__()
+        self.store: Dict[tuple, Tuple[Tensor, Tensor]] = {}
 
-        Args:
-            edge_index: The edge index to be added. (CSC format*)
-        """
-        raise NotImplementedError
+    @staticmethod
+    def key(attr: EdgeAttr) -> tuple:
+        return (attr.edge_type, attr.layout.value, attr.is_sorted, attr.size)
 
-    def _get_edge_index(self, id: Any) -> Optional[Tuple[torch.Tensor, torch.Tensor]]:
-        """
-        Synchronously get an edge index from the graph store.
-        Returns the edge index if it exists, None otherwise.
+    def _put_edge_index(self, edge_index: EdgeTensorType, edge_attr: EdgeAttr) -> bool:
+        try:
+            self.store[MDBGraphStore.key(edge_attr)] = edge_index
+            return True
+        except Exception as _:
+            return False
 
-        Args:
-            id: An unique identifier for the edge index.
-        """
-        raise NotImplementedError
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        try:
+            return self.store[MDBGraphStore.key(edge_attr)]
+        except Exception as _:
+            return None
 
-    def _remove_edge_index(self, id: Any) -> bool:
-        """
-        Synchronously remove an edge index from the graph store.
-        Returns whether removal was successful.
-
-        Args:
-            id: An unique identifier for the edge index.
-        """
-        raise NotImplementedError
+    def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
+        try:
+            del self.store[edge_attr]
+            return True
+        except Exception as _:
+            return False
 
     def get_all_edge_attrs(self) -> List[Any]:
-        """
-        Returns all edge attributes from the graphstore.
-        """
-        raise NotImplementedError
+        return [EdgeAttr(*key) for key in self.store.keys()]
