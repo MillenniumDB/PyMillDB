@@ -12,23 +12,26 @@ This particular graph store abstraction makes a few key assumptions:
 * Edge indices are static once they are stored in the graph. That is, we do not
   support dynamic modification of edge indices once they have been inserted
   into the graph store.
-"""
-
-"""
-Examples:
-
+  
+Useful links:
 * https://github.com/pyg-team/pytorch_geometric/blob/master/test/data/test_graph_store.py
 * https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/testing/graph_store.py
+
+Note:
+* In our case, we could skip the GraphStore modification methods and just implement
+  the access methods. That means that we would not be able to modify the graph store,
+  but we will have enough functionality to connect it to our own sampler.
+* We could also have a single format for all edge indices (COO, CSC or CSR)
 """
 
 
 class MDBGraphStore(GraphStore):
     def __init__(self):
         super().__init__()
-        self.store: Dict[tuple, Tuple[Tensor, Tensor]] = {}
+        self.store: Dict[Tuple, Tuple[Tensor, Tensor]] = {}
 
     @staticmethod
-    def key(attr: EdgeAttr) -> tuple:
+    def key(attr: EdgeAttr) -> Tuple:
         return (attr.edge_type, attr.layout.value, attr.is_sorted, attr.size)
 
     def _put_edge_index(self, edge_index: EdgeTensorType, edge_attr: EdgeAttr) -> bool:
