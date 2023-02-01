@@ -1,8 +1,9 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr, _field_status
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.typing import FeatureTensorType
 
+import torch
 from torch import Tensor
 
 """
@@ -33,33 +34,36 @@ Examples:
 """
 
 
-class MDBTensorAttr(TensorAttr):
-    def __init__(self, group_name: str = _field_status.UNSET):
-        # For now, we support only a `group_name`.
-        # Feature tensors are stored in a key-value store where the key is the name of
-        # the node.
-        super().__init__(group_name, None, None)
-
-
 class MDBFeatureStore(FeatureStore):
     def __init__(self):
-        super().__init__(MDBTensorAttr)
-        self.store: Dict[str, Tensor] = {}
+        super().__init__()
+        self.store: Dict[Tuple[str, str], Tuple[Tensor, Tensor]] = {}
 
     @staticmethod
-    def key(attr: TensorAttr) -> str:
-        return attr.group_name
+    def key(attr: TensorAttr) -> Tuple[str, str]:
+        return (attr.group_name, attr.attr_name)
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         try:
-            self.store[MDBFeatureStore.key(attr)] = tensor
+            index = attr.index
+            if not attr.is_set("index") or index is None:
+                index = torch.arange(0, tensor.shape[0])
+            self.store[MDBFeatureStore.key(attr)] = (index, tensor)
             return True
         except Exception as _:
             return False
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         try:
-            return self.store[MDBFeatureStore.key(attr)]
+            _, tensor = self.store.get(MDBFeatureStore.key(attr), (None, None))
+            if tensor is None:
+                return None
+            elif attr.index is None:
+                return tensor
+            elif isinstance(attr.index, slice) and attr.index == slice(None):
+                return tensor
+            return tensor[attr.index]
+
         except Exception as _:
             return None
 
@@ -70,14 +74,14 @@ class MDBFeatureStore(FeatureStore):
         except Exception as _:
             return False
 
-    def _get_tensor_size(self, attr: TensorAttr) -> Optional[int]:
+    def _get_tensor_size(self, attr: TensorAttr) -> Optional[Tuple[int]]:
         try:
-            return self.store[MDBFeatureStore.key(attr)].size()
+            return self._get_tensor(attr).size()
         except Exception as _:
             return None
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
-        return [self._tensor_attr_cls(key) for key in self.store.keys()]
+        return [self._tensor_attr_cls(*key) for key in self.store.keys()]
 
     def __len__(self) -> int:
         return len(self.store)
