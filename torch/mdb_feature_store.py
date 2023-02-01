@@ -1,13 +1,9 @@
-from typing import Any, Optional, Union, List, Dict, Tuple
+from typing import Dict, List, Optional
+
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr, _field_status
+from torch_geometric.typing import FeatureTensorType
 
 from torch import Tensor
-from torch_geometric.data.feature_store import (
-    FeatureStore,
-    TensorAttr,
-    AttrView,
-    _field_status,
-)
-from torch_geometric.typing import FeatureTensorType
 
 """
 This particular feature store abstraction makes a few key assumptions:
