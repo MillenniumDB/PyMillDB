@@ -7,14 +7,14 @@ graph_store = MDBGraphStore()
 edge_index = torch.tensor(
     [
         [0, 1, 2, 3],
-        [1300, 110, 4096, 12],
+        [4, 5, 6, 7],
     ],
     dtype=torch.long,
 )
 coo = edge_index.to_sparse_coo()
 
 # Put edges
-graph_store["person_likes_movie", "coo"] = coo
+graph_store["person_friend_person", "coo"] = coo
 
 # Access edges
-print(graph_store["person_likes_movie", "coo"])
+print(graph_store["person_friend_person", "coo"])
