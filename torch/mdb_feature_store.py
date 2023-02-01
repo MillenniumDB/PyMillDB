@@ -15,22 +15,10 @@ This particular feature store abstraction makes a few key assumptions:
 * A feature can be uniquely identified from any associated attributes specified
   in `TensorAttr`.
 
-Source: https://pytorch-geometric.readthedocs.io/en/latest/_modules/torch_geometric/data/feature_store.html
-"""
-
-"""
-Notes:
-
-* torch.Tensor types : https://pytorch.org/docs/stable/tensor_attributes.html
-* update_tensor      : Can be implemented for better performance.
-* _multi_get_tensor  : Can be implemented for better performance.
-"""
-
-"""
-Examples:
-
+Useful links:
 * https://github.com/pyg-team/pytorch_geometric/blob/master/test/data/test_feature_store.py
 * https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/testing/feature_store.py
+* https://pytorch-geometric.readthedocs.io/en/latest/_modules/torch_geometric/data/feature_store.html
 """
 
 
