@@ -1,4 +1,5 @@
 from mdb_feature_store import MDBFeatureStore, MDBTensorAttr
+
 import torch
 
 store = MDBFeatureStore()
