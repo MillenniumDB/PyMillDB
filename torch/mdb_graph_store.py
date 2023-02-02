@@ -28,7 +28,7 @@ Note:
 class MDBGraphStore(GraphStore):
     def __init__(self):
         super().__init__()
-        self.store: Dict[Tuple, Tuple[Tensor, Tensor]] = {}
+        self._store: Dict[Tuple, Tuple[Tensor, Tensor]] = {}
 
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
@@ -36,23 +36,23 @@ class MDBGraphStore(GraphStore):
 
     def _put_edge_index(self, edge_index: EdgeTensorType, edge_attr: EdgeAttr) -> bool:
         try:
-            self.store[MDBGraphStore.key(edge_attr)] = edge_index
+            self._store[MDBGraphStore.key(edge_attr)] = edge_index
             return True
         except Exception as _:
             return False
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         try:
-            return self.store[MDBGraphStore.key(edge_attr)]
+            return self._store[MDBGraphStore.key(edge_attr)]
         except Exception as _:
             return None
 
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         try:
-            del self.store[edge_attr]
+            del self._store[edge_attr]
             return True
         except Exception as _:
             return False
 
     def get_all_edge_attrs(self) -> List[Any]:
-        return [EdgeAttr(*key) for key in self.store.keys()]
+        return [EdgeAttr(*key) for key in self._store.keys()]

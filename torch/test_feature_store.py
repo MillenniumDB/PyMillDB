@@ -18,6 +18,6 @@ feature_store["paper", "x"] = paper_features
 feature_store["author", "x"] = author_features
 
 # Access features
-assert torch.equal(feature_store["paper", "x", :], paper_features)
+assert torch.equal(feature_store["paper", "x"](), paper_features)
 assert torch.equal(feature_store["paper"].x[10:20], paper_features[10:20])
 assert torch.equal(feature_store["author", "x", 0:20], author_features[0:20])
