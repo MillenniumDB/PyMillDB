@@ -27,3 +27,13 @@ class MDBClient:
             raise ConnectionError(
                 f"Couldn't connect to MillenniumDB server at {self.address}"
             ) from e
+
+    def _send(self, data: bytes) -> None:
+        if self._closed:
+            raise ConnectionError("Client is not connected to MillenniumDB")
+        self._sock.sendall(data)
+
+    def _recv(self, nbytes: int) -> bytes:
+        if self._closed:
+            raise ConnectionError("Client is not connected to MillenniumDB")
+        self._sock.recv(nbytes)
