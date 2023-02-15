@@ -24,7 +24,7 @@ class BatchLoader:
 
     def _new(self) -> None:
         # Send BATCH_LOADER_NEW request
-        msg = RequestType.BATCH_LOADER_NEW.to_bytes(1, "little")
+        msg = RequestType.BATCH_LOADER_NEW.value
         msg += self.num_seeds.to_bytes(8, "little")
         msg += self.batch_size.to_bytes(8, "little")
         msg += len(self.neighbor_sizes).to_bytes(8, "little")
@@ -41,7 +41,7 @@ class BatchLoader:
 
     def next(self) -> "Graph":
         # Send BATCH_LOADER_NEXT request
-        msg = RequestType.BATCH_LOADER_NEXT.to_bytes(1, "little")
+        msg = RequestType.BATCH_LOADER_NEXT.value
         msg += self._batch_loader_id
         self.client._send(msg)
 
@@ -51,7 +51,7 @@ class BatchLoader:
 
     def close(self) -> None:
         # Send BATCH_LOADER_CLOSE request
-        msg = RequestType.BATCH_LOADER_CLOSE.to_bytes(1, "little")
+        msg = RequestType.BATCH_LOADER_CLOSE.value
         msg += self._batch_loader_id
         self.client._send(msg)
 
