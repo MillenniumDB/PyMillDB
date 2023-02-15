@@ -27,7 +27,3 @@ class MDBClient:
             raise ConnectionError(
                 f"Couldn't connect to MillenniumDB server at {self.address}"
             ) from e
-
-
-with MDBClient() as client:
-    print(client.address)
