@@ -1,6 +1,6 @@
 from typing import List
 
-from .protocol import RequestType
+from . import protocol
 
 
 class FeatureStoreFactory:
@@ -9,7 +9,7 @@ class FeatureStoreFactory:
 
     def create(self, name: str, feature_size: int) -> "FeatureStore" or None:
         # Send FEATURE_STORE_CREATE request
-        msg = RequestType.FEATURE_STORE_CREATE
+        msg = protocol.RequestType.FEATURE_STORE_CREATE
         msg += len(name).to_bytes(8, "little")
         msg += feature_size.to_bytes(8, "little")
         msg += name.encode("utf-8")

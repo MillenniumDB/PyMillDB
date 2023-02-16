@@ -1,6 +1,6 @@
 from typing import List
 
-from .protocol import RequestType
+from . import protocol
 
 
 class BatchLoader:
@@ -24,7 +24,8 @@ class BatchLoader:
 
     def _new(self) -> None:
         # Send BATCH_LOADER_NEW request
-        msg = RequestType.BATCH_LOADER_NEW.value
+        msg = b""
+        msg += protocol.RequestType.BATCH_LOADER_NEW.to_bytes(1, "little")
         msg += self.num_seeds.to_bytes(8, "little")
         msg += self.batch_size.to_bytes(8, "little")
         msg += len(self.neighbor_sizes).to_bytes(8, "little")
@@ -34,30 +35,23 @@ class BatchLoader:
         msg += self.feature_store_name.encode("utf-8")
         self.client._send(msg)
 
-        # TODO: Receive BATCH_LOADER_NEW response
-        response = self.client._recv(9)
-        print("response:", response)
-        raise NotImplementedError("BatchLoader._new() not implemented yet")
+        # Receive BATCH_LOADER_NEW response
+        data = self.client._recv()
+        print(data)
+        print(int.from_bytes(data, "little"))
+        self._batch_loader_id = int.from_bytes(data, "little")
+        self._closed = False
 
-    def next(self) -> "Graph":
-        # Send BATCH_LOADER_NEXT request
-        msg = RequestType.BATCH_LOADER_NEXT.value
-        msg += self._batch_loader_id
-        self.client._send(msg)
-
+    def next(self) -> "Graph":  # TODO: Create Graph class
+        # TODO: Send BATCH_LOADER_NEXT request
         # TODO: Receive BATCH_LOADER_NEXT response
-        raise NotImplementedError("BatchLoader.next() not implemented yet")
         # TODO: Return Graph
+        raise NotImplementedError("BatchLoader.next() not implemented yet")
 
     def close(self) -> None:
-        # Send BATCH_LOADER_CLOSE request
-        msg = RequestType.BATCH_LOADER_CLOSE.value
-        msg += self._batch_loader_id
-        self.client._send(msg)
-
+        # TODO: Send BATCH_LOADER_CLOSE request
         # TODO: Receive BATCH_LOADER_CLOSE response
         raise NotImplementedError("BatchLoader.close() not implemented yet")
-        self._closed = True
 
     def __repr__(self) -> str:
         return (
