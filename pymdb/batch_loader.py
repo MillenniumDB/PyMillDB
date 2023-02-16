@@ -1,6 +1,7 @@
 from typing import List
 
-from . import protocol
+from .utils import packer
+from .utils.protocol import RequestType
 
 
 class BatchLoader:
@@ -25,21 +26,18 @@ class BatchLoader:
     def _new(self) -> None:
         # Send BATCH_LOADER_NEW request
         msg = b""
-        msg += protocol.RequestType.BATCH_LOADER_NEW.to_bytes(1, "little")
-        msg += self.num_seeds.to_bytes(8, "little")
-        msg += self.batch_size.to_bytes(8, "little")
-        msg += len(self.neighbor_sizes).to_bytes(8, "little")
-        msg += len(self.feature_store_name).to_bytes(8, "little")
-        for neighbor_size in self.neighbor_sizes:
-            msg += neighbor_size.to_bytes(8, "little")
-        msg += self.feature_store_name.encode("utf-8")
-        self.client._send(msg)
+        msg += packer.pack_byte(RequestType.BATCH_LOADER_NEW)
+        msg += packer.pack_uint64(self.num_seeds)
+        msg += packer.pack_uint64(self.batch_size)
+        msg += packer.pack_uint64(len(self.neighbor_sizes))
+        msg += packer.pack_uint64(len(self.feature_store_name))
+        msg += packer.pack_uint64_vector(self.neighbor_sizes)
+        msg += packer.pack_string(self.feature_store_name)
+        self.client._send(packer.data)
 
         # Receive BATCH_LOADER_NEW response
         data = self.client._recv()
-        print(data)
-        print(int.from_bytes(data, "little"))
-        self._batch_loader_id = int.from_bytes(data, "little")
+        self._batch_loader_id = packer.unpack_uint64(data[0:8])
         self._closed = False
 
     def next(self) -> "Graph":  # TODO: Create Graph class

@@ -1,21 +1,11 @@
 from typing import List
 
-from . import protocol
-
 
 class FeatureStoreFactory:
     def __init__(self, client: "MDBClient") -> None:
         self.client = client
 
     def create(self, name: str, feature_size: int) -> "FeatureStore" or None:
-        # Send FEATURE_STORE_CREATE request
-        msg = protocol.RequestType.FEATURE_STORE_CREATE
-        msg += len(name).to_bytes(8, "little")
-        msg += feature_size.to_bytes(8, "little")
-        msg += name.encode("utf-8")
-        self.client._send(msg)
-
-        # TODO: Receive FEATURE_STORE_CREATE response
         raise NotImplementedError("FeatureStoreFactory.create() not implemented yet")
 
     def load(self, name: str) -> "FeatureStore" or None:

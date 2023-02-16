@@ -1,10 +1,20 @@
 import socket
-from typing import Tuple
+from functools import wraps
+from typing import Callable
 
-from . import protocol
+from .utils import protocol
 
 
 class MDBClient:
+    def __check_closed(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if self._closed:
+                raise ConnectionError("Client is not connected to MillenniumDB")
+            return func(self, *args, **kwargs)
+
+        return wrapper
+
     def __init__(self, host: str = "localhost", port: int = 8080) -> None:
         self.address = (host, port)
         self._sock = None
@@ -14,7 +24,7 @@ class MDBClient:
     def close(self) -> None:
         self._sock.close()
         self._sock = None
-        self.closed = True
+        self._closed = True
 
     def __enter__(self) -> "MDBClient":
         return self
@@ -31,28 +41,26 @@ class MDBClient:
                 f"Couldn't connect to MillenniumDB server at {self.address}"
             ) from e
 
+    @__check_closed
     def _send(self, data: bytes) -> None:
-        if self._closed:  # TODO: DECORATOR?
-            raise ConnectionError("Client is not connected to MillenniumDB")
         self._sock.sendall(data)
 
+    @__check_closed
     def _recv(self) -> bytes:
-        # Each response contains:
+        # Each message contains:
         # - 1 bit                : Last message flag
         # - 7 bits               : Status code
-        # - 2 bytes              : Message length
-        # - Message length bytes : Message
-        if self._closed:  # TODO: DECORATOR?
-            raise ConnectionError("Client is not connected to MillenniumDB")
+        # - 2 bytes              : Data length
+        # - Message length bytes : Data
         data = b""
         while True:
             msg = self._sock.recv(protocol.BUFFER_SIZE)
             msg_length = int.from_bytes(msg[1:3], "little")
-            print(msg_length)
             data += msg[3 : 3 + msg_length]
             if protocol.last_message(msg[0]):
                 break
-        # Check if PyMDB server has thrown an exception
+
+        # Check if the server threw an exception
         if protocol.decode_status(msg[0]) != protocol.StatusCode.SUCCESS:
             raise Exception(data.decode("utf-8"))
         return data
