@@ -33,7 +33,7 @@ class BatchLoader:
         msg += packer.pack_uint64(len(self.feature_store_name))
         msg += packer.pack_uint64_vector(self.neighbor_sizes)
         msg += packer.pack_string(self.feature_store_name)
-        self.client._send(packer.data)
+        self.client._send(msg)
 
         # Receive BATCH_LOADER_NEW response
         data = self.client._recv()
