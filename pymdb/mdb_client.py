@@ -2,29 +2,25 @@ import socket
 from functools import wraps
 from typing import Callable
 
-from .utils import protocol
+from . import protocol
+from .utils import decorators
 
 
 class MDBClient:
-    def __check_closed(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            if self._closed:
-                raise ConnectionError("Client is not connected to MillenniumDB")
-            return func(self, *args, **kwargs)
-
-        return wrapper
-
     def __init__(self, host: str = "localhost", port: int = 8080) -> None:
         self.address = (host, port)
         self._sock = None
         self._closed = True
         self._connect()
 
+    def is_closed(self) -> bool:
+        return self._closed
+
     def close(self) -> None:
-        self._sock.close()
-        self._sock = None
-        self._closed = True
+        if not self._closed:
+            self._sock.close()
+            self._sock = None
+            self._closed = True
 
     def __enter__(self) -> "MDBClient":
         return self
@@ -41,11 +37,11 @@ class MDBClient:
                 f"Couldn't connect to MillenniumDB server at {self.address}"
             ) from e
 
-    @__check_closed
+    @decorators.check_closed
     def _send(self, data: bytes) -> None:
         self._sock.sendall(data)
 
-    @__check_closed
+    @decorators.check_closed
     def _recv(self) -> bytes:
         # Each message contains:
         # - 1 bit                : Last message flag

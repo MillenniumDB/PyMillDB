@@ -1,7 +1,7 @@
 from typing import List
 
-from .utils import packer
-from .utils.protocol import RequestType
+from .protocol import RequestType
+from .utils import decorators, packer
 
 
 class BatchLoader:
@@ -23,6 +23,31 @@ class BatchLoader:
         self._closed = True
         self._new()
 
+    def is_closed(self) -> bool:
+        return self._closed
+
+    def close(self) -> None:
+        if not self._closed:
+            self._close()
+
+    @decorators.check_closed
+    def __iter__(self):
+        self._begin()
+        return self
+
+    @decorators.check_closed
+    def __next__(self):
+        return self._next()
+
+    def __repr__(self) -> str:
+        return (
+            "BatchLoader("
+            + f"feature_store_name={self.feature_store_name}, "
+            + f"num_seeds={self.num_seeds}, "
+            + f"batch_size={self.batch_size}, "
+            + f"neighbor_sizes={self.neighbor_sizes})"
+        )
+
     def _new(self) -> None:
         # Send BATCH_LOADER_NEW request
         msg = b""
@@ -35,27 +60,39 @@ class BatchLoader:
         msg += packer.pack_string(self.feature_store_name)
         self.client._send(msg)
 
-        # Receive BATCH_LOADER_NEW response
+        # Handle response
         data = self.client._recv()
         self._batch_loader_id = packer.unpack_uint64(data[0:8])
         self._closed = False
 
-    def next(self) -> "Graph":  # TODO: Create Graph class
-        # TODO: Send BATCH_LOADER_NEXT request
-        # TODO: Receive BATCH_LOADER_NEXT response
-        # TODO: Return Graph
+    def _begin(self) -> None:
+        # Send BATCH_LOADER_BEGIN request
+        msg = b""
+        msg += packer.pack_byte(RequestType.BATCH_LOADER_BEGIN)
+        msg += packer.pack_uint64(self._batch_loader_id)
+        self.client._send(msg)
+
+        # Handle response
+        self.client._recv()
+
+    def _next(self) -> "Graph":
+        # Send BATCH_LOADER_NEXT request
+        msg = b""
+        msg += packer.pack_byte(RequestType.BATCH_LOADER_NEXT)
+        msg += packer.pack_uint64(self._batch_loader_id)
+        self.client._send(msg)
+
+        # Handle response
         raise NotImplementedError("BatchLoader.next() not implemented yet")
 
-    def close(self) -> None:
-        # TODO: Send BATCH_LOADER_CLOSE request
-        # TODO: Receive BATCH_LOADER_CLOSE response
-        raise NotImplementedError("BatchLoader.close() not implemented yet")
+    def _close(self) -> None:
+        # Send BATCH_LOADER_CLOSE request
+        msg = b""
+        msg += packer.pack_byte(RequestType.BATCH_LOADER_CLOSE)
+        msg += packer.pack_uint64(self._batch_loader_id)
+        self.client._send(msg)
 
-    def __repr__(self) -> str:
-        return (
-            "BatchLoader("
-            + f"feature_store_name={self.feature_store_name}, "
-            + f"num_seeds={self.num_seeds}, "
-            + f"batch_size={self.batch_size}, "
-            + f"neighbor_sizes={self.neighbor_sizes})"
-        )
+        # Handle response
+        self.client._recv()
+        self._batch_loader_id = None
+        self._closed = True

@@ -15,8 +15,9 @@ class RequestType(IntEnum):
 
     # BATCH LOADER
     BATCH_LOADER_NEW = 0x01
-    BATCH_LOADER_NEXT = 0x02
-    BATCH_LOADER_CLOSE = 0x03
+    BATCH_LOADER_BEGIN = 0x02
+    BATCH_LOADER_NEXT = 0x03
+    BATCH_LOADER_CLOSE = 0x04
 
 
 class StatusCode(IntEnum):
