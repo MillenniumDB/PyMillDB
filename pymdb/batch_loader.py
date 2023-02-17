@@ -1,7 +1,8 @@
 from typing import List
 
-from .protocol import RequestType
+from .protocol import RequestType, StatusCode
 from .utils import decorators, packer
+from .utils.graph import Graph
 
 
 class BatchLoader:
@@ -20,6 +21,7 @@ class BatchLoader:
         self.neighbor_sizes = neighbor_sizes
 
         self._batch_loader_id = None
+        self._size = None
         self._closed = True
         self._new()
 
@@ -30,8 +32,8 @@ class BatchLoader:
         if not self._closed:
             self._close()
 
-    def size() -> int:
-        raise NotImplementedError("BatchLoader.size() is not implemented")
+    def size(self) -> int:
+        return self._size
 
     @decorators.check_closed
     def __iter__(self):
@@ -67,8 +69,9 @@ class BatchLoader:
         self.client._send(msg)
 
         # Handle response
-        data = self.client._recv()
+        data, _ = self.client._recv()
         self._batch_loader_id = packer.unpack_uint64(data[0:8])
+        self._size = packer.unpack_uint64(data[8:16])
         self._closed = False
 
     def _begin(self) -> None:
@@ -89,7 +92,11 @@ class BatchLoader:
         self.client._send(msg)
 
         # Handle response
-        data = self.client._recv()
+        data, code = self.client._recv()
+
+        if code == StatusCode.END_OF_ITERATION:
+            raise StopIteration
+
         num_nodes = packer.unpack_uint64(data[0:8])
         num_edges = packer.unpack_uint64(data[8:16])
         feature_size = packer.unpack_uint64(data[16:24])
@@ -101,8 +108,7 @@ class BatchLoader:
         node_labels = packer.unpack_uint64_vector(data[lo:hi])
         lo, hi = hi, hi + 8 * 2 * num_edges
         edge_index = packer.unpack_uint64_vector(data[lo:hi], (num_edges, 2))
-
-        raise NotImplementedError("BatchLoader.next() not implemented yet")
+        return Graph(node_features, node_labels, edge_index)
 
     def _close(self) -> None:
         # Send BATCH_LOADER_CLOSE request
@@ -114,4 +120,5 @@ class BatchLoader:
         # Handle response
         self.client._recv()
         self._batch_loader_id = None
+        self._size = None
         self._closed = True

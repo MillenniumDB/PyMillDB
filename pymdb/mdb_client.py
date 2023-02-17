@@ -1,6 +1,6 @@
 import socket
 from functools import wraps
-from typing import Callable
+from typing import Tuple
 
 from . import protocol
 from .utils import decorators
@@ -42,7 +42,7 @@ class MDBClient:
         self._sock.sendall(data)
 
     @decorators.check_closed
-    def _recv(self) -> bytes:
+    def _recv(self) -> Tuple[bytes, protocol.StatusCode]:
         # Each message contains:
         # - 1 bit                : Last message flag
         # - 7 bits               : Status code
@@ -57,6 +57,6 @@ class MDBClient:
                 break
 
         # Check if the server threw an exception
-        if protocol.decode_status(msg[0]) != protocol.StatusCode.SUCCESS:
+        if protocol.error_status(msg[0]):
             raise Exception(data.decode("utf-8"))
-        return data
+        return data, protocol.decode_status(msg[0])

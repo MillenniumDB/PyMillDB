@@ -32,4 +32,4 @@ def unpack_uint64_vector(data: bytes, shape: int or Tuple[int] = -1) -> np.ndarr
 
 
 def unpack_float_vector(data: bytes, shape: int or Tuple[int] = -1) -> np.ndarray:
-    return np.frombuffer(data, dtype=np.float32).reshape(shape)
+    return np.frombuffer(data, dtype=">f").reshape(shape)
