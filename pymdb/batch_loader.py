@@ -30,6 +30,9 @@ class BatchLoader:
         if not self._closed:
             self._close()
 
+    def size() -> int:
+        raise NotImplementedError("BatchLoader.size() is not implemented")
+
     @decorators.check_closed
     def __iter__(self):
         self._begin()
@@ -47,6 +50,9 @@ class BatchLoader:
             + f"batch_size={self.batch_size}, "
             + f"neighbor_sizes={self.neighbor_sizes})"
         )
+
+    def __len__(self) -> int:
+        return self.size()
 
     def _new(self) -> None:
         # Send BATCH_LOADER_NEW request
@@ -83,6 +89,19 @@ class BatchLoader:
         self.client._send(msg)
 
         # Handle response
+        data = self.client._recv()
+        num_nodes = packer.unpack_uint64(data[0:8])
+        num_edges = packer.unpack_uint64(data[8:16])
+        feature_size = packer.unpack_uint64(data[16:24])
+        lo, hi = 24, 24 + 4 * num_nodes * feature_size
+        node_features = packer.unpack_float_vector(
+            data[lo:hi], (num_nodes, feature_size)
+        )
+        lo, hi = hi, hi + 8 * num_nodes
+        node_labels = packer.unpack_uint64_vector(data[lo:hi])
+        lo, hi = hi, hi + 8 * 2 * num_edges
+        edge_index = packer.unpack_uint64_vector(data[lo:hi], (num_edges, 2))
+
         raise NotImplementedError("BatchLoader.next() not implemented yet")
 
     def _close(self) -> None:
