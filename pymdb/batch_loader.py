@@ -34,6 +34,10 @@ class BatchLoader:
         if not self._closed:
             self._close()
 
+    def __len__(self) -> int:
+        return self.size()
+
+    @decorators.check_closed
     def size(self) -> int:
         return self._size
 
@@ -46,11 +50,8 @@ class BatchLoader:
     def __next__(self):
         return self._next()
 
-    def __len__(self) -> int:
-        return self.size()
-
     def _new(self) -> None:
-        # Send BATCH_LOADER_NEW request
+        # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.BATCH_LOADER_NEW)
         msg += packer.pack_uint64(self.num_seeds)
@@ -69,7 +70,7 @@ class BatchLoader:
         self._closed = False
 
     def _begin(self) -> None:
-        # Send BATCH_LOADER_BEGIN request
+        # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.BATCH_LOADER_BEGIN)
         msg += packer.pack_uint64(self._batch_loader_id)
@@ -79,7 +80,7 @@ class BatchLoader:
         self.client._recv()
 
     def _next(self) -> "Graph":
-        # Send BATCH_LOADER_NEXT request
+        # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.BATCH_LOADER_NEXT)
         msg += packer.pack_uint64(self._batch_loader_id)
@@ -105,7 +106,7 @@ class BatchLoader:
         return Graph(node_features, node_labels, edge_index)
 
     def _close(self) -> None:
-        # Send BATCH_LOADER_CLOSE request
+        # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.BATCH_LOADER_CLOSE)
         msg += packer.pack_uint64(self._batch_loader_id)

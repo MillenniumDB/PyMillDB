@@ -23,6 +23,13 @@ def pack_uint64_vector(vector: List[int]) -> bytes:
     return data
 
 
+def pack_float_vector(vector: List[float]) -> bytes:
+    data = b""
+    for value in vector:
+        data += struct.pack(">f", value)
+    return data
+
+
 def unpack_uint64(data: bytes) -> int:
     return struct.unpack(">Q", data)[0]
 
