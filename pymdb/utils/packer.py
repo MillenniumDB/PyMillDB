@@ -30,6 +30,10 @@ def pack_float_vector(vector: List[float]) -> bytes:
     return data
 
 
+def unpack_bool(data: bytes) -> bool:
+    return struct.unpack(">?", data)[0]
+
+
 def unpack_uint64(data: bytes) -> int:
     return struct.unpack(">Q", data)[0]
 

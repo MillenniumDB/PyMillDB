@@ -1,5 +1,6 @@
 from typing import List
 
+from .protocol import RequestType, StatusCode
 from .utils import decorators, packer
 
 
@@ -8,18 +9,51 @@ class FeatureStoreManager:
         self.client = client
 
     def list(self) -> List[str]:
-        raise NotImplementedError("FeatureStoreManager.list() is not implemented")
+        # Send request
+        msg = b""
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_LIST)
+        self.client._send(msg)
 
-    def create(self, name: str, feature_size: int) -> bool:
-        raise NotImplementedError("FeatureStoreFactory.create() not implemented yet")
+        # Handle response
+        data, _ = self.client._recv()
+        names = []
+        lo, hi = 0, 8
+        num_feature_stores = packer.unpack_uint64(data[lo:hi])
+        for _ in range(num_feature_stores):
+            lo, hi = hi, hi + 8
+            feature_store_name_size = packer.unpack_uint64(data[lo:hi])
+            lo, hi = hi, hi + feature_store_name_size
+            names.append(packer.unpack_string(data[lo:hi]))
+        return names
 
-    def remove(self, name: str) -> bool:
-        raise NotImplementedError("FeatureStore.delete() is not implemented")
+    def create(self, name: str, feature_size: int) -> None:
+        # Send request
+        msg = b""
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_CREATE)
+        msg += packer.pack_uint64(feature_size)
+        msg += packer.pack_uint64(len(name))
+        msg += packer.pack_string(name)
+        self.client._send(msg)
+
+        # Handle response
+        self.client._recv()
+
+    def remove(self, name: str) -> None:
+        # Send request
+        msg = b""
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_REMOVE)
+        msg += packer.pack_uint64(len(name))
+        msg += packer.pack_string(name)
+        self.client._send(msg)
+
+        # Handle response
+        self.client._recv()
 
 
 class FeatureStore:
-    def __init__(self, client: "MDBClient") -> None:
+    def __init__(self, client: "MDBClient", name: str) -> None:
         self.client = client
+        self.name = name
 
         self._feature_store_id = None
         self._closed = True
@@ -41,9 +75,11 @@ class FeatureStore:
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_SIZE)
         msg += packer.pack_uint64(self._feature_store_id)
+        self.client._send(msg)
 
-        # TODO: Handle response
-        raise NotImplementedError("FeatureStore.size() is not implemented")
+        # Handle response
+        data, _ = self.client._recv()
+        return packer.unpack_uint64(data[0:8])
 
     @decorators.check_closed
     def contains(self, node_id: int) -> bool:
@@ -52,12 +88,14 @@ class FeatureStore:
         msg += packer.pack_byte(RequestType.FEATURE_STORE_CONTAINS)
         msg += packer.pack_uint64(self._feature_store_id)
         msg += packer.pack_uint64(node_id)
+        self.client._send(msg)
 
-        # TODO: Handle response
-        raise NotImplementedError("FeatureStore.contains() is not implemented")
+        # Handle response
+        data, _ = self.client._recv()
+        return packer.unpack_bool(data[0:1])
 
     @decorators.check_closed
-    def insert_tensor(self, node_id: int, tensor: List[float]) -> bool:
+    def insert_tensor(self, node_id: int, tensor: List[float]) -> None:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_INSERT_TENSOR)
@@ -65,12 +103,14 @@ class FeatureStore:
         msg += packer.pack_uint64(node_id)
         msg += packer.pack_uint64(len(tensor))
         msg += packer.pack_float_vector(tensor)
+        self.client._send(msg)
 
-        # TODO: Handle response
-        raise NotImplementedError("FeatureStore.insert_tensor() is not implemented")
+        # Handle response
+        self.client._recv()
 
     @decorators.check_closed
-    def remove_tensor(self, node_id: int) -> bool:
+    def remove_tensor(self, node_id: int) -> None:
+        # TODO: Implement this
         raise NotImplementedError("FeatureStore.remove_tensor() is not implemented")
 
     @decorators.check_closed
@@ -80,19 +120,25 @@ class FeatureStore:
         msg += packer.pack_byte(RequestType.FEATURE_STORE_GET_TENSOR)
         msg += packer.pack_uint64(self._feature_store_id)
         msg += packer.pack_uint64(node_id)
+        self.client._send(msg)
 
-        # TODO: Handle response
-        raise NotImplementedError("FeatureStore.get_tensor() is not implemented")
+        # Handle response
+        data, _ = self.client._recv()
+        tensor_size = packer.unpack_uint64(data[0:8])
+        lo, hi = 8, 8 + 4 * tensor_size
+        return packer.unpack_float_vector(data[lo:hi])
 
     def _open(self) -> None:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_OPEN)
-        msg += packer.pack_uint64(len(self.feature_store_name))
-        msg += self.feature_store_name.encode("utf-8")
+        msg += packer.pack_uint64(len(self.name))
+        msg += self.name.encode("utf-8")
 
-        # TODO: Handle response
-        raise NotImplementedError("FeatureStore._open() is not implemented")
+        # Handle response
+        data, _ = self.client._send(msg)
+        self._feature_store_id = packer.unpack_uint64(data[0:8])
+        self._closed = False
 
     def _close(self) -> None:
         # Send request
@@ -100,5 +146,7 @@ class FeatureStore:
         msg += packer.pack_byte(RequestType.FEATURE_STORE_CLOSE)
         msg += packer.pack_uint64(self._feature_store_id)
 
-        # TODO: Handle response
-        raise NotImplementedError("FeatureStore._close() is not implemented")
+        # Handle response
+        self.client._send(msg)
+        self._feature_store_id = None
+        self._closed = True
