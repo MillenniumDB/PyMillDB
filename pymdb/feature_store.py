@@ -9,6 +9,7 @@ class FeatureStoreManager:
         self.client = client
 
     def list(self) -> List[str]:
+        raise NotImplementedError("FeatureStoreManager.list")
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_LIST)
@@ -27,6 +28,7 @@ class FeatureStoreManager:
         return names
 
     def create(self, name: str, feature_size: int) -> None:
+        raise NotImplementedError("FeatureStoreManager.create")
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_CREATE)
@@ -39,6 +41,7 @@ class FeatureStoreManager:
         self.client._recv()
 
     def remove(self, name: str) -> None:
+        raise NotImplementedError("FeatureStoreManager.remove")
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_REMOVE)
