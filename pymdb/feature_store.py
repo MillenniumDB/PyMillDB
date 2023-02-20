@@ -137,9 +137,10 @@ class FeatureStore:
         msg += packer.pack_byte(RequestType.FEATURE_STORE_OPEN)
         msg += packer.pack_uint64(len(self.name))
         msg += self.name.encode("utf-8")
+        self.client._send(msg)
 
         # Handle response
-        data, _ = self.client._send(msg)
+        data, _ = self.client._recv()
         self._feature_store_id = packer.unpack_uint64(data[0:8])
         self._closed = False
 
@@ -148,8 +149,9 @@ class FeatureStore:
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_CLOSE)
         msg += packer.pack_uint64(self._feature_store_id)
+        self.client._send(msg)
 
         # Handle response
-        self.client._send(msg)
+        self.client._recv()
         self._feature_store_id = None
         self._closed = True
