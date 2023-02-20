@@ -1,4 +1,4 @@
-from typing import List
+from typing import Tuple
 
 from .protocol import RequestType, StatusCode
 from .utils import decorators, packer
@@ -12,7 +12,7 @@ class BatchLoader:
         feature_store_name: str,
         num_seeds: int,
         batch_size: int,
-        neighbor_sizes: List[int],
+        neighbor_sizes: Tuple[int],
         seed: int = 42,
     ):
         self.client = client
