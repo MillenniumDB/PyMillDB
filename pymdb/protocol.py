@@ -3,9 +3,9 @@ from enum import IntEnum
 DEFAULT_PORT = 8080
 BUFFER_SIZE = 4096
 
-END_MASK = 0b1000_0000  # 1000'0000 Set to 1 if it is the last message
-ERROR_MASK = 0b0100_0000  # 0100'0000 Set to 1 if the status code is an error
-STATUS_MASK = 0b0111_1111  # 0111'1111 Status code
+END_MASK = 0b1000_0000  # Set to 1 if it is the last message
+ERROR_MASK = 0b0100_0000  # Set to 1 if the status code is an error
+STATUS_MASK = 0b0111_1111  # Status code
 
 
 class RequestType(IntEnum):

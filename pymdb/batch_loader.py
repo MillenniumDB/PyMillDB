@@ -13,12 +13,14 @@ class BatchLoader:
         num_seeds: int,
         batch_size: int,
         neighbor_sizes: List[int],
+        seed: int = 42,
     ):
         self.client = client
         self.feature_store_name = feature_store_name
         self.num_seeds = num_seeds
         self.batch_size = batch_size
         self.neighbor_sizes = neighbor_sizes
+        self.seed = seed
 
         self._batch_loader_id = None
         self._size = None
@@ -44,15 +46,6 @@ class BatchLoader:
     def __next__(self):
         return self._next()
 
-    def __repr__(self) -> str:
-        return (
-            "BatchLoader("
-            + f"feature_store_name={self.feature_store_name}, "
-            + f"num_seeds={self.num_seeds}, "
-            + f"batch_size={self.batch_size}, "
-            + f"neighbor_sizes={self.neighbor_sizes})"
-        )
-
     def __len__(self) -> int:
         return self.size()
 
@@ -62,6 +55,7 @@ class BatchLoader:
         msg += packer.pack_byte(RequestType.BATCH_LOADER_NEW)
         msg += packer.pack_uint64(self.num_seeds)
         msg += packer.pack_uint64(self.batch_size)
+        msg += packer.pack_uint64(self.seed)
         msg += packer.pack_uint64(len(self.neighbor_sizes))
         msg += packer.pack_uint64(len(self.feature_store_name))
         msg += packer.pack_uint64_vector(self.neighbor_sizes)
