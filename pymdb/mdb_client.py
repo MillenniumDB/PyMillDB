@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import socket
 from typing import Tuple
 
@@ -23,7 +21,7 @@ class MDBClient:
             self._sock = None
             self._closed = True
 
-    def __enter__(self) -> MDBClient:
+    def __enter__(self) -> "MDBClient":
         return self
 
     def __exit__(self, *_) -> None:

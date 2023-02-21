@@ -11,7 +11,7 @@ from .utils.graph import Graph
 class BatchLoader:
     def __init__(
         self,
-        client: MDBClient,
+        client: "MDBClient",
         feature_store_name: str,
         num_seeds: int,
         batch_size: int,
