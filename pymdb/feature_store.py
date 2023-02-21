@@ -157,3 +157,6 @@ class FeatureStore:
         self.client._recv()
         self._feature_store_id = None
         self._closed = True
+
+    def __repr__(self) -> str:
+        return f'FeatureStore(name="{self.name}", feature_size={self.feature_size})'

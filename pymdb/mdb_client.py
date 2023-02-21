@@ -60,3 +60,6 @@ class MDBClient:
         if protocol.error_status(msg[0]):
             raise Exception(data.decode("utf-8"))
         return data, protocol.decode_status(msg[0])
+
+    def __repr__(self) -> str:
+        return f"MDBClient(address={self.address})"

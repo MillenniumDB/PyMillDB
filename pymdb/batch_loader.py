@@ -117,3 +117,12 @@ class BatchLoader:
         self._batch_loader_id = None
         self._size = None
         self._closed = True
+
+    def __repr__(self) -> str:
+        return (
+            f'BatchLoader(feature_store_name="{self.feature_store_name}", '
+            + f"num_seeds={self.num_seeds}, "
+            + f"batch_size={self.batch_size}, "
+            + f"neighbor_sizes={self.neighbor_sizes}, "
+            + f"seed={self.seed})"
+        )

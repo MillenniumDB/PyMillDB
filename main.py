@@ -10,5 +10,6 @@ with MDBClient(host="127.0.0.1", port=8080) as client:
         seed=2023,
     )
 
+    print(batch_loader)
     for batch in batch_loader:
         print(batch)
