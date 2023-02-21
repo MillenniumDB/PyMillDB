@@ -57,6 +57,7 @@ class FeatureStore:
     def __init__(self, client: "MDBClient", name: str) -> None:
         self.client = client
         self.name = name
+        self.feature_size = None
 
         self._feature_store_id = None
         self._closed = True
@@ -142,6 +143,7 @@ class FeatureStore:
         # Handle response
         data, _ = self.client._recv()
         self._feature_store_id = packer.unpack_uint64(data[0:8])
+        self.feature_size = packer.unpack_uint64(data[8:16])
         self._closed = False
 
     def _close(self) -> None:
