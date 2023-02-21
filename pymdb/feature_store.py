@@ -131,8 +131,7 @@ class FeatureStore:
 
         # Handle response
         data, _ = self.client._recv()
-        tensor_size = packer.unpack_uint64(data[0:8])
-        lo, hi = 8, 8 + 4 * tensor_size
+        lo, hi = 0, 4 * self.feature_size
         return packer.unpack_float_vector(data[lo:hi])
 
     def _open(self) -> None:
