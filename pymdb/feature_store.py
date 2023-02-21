@@ -1,11 +1,14 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 
-from .protocol import RequestType, StatusCode
+if TYPE_CHECKING:
+    from .mdb_client import MDBClient
+
+from .protocol import RequestType
 from .utils import decorators, packer
 
 
 class FeatureStoreManager:
-    def __init__(self, client: "MDBClient") -> None:
+    def __init__(self, client: MDBClient) -> None:
         self.client = client
 
     def list(self) -> List[str]:
@@ -54,7 +57,7 @@ class FeatureStoreManager:
 
 
 class FeatureStore:
-    def __init__(self, client: "MDBClient", name: str) -> None:
+    def __init__(self, client: MDBClient, name: str) -> None:
         self.client = client
         self.name = name
         self.feature_size = None

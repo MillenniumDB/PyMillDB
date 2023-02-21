@@ -1,4 +1,7 @@
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple
+
+if TYPE_CHECKING:
+    from .mdb_client import MDBClient
 
 from .protocol import RequestType, StatusCode
 from .utils import decorators, packer
@@ -8,13 +11,13 @@ from .utils.graph import Graph
 class BatchLoader:
     def __init__(
         self,
-        client: "MDBClient",
+        client: MDBClient,
         feature_store_name: str,
         num_seeds: int,
         batch_size: int,
         neighbor_sizes: Tuple[int],
         seed: int = 42,
-    ):
+    ) -> None:
         self.client = client
         self.feature_store_name = feature_store_name
         self.num_seeds = num_seeds
@@ -79,7 +82,7 @@ class BatchLoader:
         # Handle response
         self.client._recv()
 
-    def _next(self) -> "Graph":
+    def _next(self) -> Graph:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.BATCH_LOADER_NEXT)
