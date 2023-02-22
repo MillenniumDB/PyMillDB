@@ -8,6 +8,7 @@ from .utils import decorators
 class MDBClient:
     def __init__(self, host: str = "localhost", port: int = 8080) -> None:
         self.address = (host, port)
+
         self._sock = None
         self._closed = True
         self._connect()

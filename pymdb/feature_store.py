@@ -7,55 +7,6 @@ from .protocol import RequestType
 from .utils import decorators, packer
 
 
-class FeatureStoreManager:
-    def __init__(self, client: "MDBClient") -> None:
-        self.client = client
-
-    def list(self) -> List[str]:
-        raise NotImplementedError("FeatureStoreManager.list")
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_LIST)
-        self.client._send(msg)
-
-        # Handle response
-        data, _ = self.client._recv()
-        names = []
-        lo, hi = 0, 8
-        num_feature_stores = packer.unpack_uint64(data[lo:hi])
-        for _ in range(num_feature_stores):
-            lo, hi = hi, hi + 8
-            feature_store_name_size = packer.unpack_uint64(data[lo:hi])
-            lo, hi = hi, hi + feature_store_name_size
-            names.append(packer.unpack_string(data[lo:hi]))
-        return names
-
-    def create(self, name: str, feature_size: int) -> None:
-        raise NotImplementedError("FeatureStoreManager.create")
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_CREATE)
-        msg += packer.pack_uint64(feature_size)
-        msg += packer.pack_uint64(len(name))
-        msg += packer.pack_string(name)
-        self.client._send(msg)
-
-        # Handle response
-        self.client._recv()
-
-    def remove(self, name: str) -> None:
-        raise NotImplementedError("FeatureStoreManager.remove")
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_REMOVE)
-        msg += packer.pack_uint64(len(name))
-        msg += packer.pack_string(name)
-        self.client._send(msg)
-
-        # Handle response
-        self.client._recv()
-
-
 class FeatureStore:
     def __init__(self, client: "MDBClient", name: str) -> None:
         self.client = client
@@ -75,6 +26,12 @@ class FeatureStore:
 
     def __len__(self) -> int:
         return self.size()
+
+    def __enter__(self) -> "FeatureStore":
+        return self
+
+    def __exit__(self, *_) -> None:
+        self.close()
 
     @decorators.check_closed
     def size(self) -> int:
