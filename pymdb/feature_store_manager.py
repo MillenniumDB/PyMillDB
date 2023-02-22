@@ -26,7 +26,7 @@ class FeatureStoreManager:
         feature_store_id = packer.unpack_uint64(data[lo:hi])
         lo, hi = hi, hi + 8
         feature_size = packer.unpack_uint64(data[lo:hi])
-        return FeatureStore(self.client, name)
+        return FeatureStore(self.client, name, feature_store_id, feature_size)
 
     def list(self) -> List[str]:
         # Send request

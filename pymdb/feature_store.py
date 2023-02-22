@@ -8,14 +8,19 @@ from .utils import decorators, packer
 
 
 class FeatureStore:
-    def __init__(self, client: "MDBClient", name: str) -> None:
+    def __init__(
+        self,
+        client: "MDBClient",
+        name: str,
+        feature_store_id: int,
+        feature_size: int,
+    ) -> None:
         self.client = client
         self.name = name
-        self.feature_size = None
+        self.feature_size = feature_size
 
-        self._feature_store_id = None
-        self._closed = True
-        self._open()
+        self._feature_store_id = feature_store_id
+        self._closed = False
 
     def is_closed(self) -> bool:
         return self._closed
@@ -90,20 +95,6 @@ class FeatureStore:
         data, _ = self.client._recv()
         lo, hi = 0, 4 * self.feature_size
         return packer.unpack_float_vector(data[lo:hi])
-
-    def _open(self) -> None:
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_OPEN)
-        msg += packer.pack_uint64(len(self.name))
-        msg += self.name.encode("utf-8")
-        self.client._send(msg)
-
-        # Handle response
-        data, _ = self.client._recv()
-        self._feature_store_id = packer.unpack_uint64(data[0:8])
-        self.feature_size = packer.unpack_uint64(data[8:16])
-        self._closed = False
 
     def _close(self) -> None:
         # Send request
