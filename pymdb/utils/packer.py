@@ -38,9 +38,13 @@ def unpack_uint64(data: bytes) -> int:
     return struct.unpack(">Q", data)[0]
 
 
+def unpack_string(data: bytes) -> str:
+    return data.decode("utf-8")
+
+
 def unpack_uint64_vector(data: bytes, shape: int or Tuple[int] = -1) -> np.ndarray:
-    return np.frombuffer(data, dtype=">Q").reshape(shape)
+    return np.frombuffer(data, dtype=">Q").astype(np.int64).reshape(shape)
 
 
 def unpack_float_vector(data: bytes, shape: int or Tuple[int] = -1) -> np.ndarray:
-    return np.frombuffer(data, dtype=">f").reshape(shape)
+    return np.frombuffer(data, dtype=">f").astype(np.float32).reshape(shape)
