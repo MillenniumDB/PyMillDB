@@ -79,8 +79,15 @@ class FeatureStore:
 
     @decorators.check_closed
     def remove_tensor(self, node_id: int) -> None:
-        # TODO: Implement this
-        raise NotImplementedError("FeatureStore.remove_tensor() is not implemented")
+        # Send request
+        msg = b""
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_REMOVE_TENSOR)
+        msg += packer.pack_uint64(self._feature_store_id)
+        msg += packer.pack_uint64(node_id)
+        self.client._send(msg)
+
+        # Handle response
+        self.client._recv()
 
     @decorators.check_closed
     def get_tensor(self, node_id: int) -> List[float]:
