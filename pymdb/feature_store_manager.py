@@ -15,7 +15,7 @@ class FeatureStoreManager:
     def open(self, name: str) -> "FeatureStore":
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_OPEN)
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_MANAGER_OPEN)
         msg += packer.pack_uint64(len(name))
         msg += packer.pack_string(name)
         self.client._send(msg)
@@ -31,25 +31,25 @@ class FeatureStoreManager:
     def list(self) -> List[str]:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_LIST)
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_MANAGER_LIST)
         self.client._send(msg)
 
         # Handle response
         data, _ = self.client._recv()
-        names = []
+        names = list()
         lo, hi = 0, 8
-        num_feature_stores = packer.unpack_uint64(data[lo:hi])
-        for _ in range(num_feature_stores):
-            lo, hi = hi, hi + 8
-            feature_store_name_size = packer.unpack_uint64(data[lo:hi])
-            lo, hi = hi, hi + feature_store_name_size
+        names_size = packer.unpack_uint64(data[lo:hi])
+        lo, hi = hi, hi + 8 * names_size
+        names_sizes = packer.unpack_uint64_vector(data[lo:hi])
+        for name_size in names_sizes:
+            lo, hi = hi, hi + name_size
             names.append(packer.unpack_string(data[lo:hi]))
         return names
 
     def create(self, name: str, feature_size: int) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_CREATE)
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_MANAGER_CREATE)
         msg += packer.pack_uint64(feature_size)
         msg += packer.pack_uint64(len(name))
         msg += packer.pack_string(name)
@@ -61,7 +61,7 @@ class FeatureStoreManager:
     def remove(self, name: str) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.FEATURE_STORE_REMOVE)
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_MANAGER_REMOVE)
         msg += packer.pack_uint64(len(name))
         msg += packer.pack_string(name)
         self.client._send(msg)
