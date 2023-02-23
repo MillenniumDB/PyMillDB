@@ -1,3 +1,4 @@
+# TODO: Load Features
 # This script converts the GitHub dataset from PyTorch Geometric to the MillenniumDB
 # format and creates a database from it.
 
@@ -6,12 +7,14 @@ import subprocess
 
 from torch_geometric.datasets import GitHub
 
+DATASET_DOWNLOAD_PATH = "/tmp/torch_datasets/github/"
 CREATE_DB_PATH = "/home/zeus/MillenniumDB-Dev/build/Release/bin/create_db"
 DESTINATION_PATH = "/home/zeus/MillenniumDB-Dev/tests/dbs/github/"
 
 # Download the dataset
-dataset = GitHub(root="/tmp/")
+dataset = GitHub(root=DATASET_DOWNLOAD_PATH)
 data = dataset[0]
+
 # Write the graph data to the MillenniumDB format on a temporary file
 with open("github.tmp", "w") as f:
     for node_id, label in enumerate(data.y):
