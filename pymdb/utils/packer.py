@@ -1,7 +1,5 @@
 import struct
-from typing import List, Tuple
-
-import numpy as np
+from typing import List
 
 
 def pack_byte(b: int) -> bytes:
@@ -38,13 +36,17 @@ def unpack_uint64(data: bytes) -> int:
     return struct.unpack(">Q", data)[0]
 
 
+def unpack_float(data: bytes) -> float:
+    return struct.unpack(">f", data)[0]
+
+
 def unpack_string(data: bytes) -> str:
     return data.decode("utf-8")
 
 
-def unpack_uint64_vector(data: bytes, shape: int or Tuple[int] = -1) -> np.ndarray:
-    return np.frombuffer(data, dtype=">Q").astype(np.int64).reshape(shape)
+def unpack_uint64_vector(data: bytes) -> list[int]:
+    return [unpack_uint64(data[i : i + 8]) for i in range(0, len(data), 8)]
 
 
-def unpack_float_vector(data: bytes, shape: int or Tuple[int] = -1) -> np.ndarray:
-    return np.frombuffer(data, dtype=">f").astype(np.float32).reshape(shape)
+def unpack_float_vector(data: bytes) -> list[float]:
+    return [unpack_float(data[i : i + 4]) for i in range(0, len(data), 4)]

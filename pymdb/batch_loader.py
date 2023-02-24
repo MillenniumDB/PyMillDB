@@ -1,4 +1,9 @@
+# NOTE: The uint64 vectors are parsed as int64 vectors due the lack of the uint64 dtype
+# in the torch.Tensor class.
+
 from typing import TYPE_CHECKING, Tuple
+
+import torch
 
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
@@ -98,14 +103,22 @@ class BatchLoader:
         num_nodes = packer.unpack_uint64(data[0:8])
         num_edges = packer.unpack_uint64(data[8:16])
         feature_size = packer.unpack_uint64(data[16:24])
+
         lo, hi = 24, 24 + 4 * num_nodes * feature_size
-        node_features = packer.unpack_float_vector(
-            data[lo:hi], (num_nodes, feature_size)
-        )
+        node_features = torch.tensor(
+            data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
+        ).reshape(num_nodes, feature_size)
+
         lo, hi = hi, hi + 8 * num_nodes
-        node_labels = packer.unpack_uint64_vector(data[lo:hi])
+        node_labels = torch.tensor(
+            data=packer.unpack_uint64_vector(data[lo:hi]), dtype=torch.int64
+        )
+
         lo, hi = hi, hi + 8 * 2 * num_edges
-        edge_index = packer.unpack_uint64_vector(data[lo:hi], (num_edges, 2))
+        edge_index = torch.tensor(
+            data=packer.unpack_uint64_vector(data[lo:hi]), dtype=torch.int64
+        ).reshape(2, num_edges)
+
         return Graph(node_features, node_labels, edge_index)
 
     def _close(self) -> None:

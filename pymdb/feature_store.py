@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, List
 
+import torch
+
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
 
@@ -90,7 +92,7 @@ class FeatureStore:
         self.client._recv()
 
     @decorators.check_closed
-    def get_tensor(self, node_id: int) -> List[float]:
+    def get_tensor(self, node_id: int) -> torch.Tensor:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_GET_TENSOR)
@@ -101,7 +103,9 @@ class FeatureStore:
         # Handle response
         data, _ = self.client._recv()
         lo, hi = 0, 4 * self.feature_size
-        return packer.unpack_float_vector(data[lo:hi])
+        return torch.tensor(
+            data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
+        )
 
     def _close(self) -> None:
         # Send request
