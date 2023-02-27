@@ -43,6 +43,16 @@ class MDBClient:
 
     @decorators.check_closed
     def _recv(self) -> Tuple[bytes, protocol.StatusCode]:
+        # Helper function to receive exactly `length` bytes
+        def recvall(length: int) -> bytes:
+            data = b""
+            while len(data) < length:
+                msg = self._sock.recv(length - len(data))
+                if len(msg) == 0:
+                    raise ConnectionError("Server closed the connection")
+                data += msg
+            return data
+
         # Each message contains:
         # - 1 bit                : Last message flag
         # - 7 bits               : Status code
@@ -50,7 +60,7 @@ class MDBClient:
         # - Message length bytes : Data
         data = b""
         while True:
-            msg = self._sock.recv(protocol.BUFFER_SIZE)
+            msg = recvall(protocol.BUFFER_SIZE)
             msg_length = int.from_bytes(msg[1:3], "little")
             data += msg[3 : 3 + msg_length]
             if protocol.last_message(msg[0]):
