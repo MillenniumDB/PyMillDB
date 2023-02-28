@@ -40,6 +40,18 @@ class FeatureStore:
     def __exit__(self, *_) -> None:
         self.close()
 
+    def __getitem__(self, node_id: int) -> torch.Tensor:
+        return self.get_tensor(node_id)
+
+    def __setitem__(self, node_id: int, tensor: torch.Tensor) -> None:
+        self.insert_tensor(node_id, tensor)
+
+    def __delitem__(self, node_id: int) -> None:
+        self.remove_tensor(node_id)
+
+    def __contains__(self, node_id: int) -> bool:
+        return self.contains(node_id)
+
     @decorators.check_closed
     def size(self) -> int:
         # Send request
