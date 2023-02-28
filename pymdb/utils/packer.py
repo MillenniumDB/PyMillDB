@@ -44,9 +44,9 @@ def unpack_string(data: bytes) -> str:
     return data.decode("utf-8")
 
 
-def unpack_uint64_vector(data: bytes) -> list[int]:
+def unpack_uint64_vector(data: bytes) -> List[int]:
     return [unpack_uint64(data[i : i + 8]) for i in range(0, len(data), 8)]
 
 
-def unpack_float_vector(data: bytes) -> list[float]:
+def unpack_float_vector(data: bytes) -> List[float]:
     return [unpack_float(data[i : i + 4]) for i in range(0, len(data), 4)]

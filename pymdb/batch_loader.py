@@ -50,12 +50,12 @@ class BatchLoader:
         return self._size
 
     @decorators.check_closed
-    def __iter__(self):
+    def __iter__(self) -> "BatchLoader":
         self._begin()
         return self
 
     @decorators.check_closed
-    def __next__(self):
+    def __next__(self) -> Graph:
         return self._next()
 
     def _new(self) -> None:

@@ -22,7 +22,7 @@ class Graph:
     def __repr__(self) -> str:
         return (
             "Graph("
-            + f"node_features={list(self.node_features.shape)} "
-            + f"node_labels={list(self.node_labels.shape)} "
+            + f"node_features={list(self.node_features.shape)}, "
+            + f"node_labels={list(self.node_labels.shape)}, "
             + f"edge_index={list(self.edge_index.shape)})"
         )
