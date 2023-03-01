@@ -54,15 +54,15 @@ class MDBClient:
             return data
 
         # Each message contains:
-        # - 1 bit                : Last message flag
-        # - 7 bits               : Status code
-        # - 2 bytes              : Data length
-        # - Message length bytes : Data
+        # - 1 bit                      : Last message flag
+        # - 7 bits                     : Status code
+        # - 2 bytes                    : message.size()
+        # - (message.size() - 3) bytes : Data
         data = b""
         while True:
             msg = recvall(protocol.BUFFER_SIZE)
-            msg_length = int.from_bytes(msg[1:3], "little")
-            data += msg[3 : 3 + msg_length]
+            msg_size = int.from_bytes(msg[1:3], "little")
+            data += msg[3:msg_size]
             if protocol.last_message(msg[0]):
                 break
 
