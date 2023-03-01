@@ -40,8 +40,10 @@ class FeatureStore:
     def __exit__(self, *_) -> None:
         self.close()
 
-    def __getitem__(self, node_id: int) -> torch.Tensor:
-        return self.get_tensor(node_id)
+    def __getitem__(self, node_id: int | List[int]) -> torch.Tensor:
+        if isinstance(node_id, int):
+            return self.get_tensor(node_id)
+        return self.multi_get_tensor(node_id)
 
     def __setitem__(self, node_id: int, tensor: torch.Tensor) -> None:
         self.insert_tensor(node_id, tensor)
@@ -118,6 +120,24 @@ class FeatureStore:
         return torch.tensor(
             data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
         )
+
+    @decorators.check_closed
+    def multi_get_tensor(self, node_ids: List[int]) -> torch.Tensor:
+        # Send request
+        msg = b""
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_MULTI_GET_TENSOR)
+        msg += packer.pack_uint64(self._feature_store_id)
+        msg += packer.pack_uint64(len(node_ids))
+        msg += packer.pack_uint64_vector(node_ids)
+        self.client._send(msg)
+
+        # Handle response
+        data, _ = self.client._recv()
+        lo, hi = 0, 4 * self.feature_size * len(node_ids)
+        return torch.tensor(
+            data=packer.unpack_float_vector(data[lo:hi]),
+            dtype=torch.float32,
+        ).reshape(len(node_ids), self.feature_size)
 
     def _close(self) -> None:
         # Send request
