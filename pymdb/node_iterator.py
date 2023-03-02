@@ -16,6 +16,7 @@ class NodeIterator:
         self._size = None
         self._closed = True
         self._new()
+        self._begin()
 
     def is_closed(self) -> bool:
         return self._closed
