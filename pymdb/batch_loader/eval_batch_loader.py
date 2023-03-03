@@ -19,7 +19,10 @@ class EvalBatchLoader(BatchLoader):
         self.client = client
         self.feature_store_name = feature_store_name
         self.batch_size = batch_size
-        self.num_neighbors = num_neighbors
+        # Convert negative values to max uint64 value
+        self.num_neighbors = list(
+            map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
+        )
 
         self._batch_loader_id = None
         self._size = None
@@ -34,7 +37,6 @@ class EvalBatchLoader(BatchLoader):
         msg += packer.pack_uint64(self.batch_size)
         msg += packer.pack_uint64(len(self.num_neighbors))
         msg += packer.pack_uint64(len(self.feature_store_name))
-        # TODO: Convert negative values to UINT64_MAX
         msg += packer.pack_uint64_vector(self.num_neighbors)
         msg += packer.pack_string(self.feature_store_name)
         self.client._send(msg)

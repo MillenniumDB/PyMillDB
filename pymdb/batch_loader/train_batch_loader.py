@@ -20,7 +20,10 @@ class TrainBatchLoader(BatchLoader):
         self.client = client
         self.feature_store_name = feature_store_name
         self.batch_size = batch_size
-        self.num_neighbors = num_neighbors
+        # Convert negative values to max uint64 value
+        self.num_neighbors = list(
+            map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
+        )
         self.seed_ids = seed_ids
 
         self._batch_loader_id = None

@@ -31,6 +31,9 @@ class RequestType(IntEnum):
     FEATURE_STORE_SIZE             = 0b0000_1111
     FEATURE_STORE_CLOSE            = 0b0001_0000
 
+    # SAMPLER
+    SAMPLER_GET_SEED_IDS = 0b0001_0001
+
 class StatusCode(IntEnum):
     # SUCCESS CODES
     # Generic success
