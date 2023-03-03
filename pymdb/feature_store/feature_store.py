@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, List
 import torch
 
 if TYPE_CHECKING:
-    from .mdb_client import MDBClient
+    from ..mdb_client.mdb_client import MDBClient
 
-from .protocol import RequestType
-from .utils import decorators, packer
+from ..mdb_client.protocol import RequestType
+from ..utils import decorators, packer
 
 
 class FeatureStore:
@@ -152,4 +152,4 @@ class FeatureStore:
         self._closed = True
 
     def __repr__(self) -> str:
-        return f'FeatureStore(name="{self.name}", feature_size={self.feature_size})'
+        return f'{self.__class__.__name__}(name="{self.name}", feature_size={self.feature_size})'

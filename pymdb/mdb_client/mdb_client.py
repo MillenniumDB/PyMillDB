@@ -1,8 +1,8 @@
 import socket
 from typing import Tuple
 
+from ..utils import decorators
 from . import protocol
-from .utils import decorators
 
 
 class MDBClient:
@@ -72,4 +72,4 @@ class MDBClient:
         return data, protocol.decode_status(msg[0])
 
     def __repr__(self) -> str:
-        return f"MDBClient(address={self.address})"
+        return f"{self.__class__.__name__}(address={self.address})"

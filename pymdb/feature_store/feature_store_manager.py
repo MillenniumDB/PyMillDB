@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
-    from .mdb_client import MDBClient
+    from ..mdb_client.mdb_client import MDBClient
 
+from ..mdb_client.protocol import RequestType
+from ..utils import packer
 from .feature_store import FeatureStore
-from .protocol import RequestType
-from .utils import packer
 
 
 class FeatureStoreManager:

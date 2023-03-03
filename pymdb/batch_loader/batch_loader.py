@@ -1,40 +1,27 @@
 # NOTE: The uint64 vectors are parsed as int64 vectors due the lack of the uint64 dtype
 # in the torch.Tensor class.
 
-from typing import TYPE_CHECKING, Tuple
+import abc
 
 import torch
 
-if TYPE_CHECKING:
-    from .mdb_client import MDBClient
-
-from .protocol import RequestType, StatusCode
-from .utils import decorators, packer
-from .utils.graph import Graph
+from ..mdb_client.protocol import RequestType, StatusCode
+from ..utils import decorators, packer
+from ..utils.graph import Graph
 
 
-class BatchLoader:
-    def __init__(
-        self,
-        client: "MDBClient",
-        feature_store_name: str,
-        num_seeds: int,
-        batch_size: int,
-        neighbor_sizes: Tuple[int],
-        seed: int = 42,
-    ) -> None:
-        self.client = client
-        self.feature_store_name = feature_store_name
-        self.num_seeds = num_seeds
-        self.batch_size = batch_size
-        self.neighbor_sizes = neighbor_sizes
-        self.seed = seed
+class BatchLoader(abc.ABC):
+    @abc.abstractclassmethod
+    def __init__(self, *args) -> None:
+        pass
 
-        self._batch_loader_id = None
-        self._size = None
-        self._closed = True
-        self._new()
-        self._begin()
+    @abc.abstractmethod
+    def _new(self, *args) -> None:
+        pass
+
+    @abc.abstractmethod
+    def __repr__(self) -> str:
+        pass
 
     def is_closed(self) -> bool:
         return self._closed
@@ -58,25 +45,6 @@ class BatchLoader:
     @decorators.check_closed
     def __next__(self) -> Graph:
         return self._next()
-
-    def _new(self) -> None:
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.BATCH_LOADER_NEW)
-        msg += packer.pack_uint64(self.num_seeds)
-        msg += packer.pack_uint64(self.batch_size)
-        msg += packer.pack_uint64(self.seed)
-        msg += packer.pack_uint64(len(self.neighbor_sizes))
-        msg += packer.pack_uint64(len(self.feature_store_name))
-        msg += packer.pack_uint64_vector(self.neighbor_sizes)
-        msg += packer.pack_string(self.feature_store_name)
-        self.client._send(msg)
-
-        # Handle response
-        data, _ = self.client._recv()
-        self._batch_loader_id = packer.unpack_uint64(data[0:8])
-        self._size = packer.unpack_uint64(data[8:16])
-        self._closed = False
 
     def _begin(self) -> None:
         # Send request
@@ -103,9 +71,10 @@ class BatchLoader:
 
         num_nodes = packer.unpack_uint64(data[0:8])
         num_edges = packer.unpack_uint64(data[8:16])
-        feature_size = packer.unpack_uint64(data[16:24])
+        num_seeds = packer.unpack_uint64(data[16:24])
+        feature_size = packer.unpack_uint64(data[24:32])
 
-        lo, hi = 24, 24 + 4 * num_nodes * feature_size
+        lo, hi = 32, 32 + 4 * num_nodes * feature_size
         node_features = torch.tensor(
             data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
         ).reshape(num_nodes, feature_size)
@@ -120,7 +89,7 @@ class BatchLoader:
             data=packer.unpack_uint64_vector(data[lo:hi]), dtype=torch.int64
         ).reshape(2, num_edges)
 
-        return Graph(node_features, node_labels, edge_index)
+        return Graph(node_features, node_labels, edge_index, num_seeds)
 
     def _close(self) -> None:
         # Send request
@@ -134,12 +103,3 @@ class BatchLoader:
         self._batch_loader_id = None
         self._size = None
         self._closed = True
-
-    def __repr__(self) -> str:
-        return (
-            f'BatchLoader(feature_store_name="{self.feature_store_name}", '
-            + f"num_seeds={self.num_seeds}, "
-            + f"batch_size={self.batch_size}, "
-            + f"neighbor_sizes={self.neighbor_sizes}, "
-            + f"seed={self.seed})"
-        )
