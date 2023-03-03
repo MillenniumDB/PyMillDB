@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING, List
 
-if TYPE_CHECKING:
-    from ..mdb_client.mdb_client import MDBClient
-
 from ..mdb_client.protocol import RequestType
 from ..utils import packer
 from .batch_loader import BatchLoader
+
+if TYPE_CHECKING:
+    from ..mdb_client.mdb_client import MDBClient
 
 
 class TrainBatchLoader(BatchLoader):
