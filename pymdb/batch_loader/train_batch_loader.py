@@ -17,6 +17,13 @@ class TrainBatchLoader(BatchLoader):
         num_neighbors: List[int],
         seed_ids: List[int],
     ) -> None:
+        if not batch_size > 0:
+            raise ValueError("batch_size must be a positive integer")
+        if len(num_neighbors) == 0:
+            raise ValueError("num_neighbors must be non-empty")
+        if len(seed_ids) == 0:
+            raise ValueError("seed_ids must be non-empty")
+
         self.client = client
         self.feature_store_name = feature_store_name
         self.batch_size = batch_size
