@@ -22,5 +22,5 @@ class Graph:
             + f"node_features={list(self.node_features.shape)}, "
             + f"node_labels={list(self.node_labels.shape)}, "
             + f"edge_index={list(self.edge_index.shape)}, "
-            + f"num_seeds=[{len(self.seed_ids)}])"
+            + f"seed_ids=[{len(self.seed_ids)}])"
         )

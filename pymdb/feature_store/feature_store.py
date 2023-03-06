@@ -43,10 +43,14 @@ class FeatureStore:
     def __getitem__(self, node_id: int | List[int]) -> torch.Tensor:
         if isinstance(node_id, int):
             return self.get_tensor(node_id)
-        return self.multi_get_tensor(node_id)
+        else:
+            return self.multi_get_tensor(node_id)
 
-    def __setitem__(self, node_id: int, tensor: torch.Tensor) -> None:
-        self.insert_tensor(node_id, tensor)
+    def __setitem__(self, node_id: int | List[int], tensor: torch.Tensor) -> None:
+        if isinstance(node_id, int):
+            self.insert_tensor(node_id, tensor)
+        else:
+            self.multi_insert_tensor(node_id, tensor)
 
     def __delitem__(self, node_id: int) -> None:
         self.remove_tensor(node_id)
@@ -81,13 +85,48 @@ class FeatureStore:
 
     @decorators.check_closed
     def insert_tensor(self, node_id: int, tensor: List[float]) -> None:
+        if type(tensor) is not torch.Tensor:
+            tensor = torch.tensor(tensor, dtype=torch.float32)
+
+        if tensor.shape != torch.Size([self.feature_size]):
+            raise ValueError(
+                f"Tensor shape {tensor.shape} does not match the shape {torch.Size([self.feature_size])}"
+            )
+
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.FEATURE_STORE_INSERT_TENSOR)
         msg += packer.pack_uint64(self._feature_store_id)
         msg += packer.pack_uint64(node_id)
-        msg += packer.pack_uint64(len(tensor))
         msg += packer.pack_float_vector(tensor)
+        self.client._send(msg)
+
+        # Handle response
+        self.client._recv()
+
+    @decorators.check_closed
+    def multi_insert_tensor(
+        self, node_ids: List[int], tensors: List[List[float]]
+    ) -> None:
+        if type(tensors) is not torch.Tensor:
+            tensors = torch.tensor(tensors, dtype=torch.float32).reshape(
+                len(node_ids), self.feature_size
+            )
+
+        if tensors.shape != torch.Size([len(node_ids), self.feature_size]):
+            raise ValueError(
+                f"Tensor shape {tensors.shape} does not match the shape {torch.Size([len(node_ids), self.feature_size])}"
+            )
+
+        # Send request
+        msg = b""
+        msg += packer.pack_byte(RequestType.FEATURE_STORE_MULTI_INSERT_TENSOR)
+        msg += packer.pack_uint64(self._feature_store_id)
+        msg += packer.pack_uint64(len(node_ids))
+        for node_id in node_ids:
+            msg += packer.pack_uint64(node_id)
+        for tensor in tensors:
+            msg += packer.pack_float_vector(tensor)
         self.client._send(msg)
 
         # Handle response
