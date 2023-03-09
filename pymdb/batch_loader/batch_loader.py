@@ -71,7 +71,7 @@ class BatchLoader(abc.ABC):
 
         num_nodes = packer.unpack_uint64(data[0:8])
         num_edges = packer.unpack_uint64(data[8:16])
-        num_seed_ids = packer.unpack_uint64(data[16:24])
+        num_seeds = packer.unpack_uint64(data[16:24])
         feature_size = packer.unpack_uint64(data[24:32])
 
         lo, hi = 32, 32 + 4 * num_nodes * feature_size
@@ -89,10 +89,17 @@ class BatchLoader(abc.ABC):
             data=packer.unpack_uint64_vector(data[lo:hi]), dtype=torch.int64
         ).reshape(2, num_edges)
 
-        lo, hi = hi, hi + 8 * num_seed_ids
-        seed_ids = packer.unpack_uint64_vector(data[lo:hi])
+        lo, hi = hi, hi + 8 * num_nodes
+        node_ids = packer.unpack_uint64_vector(data[lo:hi])
 
-        return Graph(node_features, node_labels, edge_index, seed_ids)
+        return Graph(
+            node_features,
+            node_labels,
+            edge_index,
+            node_ids,
+            num_seeds,
+            feature_size,
+        )
 
     def _close(self) -> None:
         # Send request
