@@ -68,3 +68,6 @@ class FeatureStoreManager:
 
         # Handle response
         self.client._recv()
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}()"

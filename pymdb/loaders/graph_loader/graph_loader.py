@@ -5,12 +5,12 @@ import abc
 
 import torch
 
-from ..mdb_client.protocol import RequestType, StatusCode
-from ..utils import decorators, packer
-from ..utils.graph import Graph
+from ...mdb_client.protocol import RequestType, StatusCode
+from ...utils import decorators, packer
+from .graph import Graph
 
 
-class BatchLoader(abc.ABC):
+class GraphLoader(abc.ABC):
     @abc.abstractclassmethod
     def __init__(self, *args) -> None:
         pass
@@ -38,7 +38,7 @@ class BatchLoader(abc.ABC):
         return self._size
 
     @decorators.check_closed
-    def __iter__(self) -> "BatchLoader":
+    def __iter__(self) -> "GraphLoader":
         self._begin()
         return self
 
@@ -49,8 +49,8 @@ class BatchLoader(abc.ABC):
     def _begin(self) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.BATCH_LOADER_BEGIN)
-        msg += packer.pack_uint64(self._batch_loader_id)
+        msg += packer.pack_byte(RequestType.GRAPH_LOADER_BEGIN)
+        msg += packer.pack_uint64(self._graph_loader_id)
         self.client._send(msg)
 
         # Handle response
@@ -59,8 +59,8 @@ class BatchLoader(abc.ABC):
     def _next(self) -> Graph:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.BATCH_LOADER_NEXT)
-        msg += packer.pack_uint64(self._batch_loader_id)
+        msg += packer.pack_byte(RequestType.GRAPH_LOADER_NEXT)
+        msg += packer.pack_uint64(self._graph_loader_id)
         self.client._send(msg)
 
         # Handle response
@@ -104,12 +104,12 @@ class BatchLoader(abc.ABC):
     def _close(self) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.BATCH_LOADER_CLOSE)
-        msg += packer.pack_uint64(self._batch_loader_id)
+        msg += packer.pack_byte(RequestType.GRAPH_LOADER_CLOSE)
+        msg += packer.pack_uint64(self._graph_loader_id)
         self.client._send(msg)
 
         # Handle response
         self.client._recv()
-        self._batch_loader_id = None
+        self._graph_loader_id = None
         self._size = None
         self._closed = True

@@ -191,4 +191,8 @@ class FeatureStore:
         self._closed = True
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(name="{self.name}", feature_size={self.feature_size})'
+        return (
+            f"{self.__class__.__name__}("
+            f'name="{self.name}", '
+            f"feature_size={self.feature_size})"
+        )
