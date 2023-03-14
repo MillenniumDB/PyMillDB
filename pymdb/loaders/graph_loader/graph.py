@@ -23,9 +23,9 @@ class Graph:
     def __repr__(self) -> str:
         return (
             "Graph("
-            + f"node_features={list(self.node_features.shape)}, "
-            + f"node_labels={list(self.node_labels.shape)}, "
-            + f"edge_index={list(self.edge_index.shape)}, "
+            + f"node_features={list(self.node_features.size())}, "
+            + f"node_labels={list(self.node_labels.size())}, "
+            + f"edge_index={list(self.edge_index.size())}, "
             + f"node_ids=[{len(self.node_ids)}], "
             + f"num_seeds={self.num_seeds}, "
             + f"feature_size={self.feature_size})"

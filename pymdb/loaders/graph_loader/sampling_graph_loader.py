@@ -12,7 +12,7 @@ class SamplingGraphLoader(GraphLoader):
     def __init__(
         self,
         client: "MDBClient",
-        feature_store_name: str,
+        tensor_store_name: str,
         num_seeds: int,
         batch_size: int,
         num_neighbors: List[int],
@@ -25,7 +25,7 @@ class SamplingGraphLoader(GraphLoader):
             raise ValueError("num_seeds must be a positive integer")
 
         self.client = client
-        self.feature_store_name = feature_store_name
+        self.tensor_store_name = tensor_store_name
         self.num_seeds = num_seeds
         self.batch_size = batch_size
         # Convert negative values to max uint64 value
@@ -46,9 +46,9 @@ class SamplingGraphLoader(GraphLoader):
         msg += packer.pack_uint64(self.batch_size)
         msg += packer.pack_uint64(self.num_seeds)
         msg += packer.pack_uint64(len(self.num_neighbors))
-        msg += packer.pack_uint64(len(self.feature_store_name))
+        msg += packer.pack_uint64(len(self.tensor_store_name))
         msg += packer.pack_uint64_vector(self.num_neighbors)
-        msg += packer.pack_string(self.feature_store_name)
+        msg += packer.pack_string(self.tensor_store_name)
         self.client._send(msg)
 
         # Handle response
@@ -60,7 +60,7 @@ class SamplingGraphLoader(GraphLoader):
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}("
-            f'feature_store_name="{self.feature_store_name}", '
+            f'tensor_store_name="{self.tensor_store_name}", '
             f"num_seeds={self.num_seeds}, "
             f'batch_size="{self.batch_size}", '
             f"num_neighbors={self.num_neighbors})"

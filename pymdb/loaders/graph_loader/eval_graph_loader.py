@@ -12,7 +12,7 @@ class EvalGraphLoader(GraphLoader):
     def __init__(
         self,
         client: "MDBClient",
-        feature_store_name: str,
+        tensor_store_name: str,
         batch_size: int,
         num_neighbors: List[int],
     ) -> None:
@@ -22,7 +22,7 @@ class EvalGraphLoader(GraphLoader):
             raise ValueError("num_neighbors must be non-empty")
 
         self.client = client
-        self.feature_store_name = feature_store_name
+        self.tensor_store_name = tensor_store_name
         self.batch_size = batch_size
         # Convert negative values to max uint64 value
         self.num_neighbors = list(
@@ -41,9 +41,9 @@ class EvalGraphLoader(GraphLoader):
         msg += packer.pack_byte(RequestType.EVAL_GRAPH_LOADER_NEW)
         msg += packer.pack_uint64(self.batch_size)
         msg += packer.pack_uint64(len(self.num_neighbors))
-        msg += packer.pack_uint64(len(self.feature_store_name))
+        msg += packer.pack_uint64(len(self.tensor_store_name))
         msg += packer.pack_uint64_vector(self.num_neighbors)
-        msg += packer.pack_string(self.feature_store_name)
+        msg += packer.pack_string(self.tensor_store_name)
         self.client._send(msg)
 
         # Handle response
@@ -55,7 +55,7 @@ class EvalGraphLoader(GraphLoader):
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}("
-            f'feature_store_name="{self.feature_store_name}", '
+            f'tensor_store_name="{self.tensor_store_name}", '
             f"batch_size={self.batch_size}, "
             f"num_neighbors={self.num_neighbors})"
         )

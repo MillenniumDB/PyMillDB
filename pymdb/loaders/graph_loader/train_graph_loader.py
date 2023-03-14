@@ -12,7 +12,7 @@ class TrainGraphLoader(GraphLoader):
     def __init__(
         self,
         client: "MDBClient",
-        feature_store_name: str,
+        tensor_store_name: str,
         batch_size: int,
         num_neighbors: List[int],
         seed_ids: List[int],
@@ -25,7 +25,7 @@ class TrainGraphLoader(GraphLoader):
             raise ValueError("seed_ids must be non-empty")
 
         self.client = client
-        self.feature_store_name = feature_store_name
+        self.tensor_store_name = tensor_store_name
         self.batch_size = batch_size
         # Convert negative values to max uint64 value
         self.num_neighbors = list(
@@ -45,10 +45,10 @@ class TrainGraphLoader(GraphLoader):
         msg += packer.pack_byte(RequestType.TRAIN_GRAPH_LOADER_NEW)
         msg += packer.pack_uint64(self.batch_size)
         msg += packer.pack_uint64(len(self.num_neighbors))
-        msg += packer.pack_uint64(len(self.feature_store_name))
+        msg += packer.pack_uint64(len(self.tensor_store_name))
         msg += packer.pack_uint64(len(self.seed_ids))
         msg += packer.pack_uint64_vector(self.num_neighbors)
-        msg += packer.pack_string(self.feature_store_name)
+        msg += packer.pack_string(self.tensor_store_name)
         msg += packer.pack_uint64_vector(self.seed_ids)
         self.client._send(msg)
 
@@ -61,8 +61,8 @@ class TrainGraphLoader(GraphLoader):
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}("
-            f'batch_size="{self.feature_store_name}", '
+            f'tensor_store_name="{self.tensor_store_name}", '
+            f'batch_size="{self.batch_size}", '
             f"num_neighbors={self.num_neighbors}, "
-            f'feature_store_name="{self.feature_store_name}", '
             f"num_seed_ids={len(self.seed_ids)})"
         )

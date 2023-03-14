@@ -160,17 +160,17 @@ class TensorStore:
     def multi_insert(self, node_ids: List[int], tensors: torch.Tensor) -> None:
         if tensors.dtype != torch.float32:
             raise ValueError(f"Tensor dtype must be torch.float32, got {tensors.dtype}")
-        if tensors.shape.numel() != 2:
+        if len(tensors.size()) != 2:
             raise ValueError(
-                f"tensors must be 2-dimensional, but got {tensors.shape.numel()}-dimensional tensor"
+                f"tensors must be 2-dimensional, but got {len(tensors.size())}-dimensional tensor"
             )
-        if len(node_ids) != tensors.shape[0]:
+        if len(node_ids) != tensors.size(0):
             raise ValueError(
-                f"The number of node_ids ({len(node_ids)}) does not match the tensors rows ({tensors.shape[0]})"
+                f"The number of node_ids ({len(node_ids)}) does not match the tensors rows ({tensors.size(0)})"
             )
-        if tensors.shape[1] != self.tensor_size:
+        if tensors.size(1) != self.tensor_size:
             raise ValueError(
-                f"tensors columns ({tensors.shape[1]}) does not match tensor_size of the store ({self.tensor_size})"
+                f"tensors columns ({tensors.size(1)}) does not match tensor_size of the store ({self.tensor_size})"
             )
 
         # Send request
