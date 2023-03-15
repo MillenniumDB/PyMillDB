@@ -6,11 +6,17 @@ from .utils import packer
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
 
-
+## Interface for generating samples from MillenniumDB.
+#
+# The MillenniumDB's server creates a new seed after each initialization, so the
+# results may vary between different runs.
 class Sampler:
+    ## Constructor.
     def __init__(self, client: "MDBClient"):
+        ## Client instance.
         self.client = client
 
+    ## Returns at most `num_seeds` node ids for being used as seeds.
     def get_seed_ids(self, num_seeds: int) -> List[int]:
         # Send request
         msg = b""

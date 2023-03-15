@@ -11,7 +11,7 @@ from .utils import decorators
 # Almost every class and function in this library needs a `MDBClient` instance
 # as an argument to communicate with the server.
 class MDBClient:
-    ## Class constructor.
+    ## Constructor.
     def __init__(self, host: str = "localhost", port: int = 8080) -> None:
         ## Address of the server.
         self.address = (host, port)
