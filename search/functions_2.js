@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['is_5fclosed_33',['is_closed',['../classpymdb_1_1mdb__client_1_1MDBClient.html#a51719e75d120e53188c1522c3a5d1ed2',1,'pymdb::mdb_client::MDBClient']]]
+  ['get_5fseed_5fids_35',['get_seed_ids',['../classpymdb_1_1sampler_1_1Sampler.html#a24b574a1452e7bde2be3ac2904235843',1,'pymdb::sampler::Sampler']]]
 ];

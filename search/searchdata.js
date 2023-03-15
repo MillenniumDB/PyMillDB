@@ -2,8 +2,8 @@ var indexSectionsWithContent =
 {
   0: "_acegimprst",
   1: "egmrst",
-  2: "_ci",
-  3: "a",
+  2: "_cgi",
+  3: "ac",
   4: "p"
 };
 

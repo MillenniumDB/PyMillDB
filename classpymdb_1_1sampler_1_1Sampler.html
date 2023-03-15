@@ -73,23 +73,32 @@ $(function() {
 <div class="title">pymdb.sampler.Sampler Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface for generating samples from MillenniumDB.  
+ <a href="classpymdb_1_1sampler_1_1Sampler.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:abe250cff89cdebca2d205fbdca69c834"><td class="memItemLeft" align="right" valign="top"><a id="abe250cff89cdebca2d205fbdca69c834"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, &quot;MDBClient&quot; client)</td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1sampler_1_1Sampler.html#abe250cff89cdebca2d205fbdca69c834">__init__</a> (self, &quot;MDBClient&quot; client)</td></tr>
+<tr class="memdesc:abe250cff89cdebca2d205fbdca69c834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:abe250cff89cdebca2d205fbdca69c834"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24b574a1452e7bde2be3ac2904235843"><td class="memItemLeft" align="right" valign="top"><a id="a24b574a1452e7bde2be3ac2904235843"></a>
-List[int]&#160;</td><td class="memItemRight" valign="bottom"><b>get_seed_ids</b> (self, int num_seeds)</td></tr>
+List[int]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1sampler_1_1Sampler.html#a24b574a1452e7bde2be3ac2904235843">get_seed_ids</a> (self, int num_seeds)</td></tr>
+<tr class="memdesc:a24b574a1452e7bde2be3ac2904235843"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns at most <code>num_seeds</code> node ids for being used as seeds. <br /></td></tr>
 <tr class="separator:a24b574a1452e7bde2be3ac2904235843"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aa33b4e22b458b7636b6fa809657ce6f8"><td class="memItemLeft" align="right" valign="top"><a id="aa33b4e22b458b7636b6fa809657ce6f8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>client</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1sampler_1_1Sampler.html#aa33b4e22b458b7636b6fa809657ce6f8">client</a></td></tr>
+<tr class="memdesc:aa33b4e22b458b7636b6fa809657ce6f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Client instance. <br /></td></tr>
 <tr class="separator:aa33b4e22b458b7636b6fa809657ce6f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface for generating samples from MillenniumDB. </p>
+<p>The MillenniumDB's server creates a new seed after each initialization, so the results may vary between different runs. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>pymdb/sampler.py</li>
 </ul>
 </div><!-- contents -->
