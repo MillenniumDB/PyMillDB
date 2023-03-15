@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, List
 
-from ..mdb_client.protocol import RequestType
-from ..utils import packer
+from .protocol import RequestType
+from .utils import packer
 
 if TYPE_CHECKING:
-    from ..mdb_client.mdb_client import MDBClient
+    from .mdb_client import MDBClient
 
 
 class Sampler:

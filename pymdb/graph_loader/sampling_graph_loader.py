@@ -1,37 +1,37 @@
 from typing import TYPE_CHECKING, List
 
-from ...mdb_client.protocol import RequestType
-from ...utils import packer
+from ..protocol import RequestType
+from ..utils import packer
 from .graph_loader import GraphLoader
 
 if TYPE_CHECKING:
-    from ...mdb_client.mdb_client import MDBClient
+    from ..mdb_client import MDBClient
 
 
-class TrainGraphLoader(GraphLoader):
+class SamplingGraphLoader(GraphLoader):
     def __init__(
         self,
         client: "MDBClient",
         tensor_store_name: str,
+        num_seeds: int,
         batch_size: int,
         num_neighbors: List[int],
-        seed_ids: List[int],
     ) -> None:
         if batch_size < 1:
             raise ValueError("batch_size must be a positive integer")
         if len(num_neighbors) == 0:
             raise ValueError("num_neighbors must be non-empty")
-        if len(seed_ids) == 0:
-            raise ValueError("seed_ids must be non-empty")
+        if num_seeds < 1:
+            raise ValueError("num_seeds must be a positive integer")
 
         self.client = client
         self.tensor_store_name = tensor_store_name
+        self.num_seeds = num_seeds
         self.batch_size = batch_size
         # Convert negative values to max uint64 value
         self.num_neighbors = list(
             map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
         )
-        self.seed_ids = seed_ids
 
         self._graph_loader_id = None
         self._size = None
@@ -42,14 +42,13 @@ class TrainGraphLoader(GraphLoader):
     def _new(self) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TRAIN_GRAPH_LOADER_NEW)
+        msg += packer.pack_byte(RequestType.SAMPLING_GRAPH_LOADER_NEW)
         msg += packer.pack_uint64(self.batch_size)
+        msg += packer.pack_uint64(self.num_seeds)
         msg += packer.pack_uint64(len(self.num_neighbors))
         msg += packer.pack_uint64(len(self.tensor_store_name))
-        msg += packer.pack_uint64(len(self.seed_ids))
         msg += packer.pack_uint64_vector(self.num_neighbors)
         msg += packer.pack_string(self.tensor_store_name)
-        msg += packer.pack_uint64_vector(self.seed_ids)
         self.client._send(msg)
 
         # Handle response
@@ -62,7 +61,7 @@ class TrainGraphLoader(GraphLoader):
         return (
             f"{self.__class__.__name__}("
             f'tensor_store_name="{self.tensor_store_name}", '
+            f"num_seeds={self.num_seeds}, "
             f'batch_size="{self.batch_size}", '
-            f"num_neighbors={self.num_neighbors}, "
-            f"num_seed_ids={len(self.seed_ids)})"
+            f"num_neighbors={self.num_neighbors})"
         )

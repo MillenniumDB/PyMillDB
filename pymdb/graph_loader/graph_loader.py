@@ -5,8 +5,8 @@ import abc
 
 import torch
 
-from ...mdb_client.protocol import RequestType, StatusCode
-from ...utils import decorators, packer
+from ..protocol import RequestType, StatusCode
+from ..utils import decorators, packer
 from .graph import Graph
 
 

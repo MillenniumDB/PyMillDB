@@ -1,8 +1,8 @@
 import socket
 from typing import Tuple
 
-from ..utils import decorators
 from . import protocol
+from .utils import decorators
 
 
 class MDBClient:
