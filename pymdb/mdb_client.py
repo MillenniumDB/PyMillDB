@@ -5,26 +5,37 @@ from . import protocol
 from .utils import decorators
 
 
+## Main interface for stablishing a connection with the server for
+# sending and receiving data.
+#
+# Almost every class and function in this library needs a `MDBClient` instance
+# as an argument to communicate with the server.
 class MDBClient:
+    ## Class constructor.
     def __init__(self, host: str = "localhost", port: int = 8080) -> None:
+        ## Address of the server.
         self.address = (host, port)
 
         self._sock = None
         self._closed = True
         self._connect()
 
+    ## Returns `True` if the connection with the server is closed.
     def is_closed(self) -> bool:
         return self._closed
 
+    ## Closes the connection with the server.
     def close(self) -> None:
         if not self._closed:
             self._sock.close()
             self._sock = None
             self._closed = True
 
+    ## Enter context manager.
     def __enter__(self) -> "MDBClient":
         return self
 
+    ## Exit context manager.
     def __exit__(self, *_) -> None:
         self.close()
 
@@ -71,5 +82,6 @@ class MDBClient:
             raise Exception(data.decode("utf-8"))
         return data, protocol.decode_status(msg[0])
 
+    ## Class representation.
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(address={self.address})"
