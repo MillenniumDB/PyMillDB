@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classgraph__loader_1_1eval__graph__loader_1_1EvalGraphLoader.html" title=" " alt="" coords="5,50,189,91"/>
+<area shape="rect" id="node2" href="$classgraph__loader_1_1graph__loader_1_1GraphLoader.html" title=" " alt="" coords="237,50,393,91"/>
+<area shape="rect" id="node3" href="$classgraph__loader_1_1sampling__graph__loader_1_1SamplingGraphLoader.html" title=" " alt="" coords="448,5,665,61"/>
+<area shape="rect" id="node4" href="$classgraph__loader_1_1train__graph__loader_1_1TrainGraphLoader.html" title=" " alt="" coords="441,86,672,127"/>
+</map>
