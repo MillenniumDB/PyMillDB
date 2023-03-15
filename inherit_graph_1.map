@@ -1,6 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classpymdb_1_1graph__loader_1_1eval__graph__loader_1_1EvalGraphLoader.html" title=" " alt="" coords="5,39,233,80"/>
-<area shape="rect" id="node2" href="$classpymdb_1_1graph__loader_1_1graph__loader_1_1GraphLoader.html" title=" " alt="" coords="281,39,477,80"/>
-<area shape="rect" id="node3" href="$classpymdb_1_1graph__loader_1_1sampling__graph__loader_1_1SamplingGraphLoader.html" title=" " alt="" coords="525,5,787,47"/>
-<area shape="rect" id="node4" href="$classpymdb_1_1graph__loader_1_1train__graph__loader_1_1TrainGraphLoader.html" title=" " alt="" coords="541,71,771,112"/>
+<area shape="rect" id="node1" href="$classpymdb_1_1graph__loader_1_1EvalGraphLoader.html" title=" " alt="" coords="5,39,232,80"/>
+<area shape="rect" id="node2" href="$classpymdb_1_1graph__loader_1_1GraphLoader.html" title=" " alt="" coords="280,39,479,80"/>
+<area shape="rect" id="node3" href="$classpymdb_1_1graph__loader_1_1SamplingGraphLoader.html" title=" " alt="" coords="527,5,747,47"/>
+<area shape="rect" id="node4" href="$classpymdb_1_1graph__loader_1_1TrainGraphLoader.html" title=" " alt="" coords="541,71,732,112"/>
 </map>
