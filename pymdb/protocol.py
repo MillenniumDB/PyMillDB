@@ -7,7 +7,7 @@ END_MASK = 0b1000_0000  # Set to 1 if it is the last message
 ERROR_MASK = 0b0100_0000  # Set to 1 if the status code is an error
 STATUS_MASK = 0b0111_1111  # Status code
 
-
+## Client request type codes.
 class RequestType(IntEnum):
     # GRAPH LOADER
     TRAIN_GRAPH_LOADER_NEW    = 0b0000_0001
@@ -37,7 +37,7 @@ class RequestType(IntEnum):
     # SAMPLER
     SAMPLER_GET_SEED_IDS = 0b0001_0100
 
-
+## Server response status codes.
 class StatusCode(IntEnum):
     # SUCCESS CODES
     # Generic success

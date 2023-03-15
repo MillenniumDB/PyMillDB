@@ -5,7 +5,7 @@ from . import protocol
 from .utils import decorators
 
 
-## Main interface for stablishing a connection with the server for
+## Interface for stablishing a connection with the server for
 # sending and receiving data.
 #
 # Almost every class and function in this library needs a `MDBClient` instance
