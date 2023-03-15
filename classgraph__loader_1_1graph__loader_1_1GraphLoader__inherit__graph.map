@@ -1,7 +1,0 @@
-<map id="graph_loader.graph_loader.GraphLoader" name="graph_loader.graph_loader.GraphLoader">
-<area shape="rect" id="node1" title=" " alt="" coords="133,79,289,120"/>
-<area shape="rect" id="node3" href="$classgraph__loader_1_1eval__graph__loader_1_1EvalGraphLoader.html" title=" " alt="" coords="361,5,545,47"/>
-<area shape="rect" id="node4" href="$classgraph__loader_1_1sampling__graph__loader_1_1SamplingGraphLoader.html" title=" " alt="" coords="344,71,561,127"/>
-<area shape="rect" id="node5" href="$classgraph__loader_1_1train__graph__loader_1_1TrainGraphLoader.html" title=" " alt="" coords="337,152,568,193"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,86,85,113"/>
-</map>
