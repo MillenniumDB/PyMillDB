@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['sampler_6',['Sampler',['../classpymdb_1_1sampler_1_1Sampler.html',1,'pymdb::sampler']]],
-  ['samplinggraphloader_7',['SamplingGraphLoader',['../classpymdb_1_1graph__loader_1_1SamplingGraphLoader.html',1,'pymdb::graph_loader']]],
-  ['statuscode_8',['StatusCode',['../classpymdb_1_1protocol_1_1StatusCode.html',1,'pymdb::protocol']]]
+  ['is_5fclosed_9',['is_closed',['../classpymdb_1_1mdb__client_1_1MDBClient.html#a51719e75d120e53188c1522c3a5d1ed2',1,'pymdb::mdb_client::MDBClient']]]
 ];
