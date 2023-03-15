@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tensor_5fsize_72',['tensor_size',['../classpymdb_1_1tensor__store_1_1TensorStore.html#aa1e741dfb4d0fffcf30ded658f2dd571',1,'pymdb::tensor_store::TensorStore']]]
+  ['edge_5findex_86',['edge_index',['../classpymdb_1_1graph__loader_1_1Graph.html#a6efe0f8956613f30d69ca70f4abd40ff',1,'pymdb::graph_loader::Graph']]]
 ];

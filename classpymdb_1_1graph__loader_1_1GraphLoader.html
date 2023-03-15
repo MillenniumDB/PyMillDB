@@ -72,15 +72,18 @@ $(function() {
 <div class="title">pymdb.graph_loader.GraphLoader Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract class for the graph loader iterators.  
+ <a href="classpymdb_1_1graph__loader_1_1GraphLoader.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for pymdb.graph_loader.GraphLoader:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpymdb_1_1graph__loader_1_1GraphLoader__inherit__graph.png" border="0" usemap="#apymdb_8graph__loader_8GraphLoader_inherit__map" alt="Inheritance graph"/></div>
 <map name="apymdb_8graph__loader_8GraphLoader_inherit__map" id="apymdb_8graph__loader_8GraphLoader_inherit__map">
-<area shape="rect" title=" " alt="" coords="133,71,332,112"/>
-<area shape="rect" href="classpymdb_1_1graph__loader_1_1EvalGraphLoader.html" title=" " alt="" coords="380,5,607,47"/>
-<area shape="rect" href="classpymdb_1_1graph__loader_1_1SamplingGraphLoader.html" title=" " alt="" coords="383,71,603,112"/>
-<area shape="rect" href="classpymdb_1_1graph__loader_1_1TrainGraphLoader.html" title=" " alt="" coords="398,136,589,177"/>
+<area shape="rect" title="Abstract class for the graph loader iterators." alt="" coords="133,71,332,112"/>
+<area shape="rect" href="classpymdb_1_1graph__loader_1_1EvalGraphLoader.html" title="GraphLoader for evaluation that performs mini&#45;batching with the entire graph." alt="" coords="380,5,607,47"/>
+<area shape="rect" href="classpymdb_1_1graph__loader_1_1SamplingGraphLoader.html" title="GraphLoader that performs mini&#45;batching sampling and generating a new set of seeds on each iterator i..." alt="" coords="383,71,603,112"/>
+<area shape="rect" href="classpymdb_1_1graph__loader_1_1TrainGraphLoader.html" title="GraphLoader that performs mini&#45;batching sampling from a fixed set of seed ids." alt="" coords="398,136,589,177"/>
 <area shape="rect" title=" " alt="" coords="5,78,85,105"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -89,7 +92,7 @@ Collaboration diagram for pymdb.graph_loader.GraphLoader:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpymdb_1_1graph__loader_1_1GraphLoader__coll__graph.png" border="0" usemap="#apymdb_8graph__loader_8GraphLoader_coll__map" alt="Collaboration graph"/></div>
 <map name="apymdb_8graph__loader_8GraphLoader_coll__map" id="apymdb_8graph__loader_8GraphLoader_coll__map">
-<area shape="rect" title=" " alt="" coords="5,80,204,121"/>
+<area shape="rect" title="Abstract class for the graph loader iterators." alt="" coords="5,80,204,121"/>
 <area shape="rect" title=" " alt="" coords="65,5,145,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -97,31 +100,41 @@ Collaboration diagram for pymdb.graph_loader.GraphLoader:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3f4b3d5968f97c3755d18c67d042273f"><td class="memItemLeft" align="right" valign="top"><a id="a3f4b3d5968f97c3755d18c67d042273f"></a>
-None&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, *args)</td></tr>
+None&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#a3f4b3d5968f97c3755d18c67d042273f">__init__</a> (self, *args)</td></tr>
+<tr class="memdesc:a3f4b3d5968f97c3755d18c67d042273f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:a3f4b3d5968f97c3755d18c67d042273f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6aa912cb1190e2e80393af1413767f9c"><td class="memItemLeft" align="right" valign="top"><a id="a6aa912cb1190e2e80393af1413767f9c"></a>
-str&#160;</td><td class="memItemRight" valign="bottom"><b>__repr__</b> (self)</td></tr>
+str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#a6aa912cb1190e2e80393af1413767f9c">__repr__</a> (self)</td></tr>
+<tr class="memdesc:a6aa912cb1190e2e80393af1413767f9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representation. <br /></td></tr>
 <tr class="separator:a6aa912cb1190e2e80393af1413767f9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7e42135c98f1cb5b5dfd3a4b2fe3080"><td class="memItemLeft" align="right" valign="top"><a id="ab7e42135c98f1cb5b5dfd3a4b2fe3080"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_closed</b> (self)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#ab7e42135c98f1cb5b5dfd3a4b2fe3080">is_closed</a> (self)</td></tr>
+<tr class="memdesc:ab7e42135c98f1cb5b5dfd3a4b2fe3080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>True</code> if the <a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html" title="Abstract class for the graph loader iterators.">GraphLoader</a> is closed. <br /></td></tr>
 <tr class="separator:ab7e42135c98f1cb5b5dfd3a4b2fe3080"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a644921715f91691c9ef3d93434695257"><td class="memItemLeft" align="right" valign="top"><a id="a644921715f91691c9ef3d93434695257"></a>
-None&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> (self)</td></tr>
+None&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#a644921715f91691c9ef3d93434695257">close</a> (self)</td></tr>
+<tr class="memdesc:a644921715f91691c9ef3d93434695257"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes the <a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html" title="Abstract class for the graph loader iterators.">GraphLoader</a>. <br /></td></tr>
 <tr class="separator:a644921715f91691c9ef3d93434695257"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6c87ea6c3a7adeaaa780c85a0e6a888"><td class="memItemLeft" align="right" valign="top"><a id="ae6c87ea6c3a7adeaaa780c85a0e6a888"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>__len__</b> (self)</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#ae6c87ea6c3a7adeaaa780c85a0e6a888">__len__</a> (self)</td></tr>
+<tr class="memdesc:ae6c87ea6c3a7adeaaa780c85a0e6a888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of graphs that can be generated by the instance. <br /></td></tr>
 <tr class="separator:ae6c87ea6c3a7adeaaa780c85a0e6a888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6127dafcb4ea59a7fa9559fa7ebea483"><td class="memItemLeft" align="right" valign="top"><a id="a6127dafcb4ea59a7fa9559fa7ebea483"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> (self)</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#a6127dafcb4ea59a7fa9559fa7ebea483">size</a> (self)</td></tr>
+<tr class="memdesc:a6127dafcb4ea59a7fa9559fa7ebea483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of graphs that can be generated by the instance. <br /></td></tr>
 <tr class="separator:a6127dafcb4ea59a7fa9559fa7ebea483"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7e679869eb90aa7090d4c42861cb4c9"><td class="memItemLeft" align="right" valign="top"><a id="ae7e679869eb90aa7090d4c42861cb4c9"></a>
-&quot;GraphLoader&quot;&#160;</td><td class="memItemRight" valign="bottom"><b>__iter__</b> (self)</td></tr>
+&quot;GraphLoader&quot;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#ae7e679869eb90aa7090d4c42861cb4c9">__iter__</a> (self)</td></tr>
+<tr class="memdesc:ae7e679869eb90aa7090d4c42861cb4c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the iterator. <br /></td></tr>
 <tr class="separator:ae7e679869eb90aa7090d4c42861cb4c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4076f7519c68eaafbaedee24a2460276"><td class="memItemLeft" align="right" valign="top"><a id="a4076f7519c68eaafbaedee24a2460276"></a>
-<a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html">Graph</a>&#160;</td><td class="memItemRight" valign="bottom"><b>__next__</b> (self)</td></tr>
+<a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html">Graph</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1GraphLoader.html#a4076f7519c68eaafbaedee24a2460276">__next__</a> (self)</td></tr>
+<tr class="memdesc:a4076f7519c68eaafbaedee24a2460276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the next graph. <br /></td></tr>
 <tr class="separator:a4076f7519c68eaafbaedee24a2460276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Abstract class for the graph loader iterators. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>pymdb/graph_loader.py</li>
 </ul>
 </div><!-- contents -->

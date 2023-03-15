@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['mdbclient_23',['MDBClient',['../classpymdb_1_1mdb__client_1_1MDBClient.html',1,'pymdb::mdb_client']]],
-  ['multi_5fget_24',['multi_get',['../classpymdb_1_1tensor__store_1_1TensorStore.html#a6412a9ad467448a17e25eea9bd18ba66',1,'pymdb::tensor_store::TensorStore']]],
-  ['multi_5finsert_25',['multi_insert',['../classpymdb_1_1tensor__store_1_1TensorStore.html#a6e338f276f41c9979915d906fe89e496',1,'pymdb::tensor_store::TensorStore']]]
+  ['insert_24',['insert',['../classpymdb_1_1tensor__store_1_1TensorStore.html#afdd33b6aeb99195d655ce52c553b1e0c',1,'pymdb::tensor_store::TensorStore']]],
+  ['is_5fclosed_25',['is_closed',['../classpymdb_1_1graph__loader_1_1GraphLoader.html#ab7e42135c98f1cb5b5dfd3a4b2fe3080',1,'pymdb.graph_loader.GraphLoader.is_closed()'],['../classpymdb_1_1mdb__client_1_1MDBClient.html#a51719e75d120e53188c1522c3a5d1ed2',1,'pymdb.mdb_client.MDBClient.is_closed()'],['../classpymdb_1_1tensor__store_1_1TensorStore.html#ab931db20d6bb1acdd43ee310cb22b2cb',1,'pymdb.tensor_store.TensorStore.is_closed(self)']]],
+  ['is_5fopen_26',['is_open',['../classpymdb_1_1tensor__store_1_1TensorStore.html#ad5f8129e09cede25a576c370cbf8450b',1,'pymdb::tensor_store::TensorStore']]]
 ];
