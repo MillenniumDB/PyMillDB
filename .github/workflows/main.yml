@@ -19,6 +19,6 @@ jobs:
           # Target branch
           branch: gh-pages
           # Folder where Doxygen will generate the HTML build files
-          folder: /
+          folder: /docs
           # Source Doxyfile
           config_file: Doxyfile
