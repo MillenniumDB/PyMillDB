@@ -5,6 +5,7 @@
 name: Build and deploy Doxygen to GitHub Pages
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -18,7 +19,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Target branch
           branch: gh-pages
-          # Folder where Doxygen will generate the HTML build files
-          folder: /docs
+          # Folder where Doxygen will generate the HTML build files.
+          folder: docs
           # Source Doxyfile
           config_file: Doxyfile
