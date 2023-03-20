@@ -56,9 +56,33 @@ class Graph:
 ## Abstract class for the graph loader iterators.
 class GraphLoader(abc.ABC):
     ## Constructor.
-    @abc.abstractclassmethod
-    def __init__(self, *args) -> None:
-        pass
+    @abc.abstractmethod
+    def __init__(
+        self,
+        client: "MDBClient",
+        tensor_store_name: str,
+        batch_size: int,
+        num_neighbors: List[int],
+    ) -> None:
+        if batch_size < 1:
+            raise ValueError("batch_size must be a positive integer")
+        if len(num_neighbors) == 0:
+            raise ValueError("num_neighbors must be non-empty")
+        ## Client instance.
+        self.client = client
+        ## Name of the TensorStore to load the features from.
+        self.tensor_store_name = tensor_store_name
+        ## Number of seeds to use on each iteration.
+        self.batch_size = batch_size
+        ## Number of neighbors to sample at each layer (negative values are interpreted
+        # as all neighbors).
+        self.num_neighbors = list(
+            map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
+        )
+
+        self._graph_loader_id = None
+        self._size = None
+        self._closed = True
 
     @abc.abstractmethod
     def _new(self, *args) -> None:
@@ -96,19 +120,6 @@ class GraphLoader(abc.ABC):
     ## Returns the next graph.
     @decorators.check_closed
     def __next__(self) -> Graph:
-        return self._next()
-
-    def _begin(self) -> None:
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.GRAPH_LOADER_BEGIN)
-        msg += packer.pack_uint64(self._graph_loader_id)
-        self.client._send(msg)
-
-        # Handle response
-        self.client._recv()
-
-    def _next(self) -> Graph:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.GRAPH_LOADER_NEXT)
@@ -153,6 +164,16 @@ class GraphLoader(abc.ABC):
             feature_size,
         )
 
+    def _begin(self) -> None:
+        # Send request
+        msg = b""
+        msg += packer.pack_byte(RequestType.GRAPH_LOADER_BEGIN)
+        msg += packer.pack_uint64(self._graph_loader_id)
+        self.client._send(msg)
+
+        # Handle response
+        self.client._recv()
+
     def _close(self) -> None:
         # Send request
         msg = b""
@@ -176,28 +197,13 @@ class EvalGraphLoader(GraphLoader):
         batch_size: int,
         num_neighbors: List[int],
     ) -> None:
-        if batch_size < 1:
-            raise ValueError("batch_size must be a positive integer")
-        if len(num_neighbors) == 0:
-            raise ValueError("num_neighbors must be non-empty")
-
-        ## Client instance.
-        self.client = client
-        ## Name of the TensorStore to load the features from.
-        self.tensor_store_name = tensor_store_name
-        ## Number of seeds to use on each iteration.
-        self.batch_size = batch_size
-        ## Number of neighbors to sample at each layer (negative values are interpreted
-        # as all neighbors).
-        self.num_neighbors = list(
-            map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
+        super().__init__(
+            client=client,
+            tensor_store_name=tensor_store_name,
+            batch_size=batch_size,
+            num_neighbors=num_neighbors,
         )
-
-        self._graph_loader_id = None
-        self._size = None
-        self._closed = True
         self._new()
-        self._begin()
 
     def _new(self) -> None:
         # Send request
@@ -232,36 +238,21 @@ class SamplingGraphLoader(GraphLoader):
         self,
         client: "MDBClient",
         tensor_store_name: str,
-        num_seeds: int,
         batch_size: int,
         num_neighbors: List[int],
+        num_seeds: int,
     ) -> None:
-        if batch_size < 1:
-            raise ValueError("batch_size must be a positive integer")
-        if len(num_neighbors) == 0:
-            raise ValueError("num_neighbors must be non-empty")
         if num_seeds < 1:
             raise ValueError("num_seeds must be a positive integer")
-
-        ## Client instance.
-        self.client = client
-        ## Name of the TensorStore to load the features from.
-        self.tensor_store_name = tensor_store_name
+        super().__init__(
+            client=client,
+            tensor_store_name=tensor_store_name,
+            batch_size=batch_size,
+            num_neighbors=num_neighbors,
+        )
         ## Number of seeds to generate on each iterator initialization.
         self.num_seeds = num_seeds
-        ## Number of seeds to use on each iteration.
-        self.batch_size = batch_size
-        ## Number of neighbors to sample at each layer (negative values are interpreted
-        #  as all neighbors).
-        self.num_neighbors = list(
-            map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
-        )
-
-        self._graph_loader_id = None
-        self._size = None
-        self._closed = True
         self._new()
-        self._begin()
 
     def _new(self) -> None:
         # Send request
@@ -301,32 +292,17 @@ class TrainGraphLoader(GraphLoader):
         num_neighbors: List[int],
         seed_ids: List[int],
     ) -> None:
-        if batch_size < 1:
-            raise ValueError("batch_size must be a positive integer")
-        if len(num_neighbors) == 0:
-            raise ValueError("num_neighbors must be non-empty")
+        super().__init__(
+            client=client,
+            tensor_store_name=tensor_store_name,
+            batch_size=batch_size,
+            num_neighbors=num_neighbors,
+        )
         if len(seed_ids) == 0:
             raise ValueError("seed_ids must be non-empty")
-
-        ## Client instance.
-        self.client = client
-        ## Name of the TensorStore to load the features from.
-        self.tensor_store_name = tensor_store_name
-        ## Number of seeds to use on each iteration.
-        self.batch_size = batch_size
-        ## Number of neighbors to sample at each layer (negative values are interpreted
-        #  as all neighbors).
-        self.num_neighbors = list(
-            map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
-        )
         ## List of seed ids to sample from.
         self.seed_ids = seed_ids
-
-        self._graph_loader_id = None
-        self._size = None
-        self._closed = True
         self._new()
-        self._begin()
 
     def _new(self) -> None:
         # Send request
