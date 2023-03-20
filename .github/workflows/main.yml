@@ -19,7 +19,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Target branch
           branch: gh-pages
-          # Folder where Doxygen will generate the HTML build files. "." means "/" (root directory)
-          folder: .
+          # Folder where Doxygen will generate the HTML build files.
+          folder: docs
           # Source Doxyfile
           config_file: Doxyfile
