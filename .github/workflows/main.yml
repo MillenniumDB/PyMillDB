@@ -1,3 +1,7 @@
+# Important note:
+# The deployment to gh-pages must not be set to Github Actions
+# More here: https://github.com/JamesIves/github-pages-deploy-action/discussions/1190
+
 name: Build and deploy Doxygen to GitHub Pages
 
 on:
@@ -12,6 +16,9 @@ jobs:
       - uses: DenverCoder1/doxygen-github-pages-action@v1.2.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Target branch
           branch: gh-pages
-          folder: docs/html
+          # Folder where Doxygen will generate the HTML build files
+          folder: /
+          # Source Doxyfile
           config_file: Doxyfile
