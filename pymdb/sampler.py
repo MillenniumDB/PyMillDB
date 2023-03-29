@@ -17,10 +17,10 @@ class Sampler:
         self.client = client
 
     ## Returns at most `num_seeds` node ids for being used as seeds.
-    def get_seed_ids(self, num_seeds: int) -> List[int]:
+    def get_seeds(self, num_seeds: int) -> List[int]:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.SAMPLER_GET_SEED_IDS)
+        msg += packer.pack_byte(RequestType.SAMPLER_GET_SEEDS)
         msg += packer.pack_uint64(num_seeds)
         self.client._send(msg)
 
