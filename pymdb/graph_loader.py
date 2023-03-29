@@ -12,47 +12,6 @@ from .utils import decorators, packer
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
 
-## Data structure to represent a graph, used by the GraphLoader class.
-#
-# The `node_ids` are relabelled to be consecutive integers starting from 0. The
-# `seed_ids` are always at the first `num_seeds` on the `node_ids` list.
-class Graph:
-    ## Constructor.
-    def __init__(
-        self,
-        node_features: torch.Tensor,
-        node_labels: torch.Tensor,
-        edge_index: torch.Tensor,
-        node_ids: List[int],
-        num_seeds: int,
-        feature_size: int,
-    ) -> None:
-        ## Node features of shape `[num_nodes, feature_size]`
-        self.node_features = node_features
-        ## Node labels of shape `[num_nodes]`
-        self.node_labels = node_labels
-        ## Edge index of shape `[2, num_edges]`
-        self.edge_index = edge_index
-        ## Node ids of shape `[num_nodes]`
-        self.node_ids = node_ids
-        ## Number of seed ids used to generate the graph.
-        self.num_seeds = num_seeds
-        ## Feature size of the node features
-        self.feature_size = feature_size
-
-    ## Class representation.
-    def __repr__(self) -> str:
-        return (
-            "Graph("
-            + f"node_features={list(self.node_features.size())}, "
-            + f"node_labels={list(self.node_labels.size())}, "
-            + f"edge_index={list(self.edge_index.size())}, "
-            + f"node_ids=[{len(self.node_ids)}], "
-            + f"num_seeds={self.num_seeds}, "
-            + f"feature_size={self.feature_size})"
-        )
-
-
 ## Abstract class for the graph loader iterators.
 class GraphLoader(abc.ABC):
     ## Constructor.
@@ -60,9 +19,12 @@ class GraphLoader(abc.ABC):
     def __init__(
         self,
         client: "MDBClient",
-        tensor_store_name: str,
         batch_size: int,
         num_neighbors: List[int],
+        node_feature_prop: str,
+        edge_feature_prop: str,
+        with_node_labels: bool,
+        with_edge_labels: bool,
     ) -> None:
         if batch_size < 1:
             raise ValueError("batch_size must be a positive integer")
@@ -70,8 +32,6 @@ class GraphLoader(abc.ABC):
             raise ValueError("num_neighbors must be non-empty")
         ## Client instance.
         self.client = client
-        ## Name of the TensorStore to load the features from.
-        self.tensor_store_name = tensor_store_name
         ## Number of seeds to use on each iteration.
         self.batch_size = batch_size
         ## Number of neighbors to sample at each layer (negative values are interpreted
@@ -79,6 +39,14 @@ class GraphLoader(abc.ABC):
         self.num_neighbors = list(
             map(lambda x: 2**64 - 1 if x < 0 else x, num_neighbors)
         )
+        ## Property name of the node features.
+        self.node_feature_prop = node_feature_prop
+        ## Property name of the edge features.
+        self.edge_feature_prop = edge_feature_prop
+        ## Whether to include the node labels in the graph.
+        self.with_node_labels = with_node_labels
+        ## Whether to include the edge labels in the graph.
+        self.with_edge_labels = with_edge_labels
 
         self._graph_loader_id = None
         self._size = None
@@ -119,7 +87,7 @@ class GraphLoader(abc.ABC):
 
     ## Returns the next graph.
     @decorators.check_closed
-    def __next__(self) -> Graph:
+    def __next__(self) -> dict:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.GRAPH_LOADER_NEXT)
@@ -132,37 +100,52 @@ class GraphLoader(abc.ABC):
         if code == StatusCode.END_OF_ITERATION:
             raise StopIteration
 
-        num_nodes = packer.unpack_uint64(data[0:8])
-        num_edges = packer.unpack_uint64(data[8:16])
-        num_seeds = packer.unpack_uint64(data[16:24])
-        feature_size = packer.unpack_uint64(data[24:32])
+        res = dict()
 
-        lo, hi = 32, 32 + 4 * num_nodes * feature_size
-        node_features = torch.tensor(
-            data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
-        ).reshape(num_nodes, feature_size)
-
-        lo, hi = hi, hi + 8 * num_nodes
-        node_labels = torch.tensor(
-            data=packer.unpack_uint64_vector(data[lo:hi]), dtype=torch.int64
-        )
-
-        lo, hi = hi, hi + 8 * 2 * num_edges
-        edge_index = torch.tensor(
-            data=packer.unpack_uint64_vector(data[lo:hi]), dtype=torch.int64
-        ).reshape(2, num_edges)
+        lo, hi = 0, 8
+        num_nodes = packer.unpack_uint64(data[lo:hi])
+        lo, hi = hi, hi + 8
+        num_edges = packer.unpack_uint64(data[lo:hi])
+        lo, hi = hi, hi + 8
+        num_node_features = packer.unpack_uint64(data[lo:hi])
+        lo, hi = hi, hi + 8
+        num_edge_features = packer.unpack_uint64(data[lo:hi])
+        lo, hi = hi, hi + 8
+        num_node_labels = packer.unpack_uint64(data[lo:hi])
+        lo, hi = hi, hi + 8
+        res["num_seeds"] = packer.unpack_uint64(data[lo:hi])
 
         lo, hi = hi, hi + 8 * num_nodes
-        node_ids = packer.unpack_uint64_vector(data[lo:hi])
+        res["node_ids"] = packer.unpack_uint64_vector(data[lo:hi])
 
-        return Graph(
-            node_features,
-            node_labels,
-            edge_index,
-            node_ids,
-            num_seeds,
-            feature_size,
-        )
+        if self.node_feature_prop != "":
+            lo, hi = hi, hi + 4 * num_node_features * num_nodes
+            res["node_features"] = torch.tensor(
+                data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
+            ).reshape(num_nodes, num_node_features)
+
+        if self.with_node_labels:
+            res["node_labels"] = list()
+            for _ in range(num_nodes):
+                lo, hi = hi, hi + 8 * num_node_labels
+                res["node_labels"].append(packer.unpack_uint64_vector(data[lo:hi]))
+
+        lo, hi = hi, hi + 8 * num_edges
+        res["edge_ids"] = packer.unpack_uint64_vector(data[lo:hi])
+
+        if self.edge_feature_prop != "":
+            lo, hi = hi, hi + 4 * num_edge_features * num_edges
+            res["edge_features"] = torch.tensor(
+                data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
+            ).reshape(num_edges, num_edge_features)
+
+        if self.with_edge_labels:
+            res["edge_labels"] = list()
+            for _ in range(num_edges):
+                lo, hi = hi, hi + 8 * num_node_labels
+                res["edge_labels"].append(packer.unpack_uint64_vector(data[lo:hi]))
+
+        return res
 
     def _begin(self) -> None:
         # Send request
