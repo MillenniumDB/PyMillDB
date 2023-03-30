@@ -286,7 +286,3 @@ class TensorStore:
         self.tensor_size = None
         self._tensor_store_id = None
         self._closed = True
-
-    ## Class representation.
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(name="{self.name}, tensor_size={self.tensor_size})'

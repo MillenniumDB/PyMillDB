@@ -81,7 +81,3 @@ class MDBClient:
         if protocol.error_status(msg[0]):
             raise Exception(data.decode("utf-8"))
         return data, protocol.decode_status(msg[0])
-
-    ## Class representation.
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(address={self.address})"

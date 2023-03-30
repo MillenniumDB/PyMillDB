@@ -6,6 +6,10 @@ def pack_byte(b: int) -> bytes:
     return struct.pack(">B", b)
 
 
+def pack_bool(b: bool) -> bytes:
+    return struct.pack(">?", b)
+
+
 def pack_uint64(i: int) -> bytes:
     return struct.pack(">Q", i)
 
