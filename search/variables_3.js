@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['edge_5findex_86',['edge_index',['../classpymdb_1_1graph__loader_1_1Graph.html#a6efe0f8956613f30d69ca70f4abd40ff',1,'pymdb::graph_loader::Graph']]]
+  ['edge_5ffeature_5fprop_82',['edge_feature_prop',['../classpymdb_1_1graph__loader_1_1GraphLoader.html#a0c78a17dce8dd565bc56db5ae2187ce4',1,'pymdb::graph_loader::GraphLoader']]]
 ];

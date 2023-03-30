@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['pymdb_3a_20a_20python_20library_20for_20millenniumdb_37',['PyMDB: A python library for MillenniumDB',['../index.html',1,'']]]
+  ['remove_34',['remove',['../classpymdb_1_1tensor__store_1_1TensorStore.html#a0d9034dba97c1aad2d059c1f024d1114',1,'pymdb::tensor_store::TensorStore']]],
+  ['requesttype_35',['RequestType',['../classpymdb_1_1protocol_1_1RequestType.html',1,'pymdb::protocol']]]
 ];
