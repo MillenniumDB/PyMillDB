@@ -222,15 +222,21 @@ class EvalGraphLoader(GraphLoader):
     def __init__(
         self,
         client: "MDBClient",
-        tensor_store_name: str,
         batch_size: int,
         num_neighbors: List[int],
+        node_feature_prop: str,
+        edge_feature_prop: str,
+        with_node_labels: bool,
+        with_edge_types: bool,
     ) -> None:
         super().__init__(
             client=client,
-            tensor_store_name=tensor_store_name,
             batch_size=batch_size,
             num_neighbors=num_neighbors,
+            node_feature_prop=node_feature_prop,
+            edge_feature_prop=edge_feature_prop,
+            with_node_labels=with_node_labels,
+            with_edge_types=with_edge_types,
         )
         self._new()
 
@@ -240,9 +246,14 @@ class EvalGraphLoader(GraphLoader):
         msg += packer.pack_byte(RequestType.EVAL_GRAPH_LOADER_NEW)
         msg += packer.pack_uint64(self.batch_size)
         msg += packer.pack_uint64(len(self.num_neighbors))
-        msg += packer.pack_uint64(len(self.tensor_store_name))
+        msg += packer.pack_uint64(len(self.node_feature_prop))
+        msg += packer.pack_uint64(len(self.edge_feature_prop))
+        msg += packer.pack_bool(self.with_node_labels)
+        msg += packer.pack_bool(self.with_edge_types)
+
         msg += packer.pack_uint64_vector(self.num_neighbors)
-        msg += packer.pack_string(self.tensor_store_name)
+        msg += packer.pack_string(self.node_feature_prop)
+        msg += packer.pack_string(self.edge_feature_prop)
         self.client._send(msg)
 
         # Handle response
