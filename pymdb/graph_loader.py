@@ -12,6 +12,7 @@ from .utils import decorators, packer
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
 
+
 ## GraphLoader iterator output.
 class Graph:
     def __init__(
@@ -269,20 +270,26 @@ class SamplingGraphLoader(GraphLoader):
     def __init__(
         self,
         client: "MDBClient",
-        tensor_store_name: str,
         batch_size: int,
         num_neighbors: List[int],
+        node_feature_prop: str,
+        edge_feature_prop: str,
+        with_node_labels: bool,
+        with_edge_types: bool,
         num_seeds: int,
     ) -> None:
-        if num_seeds < 1:
-            raise ValueError("num_seeds must be a positive integer")
         super().__init__(
             client=client,
-            tensor_store_name=tensor_store_name,
             batch_size=batch_size,
             num_neighbors=num_neighbors,
+            node_feature_prop=node_feature_prop,
+            edge_feature_prop=edge_feature_prop,
+            with_node_labels=with_node_labels,
+            with_edge_types=with_edge_types,
         )
-        ## Number of seeds to generate on each iterator initialization.
+        if num_seeds == 0:
+            raise ValueError("num_seeds must be greater than 0")
+        ## List of seed ids to sample from.
         self.num_seeds = num_seeds
         self._new()
 
@@ -293,9 +300,14 @@ class SamplingGraphLoader(GraphLoader):
         msg += packer.pack_uint64(self.batch_size)
         msg += packer.pack_uint64(self.num_seeds)
         msg += packer.pack_uint64(len(self.num_neighbors))
-        msg += packer.pack_uint64(len(self.tensor_store_name))
+        msg += packer.pack_uint64(len(self.node_feature_prop))
+        msg += packer.pack_uint64(len(self.edge_feature_prop))
+        msg += packer.pack_bool(self.with_node_labels)
+        msg += packer.pack_bool(self.with_edge_types)
+
         msg += packer.pack_uint64_vector(self.num_neighbors)
-        msg += packer.pack_string(self.tensor_store_name)
+        msg += packer.pack_string(self.node_feature_prop)
+        msg += packer.pack_string(self.edge_feature_prop)
         self.client._send(msg)
 
         # Handle response
