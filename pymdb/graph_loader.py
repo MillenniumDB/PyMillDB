@@ -289,7 +289,7 @@ class SamplingGraphLoader(GraphLoader):
         )
         if num_seeds == 0:
             raise ValueError("num_seeds must be greater than 0")
-        ## List of seed ids to sample from.
+        ## Number of seed ids to generate.
         self.num_seeds = num_seeds
         self._new()
 
