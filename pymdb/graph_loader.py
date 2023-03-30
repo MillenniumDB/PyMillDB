@@ -12,6 +12,49 @@ from .utils import decorators, packer
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
 
+## GraphLoader iterator output.
+class Graph:
+    def __init__(
+        self,
+        num_seeds: int,
+        node_ids: List[int],
+        edge_ids: List[List[int]],
+        edge_index: List[List[int]],
+        node_features: torch.Tensor = None,
+        edge_features: torch.Tensor = None,
+        node_labels: List[List[int]] = None,
+        edge_types: List[List[int]] = None,
+    ):
+        self.num_seeds = num_seeds
+        self.node_ids = node_ids
+        self.edge_ids = edge_ids
+        self.edge_index = edge_index
+
+        if node_features is not None:
+            self.node_features = node_features
+        if edge_features is not None:
+            self.edge_features = edge_features
+        if node_labels is not None:
+            self.node_labels = node_labels
+        if edge_types is not None:
+            self.edge_types = edge_types
+
+    def __repr__(self) -> str:
+        res = "Graph("
+        for k, v in self.__dict__.items():
+            res += f"{k}="
+            if isinstance(v, torch.Tensor):
+                res += f"{list(v.shape)}, "
+            elif isinstance(v, list):
+                if len(v) > 0 and isinstance(v[0], list):
+                    res += f"[{len(v)}, {len(v[0])}], "
+                else:
+                    res += f"[{len(v)}], "
+            else:
+                res += f"{v}, "
+        return res[:-2] + ")"
+
+
 ## Abstract class for the graph loader iterators.
 class GraphLoader(abc.ABC):
     ## Constructor.
@@ -80,7 +123,7 @@ class GraphLoader(abc.ABC):
         self._begin()
         return self
 
-    ## Returns the next graph.
+    ## Returns the next graph. It is assumed that each 2D list is a matrix.
     @decorators.check_closed
     def __next__(self) -> dict:
         # Send request
@@ -107,6 +150,7 @@ class GraphLoader(abc.ABC):
         num_edge_features = packer.unpack_uint64(data[lo:hi])
         lo, hi = hi, hi + 8
         num_node_labels = packer.unpack_uint64(data[lo:hi])
+
         lo, hi = hi, hi + 8
         res["num_seeds"] = packer.unpack_uint64(data[lo:hi])
 
@@ -135,12 +179,19 @@ class GraphLoader(abc.ABC):
             ).reshape(num_edges, num_edge_features)
 
         if self.with_edge_types:
-            res["edge_labels"] = list()
-            for _ in range(num_edges):
-                lo, hi = hi, hi + 8 * num_node_labels
-                res["edge_labels"].append(packer.unpack_uint64_vector(data[lo:hi]))
+            lo, hi = hi, hi + 8 * num_edges
+            res["edge_types"] = packer.unpack_uint64_vector(data[lo:hi])
 
-        return res
+        res["edge_index"] = list()
+
+        for _ in range(num_edges):
+            lo, hi = hi, hi + 8
+            src = packer.unpack_uint64(data[lo:hi])
+            lo, hi = hi, hi + 8
+            dst = packer.unpack_uint64(data[lo:hi])
+            res["edge_index"].append([src, dst])
+
+        return Graph(**res)
 
     def _begin(self) -> None:
         # Send request
