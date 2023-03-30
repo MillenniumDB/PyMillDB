@@ -8,13 +8,13 @@ from .utils import decorators, packer
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
 
+
 ## Interface for storing tensors in the MillenniumDB's TensorStore.
 #
-# TensorStore is a key-value store where the key is a `(uint64 node_id)` and the value is
+# TensorStore is a key-value store where the key is a `(uint64 object_id)` and the value is
 # a `(vector<float> tensor)`. The tensor size is fixed and is specified when the store is
 # created. For consistency and our own use cases the tensors cannot be removed.
 class TensorStore:
-
     ## Returns `True` if the store exists.
     @staticmethod
     def exists(client: "MDBClient", name: str) -> bool:
@@ -146,12 +146,12 @@ class TensorStore:
 
     ## Returns `True` if the store contains the given key.
     @decorators.check_closed
-    def contains(self, node_id: int) -> bool:
+    def contains(self, object_id: int) -> bool:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_CONTAINS)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(node_id)
+        msg += packer.pack_uint64(object_id)
         self.client._send(msg)
 
         # Handle response
@@ -160,7 +160,7 @@ class TensorStore:
 
     ## Inserts a tensor into the store.
     @decorators.check_closed
-    def insert(self, node_id: int, tensor: torch.Tensor) -> None:
+    def insert(self, object_id: int, tensor: torch.Tensor) -> None:
         if tensor.dtype != torch.float32:
             raise ValueError(f"Tensor dtype must be torch.float32, got {tensor.dtype}")
         if tensor.numel() != self.tensor_size:
@@ -172,7 +172,7 @@ class TensorStore:
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_INSERT)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(node_id)
+        msg += packer.pack_uint64(object_id)
         msg += packer.pack_float_vector(tensor.flatten())
         self.client._send(msg)
 
@@ -181,16 +181,16 @@ class TensorStore:
 
     ## Inserts multiple tensors into the store.
     @decorators.check_closed
-    def multi_insert(self, node_ids: List[int], tensors: torch.Tensor) -> None:
+    def multi_insert(self, object_ids: List[int], tensors: torch.Tensor) -> None:
         if tensors.dtype != torch.float32:
             raise ValueError(f"Tensor dtype must be torch.float32, got {tensors.dtype}")
         if len(tensors.size()) != 2:
             raise ValueError(
                 f"tensors must be 2-dimensional, but got {len(tensors.size())}-dimensional tensor"
             )
-        if len(node_ids) != tensors.size(0):
+        if len(object_ids) != tensors.size(0):
             raise ValueError(
-                f"The number of node_ids ({len(node_ids)}) does not match the tensors rows ({tensors.size(0)})"
+                f"The number of object_ids ({len(object_ids)}) does not match the tensors rows ({tensors.size(0)})"
             )
         if tensors.size(1) != self.tensor_size:
             raise ValueError(
@@ -201,8 +201,8 @@ class TensorStore:
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_MULTI_INSERT)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(len(node_ids))
-        msg += packer.pack_uint64_vector(node_ids)
+        msg += packer.pack_uint64(len(object_ids))
+        msg += packer.pack_uint64_vector(object_ids)
         msg += packer.pack_float_vector(tensors.flatten())
         self.client._send(msg)
 
@@ -211,12 +211,12 @@ class TensorStore:
 
     ## Gets a tensor from the store.
     @decorators.check_closed
-    def get(self, node_id: int) -> torch.Tensor:
+    def get(self, object_id: int) -> torch.Tensor:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_GET)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(node_id)
+        msg += packer.pack_uint64(object_id)
         self.client._send(msg)
 
         # Handle response
@@ -228,22 +228,22 @@ class TensorStore:
 
     ## Gets multiple tensors from the store.
     @decorators.check_closed
-    def multi_get(self, node_ids: List[int]) -> torch.Tensor:
+    def multi_get(self, object_ids: List[int]) -> torch.Tensor:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_MULTI_GET)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(len(node_ids))
-        msg += packer.pack_uint64_vector(node_ids)
+        msg += packer.pack_uint64(len(object_ids))
+        msg += packer.pack_uint64_vector(object_ids)
         self.client._send(msg)
 
         # Handle response
         data, _ = self.client._recv()
-        lo, hi = 0, 4 * self.tensor_size * len(node_ids)
+        lo, hi = 0, 4 * self.tensor_size * len(object_ids)
         return torch.tensor(
             data=packer.unpack_float_vector(data[lo:hi]),
             dtype=torch.float32,
-        ).reshape(len(node_ids), self.tensor_size)
+        ).reshape(len(object_ids), self.tensor_size)
 
     ## Returns the number of tensors in the store.
     @decorators.check_closed
