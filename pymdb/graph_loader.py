@@ -20,7 +20,7 @@ class Graph:
         num_seeds: int,
         node_ids: List[int],
         edge_ids: List[List[int]],
-        edge_index: List[List[int]],
+        edge_index: torch.Tensor,
         node_features: torch.Tensor = None,
         edge_features: torch.Tensor = None,
         node_labels: List[List[int]] = None,
@@ -183,14 +183,10 @@ class GraphLoader(abc.ABC):
             lo, hi = hi, hi + 8 * num_edges
             res["edge_types"] = packer.unpack_uint64_vector(data[lo:hi])
 
-        res["edge_index"] = list()
-
-        for _ in range(num_edges):
-            lo, hi = hi, hi + 8
-            src = packer.unpack_uint64(data[lo:hi])
-            lo, hi = hi, hi + 8
-            dst = packer.unpack_uint64(data[lo:hi])
-            res["edge_index"].append([src, dst])
+        lo, hi = hi, hi + 16 * num_edges
+        res["edge_index"] = torch.tensor(
+            data=packer.unpack_uint64_vector(data[lo:hi]), dtype=torch.int64
+        ).reshape(2, num_edges)
 
         return Graph(**res)
 
