@@ -80,7 +80,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad0fed59d61e86fc01935b89e8d1f1bb7"><td class="memItemLeft" align="right" valign="top"><a id="ad0fed59d61e86fc01935b89e8d1f1bb7"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, int num_seeds, List[int] node_ids, List[List[int]] edge_ids, torch.Tensor edge_index, torch.Tensor node_features=None, torch.Tensor edge_features=None, List[List[int]] node_labels=None, List[List[int]] edge_types=None)</td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, int <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a9ada9434359051d7813f88052e816073">num_seeds</a>, List[int] <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a70015d01ee40f64b1f312e56a56c8346">node_ids</a>, List[List[int]] <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a94f6b267d6ff7a21b6ba89ea17f3ca9d">edge_ids</a>, torch.Tensor <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a6efe0f8956613f30d69ca70f4abd40ff">edge_index</a>, torch.Tensor <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#aae7b83ef5aa8ac36c2836068bf498b7e">node_features</a>=None, torch.Tensor <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#adaff3adcaaeba24030a3b18e71d6efe0">edge_features</a>=None, List[List[int]] <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#abe9f62f51707abce9126ea4d5f752cc7">node_labels</a>=None, List[List[int]] <a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a8fd4c0b614c9da8a6809dd28372cd6bf">edge_types</a>=None)</td></tr>
 <tr class="separator:ad0fed59d61e86fc01935b89e8d1f1bb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bf4e4bad6205c186dcb964b356d4286"><td class="memItemLeft" align="right" valign="top"><a id="a2bf4e4bad6205c186dcb964b356d4286"></a>
 str&#160;</td><td class="memItemRight" valign="bottom"><b>__repr__</b> (self)</td></tr>
@@ -89,28 +89,36 @@ str&#160;</td><td class="memItemRight" valign="bottom"><b>__repr__</b> (self)</t
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a9ada9434359051d7813f88052e816073"><td class="memItemLeft" align="right" valign="top"><a id="a9ada9434359051d7813f88052e816073"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>num_seeds</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a9ada9434359051d7813f88052e816073">num_seeds</a></td></tr>
+<tr class="memdesc:a9ada9434359051d7813f88052e816073"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of seed nodes used to generate the graph. <br /></td></tr>
 <tr class="separator:a9ada9434359051d7813f88052e816073"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70015d01ee40f64b1f312e56a56c8346"><td class="memItemLeft" align="right" valign="top"><a id="a70015d01ee40f64b1f312e56a56c8346"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>node_ids</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a70015d01ee40f64b1f312e56a56c8346">node_ids</a></td></tr>
+<tr class="memdesc:a70015d01ee40f64b1f312e56a56c8346"><td class="mdescLeft">&#160;</td><td class="mdescRight">Original node ids in the graph of shape [num_nodes]. <br /></td></tr>
 <tr class="separator:a70015d01ee40f64b1f312e56a56c8346"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94f6b267d6ff7a21b6ba89ea17f3ca9d"><td class="memItemLeft" align="right" valign="top"><a id="a94f6b267d6ff7a21b6ba89ea17f3ca9d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>edge_ids</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a94f6b267d6ff7a21b6ba89ea17f3ca9d">edge_ids</a></td></tr>
+<tr class="memdesc:a94f6b267d6ff7a21b6ba89ea17f3ca9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Original edge ids in the graph of shape [num_edges]. <br /></td></tr>
 <tr class="separator:a94f6b267d6ff7a21b6ba89ea17f3ca9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6efe0f8956613f30d69ca70f4abd40ff"><td class="memItemLeft" align="right" valign="top"><a id="a6efe0f8956613f30d69ca70f4abd40ff"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>edge_index</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a6efe0f8956613f30d69ca70f4abd40ff">edge_index</a></td></tr>
+<tr class="memdesc:a6efe0f8956613f30d69ca70f4abd40ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge index of shape [2, num_edges]. <br /></td></tr>
 <tr class="separator:a6efe0f8956613f30d69ca70f4abd40ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae7b83ef5aa8ac36c2836068bf498b7e"><td class="memItemLeft" align="right" valign="top"><a id="aae7b83ef5aa8ac36c2836068bf498b7e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>node_features</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#aae7b83ef5aa8ac36c2836068bf498b7e">node_features</a></td></tr>
+<tr class="memdesc:aae7b83ef5aa8ac36c2836068bf498b7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node features of shape [num_nodes, num_node_features]. <br /></td></tr>
 <tr class="separator:aae7b83ef5aa8ac36c2836068bf498b7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adaff3adcaaeba24030a3b18e71d6efe0"><td class="memItemLeft" align="right" valign="top"><a id="adaff3adcaaeba24030a3b18e71d6efe0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>edge_features</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#adaff3adcaaeba24030a3b18e71d6efe0">edge_features</a></td></tr>
+<tr class="memdesc:adaff3adcaaeba24030a3b18e71d6efe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge features of shape [num_edges, num_edge_features]. <br /></td></tr>
 <tr class="separator:adaff3adcaaeba24030a3b18e71d6efe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe9f62f51707abce9126ea4d5f752cc7"><td class="memItemLeft" align="right" valign="top"><a id="abe9f62f51707abce9126ea4d5f752cc7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>node_labels</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#abe9f62f51707abce9126ea4d5f752cc7">node_labels</a></td></tr>
+<tr class="memdesc:abe9f62f51707abce9126ea4d5f752cc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node labels of shape [num_nodes, num_node_labels]. <br /></td></tr>
 <tr class="separator:abe9f62f51707abce9126ea4d5f752cc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fd4c0b614c9da8a6809dd28372cd6bf"><td class="memItemLeft" align="right" valign="top"><a id="a8fd4c0b614c9da8a6809dd28372cd6bf"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>edge_types</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1graph__loader_1_1Graph.html#a8fd4c0b614c9da8a6809dd28372cd6bf">edge_types</a></td></tr>
+<tr class="memdesc:a8fd4c0b614c9da8a6809dd28372cd6bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge types of shape [num_edges]. <br /></td></tr>
 <tr class="separator:a8fd4c0b614c9da8a6809dd28372cd6bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
