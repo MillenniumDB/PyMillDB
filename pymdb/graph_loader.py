@@ -26,18 +26,26 @@ class Graph:
         node_labels: List[List[int]] = None,
         edge_types: List[List[int]] = None,
     ):
+        ## Number of seed nodes used to generate the graph.
         self.num_seeds = num_seeds
+        ## Original node ids in the graph of shape [num_nodes].
         self.node_ids = node_ids
+        ## Original edge ids in the graph of shape [num_edges].
         self.edge_ids = edge_ids
+        ## Edge index of shape [2, num_edges].
         self.edge_index = edge_index
 
         if node_features is not None:
+            ## Node features of shape [num_nodes, num_node_features].
             self.node_features = node_features
         if edge_features is not None:
+            ## Edge features of shape [num_edges, num_edge_features].
             self.edge_features = edge_features
         if node_labels is not None:
+            ## Node labels of shape [num_nodes, num_node_labels].
             self.node_labels = node_labels
         if edge_types is not None:
+            ## Edge types of shape [num_edges].
             self.edge_types = edge_types
 
     def __repr__(self) -> str:
