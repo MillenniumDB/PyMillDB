@@ -229,10 +229,10 @@ class EvalGraphLoader(GraphLoader):
         client: "MDBClient",
         batch_size: int,
         num_neighbors: List[int],
-        node_feature_prop: str,
-        edge_feature_prop: str,
-        with_node_labels: bool,
-        with_edge_types: bool,
+        node_feature_prop: str = "",
+        edge_feature_prop: str = "",
+        with_node_labels: bool = False,
+        with_edge_types: bool = False,
     ) -> None:
         super().__init__(
             client=client,
@@ -276,11 +276,11 @@ class SamplingGraphLoader(GraphLoader):
         client: "MDBClient",
         batch_size: int,
         num_neighbors: List[int],
-        node_feature_prop: str,
-        edge_feature_prop: str,
-        with_node_labels: bool,
-        with_edge_types: bool,
         num_seeds: int,
+        node_feature_prop: str = "",
+        edge_feature_prop: str = "",
+        with_node_labels: bool = False,
+        with_edge_types: bool = False,
     ) -> None:
         super().__init__(
             client=client,
@@ -328,11 +328,11 @@ class TrainGraphLoader(GraphLoader):
         client: "MDBClient",
         batch_size: int,
         num_neighbors: List[int],
-        node_feature_prop: str,
-        edge_feature_prop: str,
-        with_node_labels: bool,
-        with_edge_types: bool,
         seed_ids: List[int],
+        node_feature_prop: str = "",
+        edge_feature_prop: str = "",
+        with_node_labels: bool = False,
+        with_edge_types: bool = False,
     ) -> None:
         super().__init__(
             client=client,
