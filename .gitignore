@@ -2,3 +2,6 @@ __pycache__
 .vscode
 docs/**
 .ipynb_checkpoints
+# Ignore all but ipynb files in examples
+examples/**
+!examples/**.ipynb
