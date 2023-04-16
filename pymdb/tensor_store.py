@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Union
 
 import torch
 
@@ -127,14 +127,14 @@ class TensorStore:
         self.close()
 
     ## Get tensors from the store with the pythonic syntax `store[key]`.
-    def __getitem__(self, key: int | List[int]) -> torch.Tensor:
+    def __getitem__(self, key: Union[int, List[int]]) -> torch.Tensor:
         if isinstance(key, int):
             return self.get(key)
         else:
             return self.multi_get(key)
 
     ## Insert tensors into the store with the pythonic syntax `store[key] = value`.
-    def __setitem__(self, key: int | List[int], value: torch.Tensor) -> None:
+    def __setitem__(self, key: Union[int, List[int]], value: torch.Tensor) -> None:
         if isinstance(key, int):
             self.insert(key, value)
         else:
