@@ -5,3 +5,4 @@ docs/**
 # Ignore all but ipynb files in examples
 examples/**
 !examples/**.ipynb
+!examples/**.py
