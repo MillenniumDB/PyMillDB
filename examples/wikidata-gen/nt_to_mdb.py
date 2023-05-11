@@ -22,6 +22,8 @@ o8_exp = re.compile(r'^"((?:[^"\\]|\\.)*)"\^\^<http://www\.w3\.org/1998/Math/Mat
 
 anon_count = 0
 
+entities = set()
+
 if __name__ == "__main__":
     input_fname = sys.argv[1]
     output_fname = sys.argv[2]
@@ -36,11 +38,17 @@ if __name__ == "__main__":
         o = ' '.join(l[2:-1])
 
         m_s = s_exp.match(s)
+
+        # Subject entity
+        entities.add(m_s.groups()[0])
+
         m_p = p_exp.match(p)
 
         m_o = o1_exp.match(o)
         if m_o is not None:
             output_file.write(f'{m_s.groups()[0]}->{m_o.groups()[0]} :{m_p.groups()[0]}\n')
+            # Object entity
+            entities.add(m_o.groups()[0])
             continue
 
         m_o = o2_exp.match(o)
@@ -80,6 +88,9 @@ if __name__ == "__main__":
             output_file.write(f'{m_s.groups()[0]}->"{m_o.groups()[0]}" :{m_p.groups()[0]}\n')
             continue
 
+    # Write features for each entity
+    for entity in entities:
+        output_file.write(f"{entity} feat:[1,1,1]\n")
 
     input_file.close()
     output_file.close()
