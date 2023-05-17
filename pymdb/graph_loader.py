@@ -23,8 +23,6 @@ class Graph:
         edge_index: torch.Tensor,
         node_features: torch.Tensor = None,
         edge_features: torch.Tensor = None,
-        node_labels: List[List[int]] = None,
-        edge_types: List[List[int]] = None,
     ):
         ## Number of seed nodes used to generate the graph.
         self.num_seeds = num_seeds
@@ -41,12 +39,6 @@ class Graph:
         if edge_features is not None:
             ## Edge features of shape [num_edges, num_edge_features].
             self.edge_features = edge_features
-        if node_labels is not None:
-            ## Node labels of shape [num_nodes, num_node_labels].
-            self.node_labels = node_labels
-        if edge_types is not None:
-            ## Edge types of shape [num_edges].
-            self.edge_types = edge_types
 
     def __repr__(self) -> str:
         res = "Graph("
@@ -75,8 +67,6 @@ class GraphLoader(abc.ABC):
         num_neighbors: List[int],
         node_feature_prop: str,
         edge_feature_prop: str,
-        with_node_labels: bool,
-        with_edge_types: bool,
     ) -> None:
         if batch_size < 1:
             raise ValueError("batch_size must be a positive integer")
@@ -95,10 +85,6 @@ class GraphLoader(abc.ABC):
         self.node_feature_prop = node_feature_prop
         ## Property name of the edge features. If empty, the edge features are not sent.
         self.edge_feature_prop = edge_feature_prop
-        ## Whether to include the node labels in the graph.
-        self.with_node_labels = with_node_labels
-        ## Whether to include the edge labels in the graph.
-        self.with_edge_types = with_edge_types
 
         self._graph_loader_id = None
         self._size = None
@@ -157,8 +143,6 @@ class GraphLoader(abc.ABC):
         num_node_features = packer.unpack_uint64(data[lo:hi])
         lo, hi = hi, hi + 8
         num_edge_features = packer.unpack_uint64(data[lo:hi])
-        lo, hi = hi, hi + 8
-        num_node_labels = packer.unpack_uint64(data[lo:hi])
 
         lo, hi = hi, hi + 8
         res["num_seeds"] = packer.unpack_uint64(data[lo:hi])
@@ -172,12 +156,6 @@ class GraphLoader(abc.ABC):
                 data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
             ).reshape(num_nodes, num_node_features)
 
-        if self.with_node_labels:
-            res["node_labels"] = list()
-            for _ in range(num_nodes):
-                lo, hi = hi, hi + 8 * num_node_labels
-                res["node_labels"].append(packer.unpack_uint64_vector(data[lo:hi]))
-
         lo, hi = hi, hi + 8 * num_edges
         res["edge_ids"] = packer.unpack_uint64_vector(data[lo:hi])
 
@@ -186,10 +164,6 @@ class GraphLoader(abc.ABC):
             res["edge_features"] = torch.tensor(
                 data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
             ).reshape(num_edges, num_edge_features)
-
-        if self.with_edge_types:
-            lo, hi = hi, hi + 8 * num_edges
-            res["edge_types"] = packer.unpack_uint64_vector(data[lo:hi])
 
         lo, hi = hi, hi + 16 * num_edges
         res["edge_index"] = torch.tensor(
@@ -231,8 +205,6 @@ class EvalGraphLoader(GraphLoader):
         num_neighbors: List[int],
         node_feature_prop: str = "",
         edge_feature_prop: str = "",
-        with_node_labels: bool = False,
-        with_edge_types: bool = False,
     ) -> None:
         super().__init__(
             client=client,
@@ -240,8 +212,6 @@ class EvalGraphLoader(GraphLoader):
             num_neighbors=num_neighbors,
             node_feature_prop=node_feature_prop,
             edge_feature_prop=edge_feature_prop,
-            with_node_labels=with_node_labels,
-            with_edge_types=with_edge_types,
         )
         self._new()
 
@@ -253,8 +223,6 @@ class EvalGraphLoader(GraphLoader):
         msg += packer.pack_uint64(len(self.num_neighbors))
         msg += packer.pack_uint64(len(self.node_feature_prop))
         msg += packer.pack_uint64(len(self.edge_feature_prop))
-        msg += packer.pack_bool(self.with_node_labels)
-        msg += packer.pack_bool(self.with_edge_types)
 
         msg += packer.pack_uint64_vector(self.num_neighbors)
         msg += packer.pack_string(self.node_feature_prop)
@@ -279,8 +247,6 @@ class SamplingGraphLoader(GraphLoader):
         num_seeds: int,
         node_feature_prop: str = "",
         edge_feature_prop: str = "",
-        with_node_labels: bool = False,
-        with_edge_types: bool = False,
     ) -> None:
         super().__init__(
             client=client,
@@ -288,8 +254,6 @@ class SamplingGraphLoader(GraphLoader):
             num_neighbors=num_neighbors,
             node_feature_prop=node_feature_prop,
             edge_feature_prop=edge_feature_prop,
-            with_node_labels=with_node_labels,
-            with_edge_types=with_edge_types,
         )
         if num_seeds == 0:
             raise ValueError("num_seeds must be greater than 0")
@@ -306,8 +270,6 @@ class SamplingGraphLoader(GraphLoader):
         msg += packer.pack_uint64(len(self.num_neighbors))
         msg += packer.pack_uint64(len(self.node_feature_prop))
         msg += packer.pack_uint64(len(self.edge_feature_prop))
-        msg += packer.pack_bool(self.with_node_labels)
-        msg += packer.pack_bool(self.with_edge_types)
 
         msg += packer.pack_uint64_vector(self.num_neighbors)
         msg += packer.pack_string(self.node_feature_prop)
