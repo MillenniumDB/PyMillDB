@@ -83,6 +83,12 @@ Public Member Functions</h2></td></tr>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1sampler_1_1Sampler.html#abe250cff89cdebca2d205fbdca69c834">__init__</a> (self, &quot;MDBClient&quot; client)</td></tr>
 <tr class="memdesc:abe250cff89cdebca2d205fbdca69c834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:abe250cff89cdebca2d205fbdca69c834"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8b6a4a8681c1fdc055053e69a4618f3"><td class="memItemLeft" align="right" valign="top"><a id="ae8b6a4a8681c1fdc055053e69a4618f3"></a>
+Graph&#160;</td><td class="memItemRight" valign="bottom"><b>subgraph</b> (self, int num_seeds, List[int] num_neighbors)</td></tr>
+<tr class="separator:ae8b6a4a8681c1fdc055053e69a4618f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a1a056ac6039ce288af8b67846a64df"><td class="memItemLeft" align="right" valign="top"><a id="a9a1a056ac6039ce288af8b67846a64df"></a>
+Graph&#160;</td><td class="memItemRight" valign="bottom"><b>subgraph_edge_existance</b> (self, int num_preseeds, List[int] num_neighbors)</td></tr>
+<tr class="separator:a9a1a056ac6039ce288af8b67846a64df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af53ab257acb1aa5d5c16a8462d4c90e5"><td class="memItemLeft" align="right" valign="top"><a id="af53ab257acb1aa5d5c16a8462d4c90e5"></a>
 List[int]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymdb_1_1sampler_1_1Sampler.html#af53ab257acb1aa5d5c16a8462d4c90e5">get_seeds</a> (self, int num_seeds)</td></tr>
 <tr class="memdesc:af53ab257acb1aa5d5c16a8462d4c90e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns at most <code>num_seeds</code> node ids for being used as seeds. <br /></td></tr>
@@ -97,7 +103,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface for generating samples from MillenniumDB. </p>
-<p>The MillenniumDB's server creates a new seed after each initialization, so the results may vary between different runs. </p>
+<p>The MillenniumDB's server creates a new random seed after each initialization, so the results may vary between different runs. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>pymdb/sampler.py</li>
 </ul>

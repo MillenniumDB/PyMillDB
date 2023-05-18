@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['graph_48',['Graph',['../classpymdb_1_1graph__loader_1_1Graph.html',1,'pymdb::graph_loader']]],
-  ['graphloader_49',['GraphLoader',['../classpymdb_1_1graph__loader_1_1GraphLoader.html',1,'pymdb::graph_loader']]]
+  ['mdbclient_33',['MDBClient',['../classpymdb_1_1mdb__client_1_1MDBClient.html',1,'pymdb::mdb_client']]]
 ];

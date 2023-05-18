@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['get_21',['get',['../classpymdb_1_1tensor__store_1_1TensorStore.html#a262c7dcc81b8f1c0a8c874e68fd1790f',1,'pymdb::tensor_store::TensorStore']]],
-  ['get_5fseeds_22',['get_seeds',['../classpymdb_1_1sampler_1_1Sampler.html#af53ab257acb1aa5d5c16a8462d4c90e5',1,'pymdb::sampler::Sampler']]],
-  ['graph_23',['Graph',['../classpymdb_1_1graph__loader_1_1Graph.html',1,'pymdb::graph_loader']]],
-  ['graphloader_24',['GraphLoader',['../classpymdb_1_1graph__loader_1_1GraphLoader.html',1,'pymdb::graph_loader']]]
+  ['insert_16',['insert',['../classpymdb_1_1tensor__store_1_1TensorStore.html#a7d7cfa3b69fd816bf06e30320eba6009',1,'pymdb::tensor_store::TensorStore']]],
+  ['is_5fclosed_17',['is_closed',['../classpymdb_1_1mdb__client_1_1MDBClient.html#a51719e75d120e53188c1522c3a5d1ed2',1,'pymdb.mdb_client.MDBClient.is_closed()'],['../classpymdb_1_1tensor__store_1_1TensorStore.html#ab931db20d6bb1acdd43ee310cb22b2cb',1,'pymdb.tensor_store.TensorStore.is_closed(self)']]],
+  ['is_5fopen_18',['is_open',['../classpymdb_1_1tensor__store_1_1TensorStore.html#ad5f8129e09cede25a576c370cbf8450b',1,'pymdb::tensor_store::TensorStore']]]
 ];

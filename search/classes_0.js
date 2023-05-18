@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['evalgraphloader_47',['EvalGraphLoader',['../classpymdb_1_1graph__loader_1_1EvalGraphLoader.html',1,'pymdb::graph_loader']]]
+  ['graph_32',['Graph',['../classgraph_1_1Graph.html',1,'graph']]]
 ];

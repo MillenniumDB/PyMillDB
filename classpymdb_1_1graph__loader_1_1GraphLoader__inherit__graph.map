@@ -1,6 +1,0 @@
-<map id="pymdb.graph_loader.GraphLoader" name="pymdb.graph_loader.GraphLoader">
-<area shape="rect" id="node1" title="Abstract class for the graph loader iterators." alt="" coords="143,80,342,121"/>
-<area shape="rect" id="node3" href="$classpymdb_1_1graph__loader_1_1EvalGraphLoader.html" title="GraphLoader for evaluation that performs mini&#45;batching with the entire graph." alt="" coords="5,169,232,211"/>
-<area shape="rect" id="node4" href="$classpymdb_1_1graph__loader_1_1SamplingGraphLoader.html" title="GraphLoader that performs mini&#45;batching sampling and generating a new set of seeds on each iterator i..." alt="" coords="257,169,477,211"/>
-<area shape="rect" id="node2" title=" " alt="" coords="203,5,283,32"/>
-</map>

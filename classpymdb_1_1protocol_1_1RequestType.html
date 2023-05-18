@@ -96,66 +96,51 @@ Collaboration diagram for pymdb.protocol.RequestType:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a1a40e2d091bd1d10205484263e7784d0"><td class="memItemLeft" align="right" valign="top"><a id="a1a40e2d091bd1d10205484263e7784d0"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>TRAIN_GRAPH_LOADER_NEW</b> = 0b0000_0001</td></tr>
-<tr class="separator:a1a40e2d091bd1d10205484263e7784d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9408a0acbc44d81ef7033f744209e09"><td class="memItemLeft" align="right" valign="top"><a id="ab9408a0acbc44d81ef7033f744209e09"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>EVAL_GRAPH_LOADER_NEW</b> = 0b0000_0010</td></tr>
-<tr class="separator:ab9408a0acbc44d81ef7033f744209e09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac76f66934b26866f303363a7d2887214"><td class="memItemLeft" align="right" valign="top"><a id="ac76f66934b26866f303363a7d2887214"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>SAMPLING_GRAPH_LOADER_NEW</b> = 0b0000_0011</td></tr>
-<tr class="separator:ac76f66934b26866f303363a7d2887214"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9817d1052549596dc81809477c743160"><td class="memItemLeft" align="right" valign="top"><a id="a9817d1052549596dc81809477c743160"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GRAPH_LOADER_BEGIN</b> = 0b0000_0100</td></tr>
-<tr class="separator:a9817d1052549596dc81809477c743160"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad047f52d4347f3ea627b853cfb150e74"><td class="memItemLeft" align="right" valign="top"><a id="ad047f52d4347f3ea627b853cfb150e74"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GRAPH_LOADER_NEXT</b> = 0b0000_0101</td></tr>
-<tr class="separator:ad047f52d4347f3ea627b853cfb150e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f0fe242b71e0befa970c083964febc0"><td class="memItemLeft" align="right" valign="top"><a id="a5f0fe242b71e0befa970c083964febc0"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GRAPH_LOADER_CLOSE</b> = 0b0000_0110</td></tr>
-<tr class="separator:a5f0fe242b71e0befa970c083964febc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a501c4957e6efbb781ad5b8075206f693"><td class="memItemLeft" align="right" valign="top"><a id="a501c4957e6efbb781ad5b8075206f693"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_EXISTS</b> = (0b0000_0111,)</td></tr>
-<tr class="separator:a501c4957e6efbb781ad5b8075206f693"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac00ba846145f04d0ae1632f0be9d3e53"><td class="memItemLeft" align="right" valign="top"><a id="ac00ba846145f04d0ae1632f0be9d3e53"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_IS_OPEN</b> = (0b0000_1000,)</td></tr>
-<tr class="separator:ac00ba846145f04d0ae1632f0be9d3e53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89d418564a52f4d7073448ab1974a98f"><td class="memItemLeft" align="right" valign="top"><a id="a89d418564a52f4d7073448ab1974a98f"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_CREATE</b> = (0b0000_1001,)</td></tr>
-<tr class="separator:a89d418564a52f4d7073448ab1974a98f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac64f4348fa15d5c3626dfc837d319641"><td class="memItemLeft" align="right" valign="top"><a id="ac64f4348fa15d5c3626dfc837d319641"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_REMOVE</b> = (0b0000_1010,)</td></tr>
-<tr class="separator:ac64f4348fa15d5c3626dfc837d319641"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8beed3ec5004108326aa2275ec0f82e"><td class="memItemLeft" align="right" valign="top"><a id="ac8beed3ec5004108326aa2275ec0f82e"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_LIST</b> = (0b0000_1011,)</td></tr>
-<tr class="separator:ac8beed3ec5004108326aa2275ec0f82e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade81f7266e4fda73c6c2de122c3b793e"><td class="memItemLeft" align="right" valign="top"><a id="ade81f7266e4fda73c6c2de122c3b793e"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_OPEN</b> = (0b0000_1100,)</td></tr>
-<tr class="separator:ade81f7266e4fda73c6c2de122c3b793e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d7cdf61bb700a54cba2bead4f3f855c"><td class="memItemLeft" align="right" valign="top"><a id="a3d7cdf61bb700a54cba2bead4f3f855c"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_CLOSE</b> = (0b0000_1101,)</td></tr>
-<tr class="separator:a3d7cdf61bb700a54cba2bead4f3f855c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae1a666364ba38b3c99ff8b275493aae"><td class="memItemLeft" align="right" valign="top"><a id="aae1a666364ba38b3c99ff8b275493aae"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_CONTAINS</b> = (0b0000_1110,)</td></tr>
-<tr class="separator:aae1a666364ba38b3c99ff8b275493aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74018d295ad18fb708ffecd5376e21b7"><td class="memItemLeft" align="right" valign="top"><a id="a74018d295ad18fb708ffecd5376e21b7"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_INSERT</b> = (0b0000_1111,)</td></tr>
-<tr class="separator:a74018d295ad18fb708ffecd5376e21b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8b597f52f6d4a6d750ad5045cca0995"><td class="memItemLeft" align="right" valign="top"><a id="aa8b597f52f6d4a6d750ad5045cca0995"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_MULTI_INSERT</b> = (0b0001_0000,)</td></tr>
-<tr class="separator:aa8b597f52f6d4a6d750ad5045cca0995"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a800c6ee494e9ea0b4196aada22860ad1"><td class="memItemLeft" align="right" valign="top"><a id="a800c6ee494e9ea0b4196aada22860ad1"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_GET</b> = (0b0001_0001,)</td></tr>
-<tr class="separator:a800c6ee494e9ea0b4196aada22860ad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e0c7cd409712ba1116b82221b6a39b1"><td class="memItemLeft" align="right" valign="top"><a id="a4e0c7cd409712ba1116b82221b6a39b1"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_MULTI_GET</b> = (0b0001_0010,)</td></tr>
-<tr class="separator:a4e0c7cd409712ba1116b82221b6a39b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0aba4a00c624a5f68419a5bbf16112e"><td class="memItemLeft" align="right" valign="top"><a id="ab0aba4a00c624a5f68419a5bbf16112e"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_SIZE</b> = (0b0001_0011,)</td></tr>
-<tr class="separator:ab0aba4a00c624a5f68419a5bbf16112e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64c3dc44f646b6cf46b347df34dd851d"><td class="memItemLeft" align="right" valign="top"><a id="a64c3dc44f646b6cf46b347df34dd851d"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>SAMPLER_GET_SEEDS</b> = 0b0001_0100</td></tr>
-<tr class="separator:a64c3dc44f646b6cf46b347df34dd851d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e11c4b1c9e33f8170d6818807e0346e"><td class="memItemLeft" align="right" valign="top"><a id="a1e11c4b1c9e33f8170d6818807e0346e"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>SAMPLER_SUBGRAPH</b> = 0b0000_0001</td></tr>
+<tr class="separator:a1e11c4b1c9e33f8170d6818807e0346e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae31ddf6c9856d8d5d495d17c053831c0"><td class="memItemLeft" align="right" valign="top"><a id="ae31ddf6c9856d8d5d495d17c053831c0"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>SAMPLER_SUBGRAPH_EDGE_EXISTANCE</b> = 0b0000_0010</td></tr>
+<tr class="separator:ae31ddf6c9856d8d5d495d17c053831c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68567c6d3d2339de1c4b57c622e620c7"><td class="memItemLeft" align="right" valign="top"><a id="a68567c6d3d2339de1c4b57c622e620c7"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_EXISTS</b> = 0b0000_0111</td></tr>
+<tr class="separator:a68567c6d3d2339de1c4b57c622e620c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac619dcfa474096ccf726b57b2883ac41"><td class="memItemLeft" align="right" valign="top"><a id="ac619dcfa474096ccf726b57b2883ac41"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_IS_OPEN</b> = 0b0000_1000</td></tr>
+<tr class="separator:ac619dcfa474096ccf726b57b2883ac41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96c35eb74cf5efc9944280ee8f9e595c"><td class="memItemLeft" align="right" valign="top"><a id="a96c35eb74cf5efc9944280ee8f9e595c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_CREATE</b> = 0b0000_1001</td></tr>
+<tr class="separator:a96c35eb74cf5efc9944280ee8f9e595c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cd52496934c890d29d9cefaac16e6b1"><td class="memItemLeft" align="right" valign="top"><a id="a1cd52496934c890d29d9cefaac16e6b1"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_REMOVE</b> = 0b0000_1010</td></tr>
+<tr class="separator:a1cd52496934c890d29d9cefaac16e6b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95aac2d60bfe3e7904ef08297a184b22"><td class="memItemLeft" align="right" valign="top"><a id="a95aac2d60bfe3e7904ef08297a184b22"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_LIST</b> = 0b0000_1011</td></tr>
+<tr class="separator:a95aac2d60bfe3e7904ef08297a184b22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4049dbb8adb8f23607e99c68e014e4b9"><td class="memItemLeft" align="right" valign="top"><a id="a4049dbb8adb8f23607e99c68e014e4b9"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_OPEN</b> = 0b0000_1100</td></tr>
+<tr class="separator:a4049dbb8adb8f23607e99c68e014e4b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29672fe6093320a169c9b577cf24e40e"><td class="memItemLeft" align="right" valign="top"><a id="a29672fe6093320a169c9b577cf24e40e"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_CLOSE</b> = 0b0000_1101</td></tr>
+<tr class="separator:a29672fe6093320a169c9b577cf24e40e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68263a15c6dcb9eb8d3ebb4a055fee3b"><td class="memItemLeft" align="right" valign="top"><a id="a68263a15c6dcb9eb8d3ebb4a055fee3b"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_CONTAINS</b> = 0b0000_1110</td></tr>
+<tr class="separator:a68263a15c6dcb9eb8d3ebb4a055fee3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbda4fe904afcf7febcf27d7d22d4ecc"><td class="memItemLeft" align="right" valign="top"><a id="acbda4fe904afcf7febcf27d7d22d4ecc"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_INSERT</b> = 0b0000_1111</td></tr>
+<tr class="separator:acbda4fe904afcf7febcf27d7d22d4ecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b2049380200daace90066b9e5ea9be3"><td class="memItemLeft" align="right" valign="top"><a id="a7b2049380200daace90066b9e5ea9be3"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_MULTI_INSERT</b> = 0b0001_0000</td></tr>
+<tr class="separator:a7b2049380200daace90066b9e5ea9be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35970ea8b795c44b28437e6f957da3c6"><td class="memItemLeft" align="right" valign="top"><a id="a35970ea8b795c44b28437e6f957da3c6"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_GET</b> = 0b0001_0001</td></tr>
+<tr class="separator:a35970ea8b795c44b28437e6f957da3c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c4147c6631445660723c349822e13fe"><td class="memItemLeft" align="right" valign="top"><a id="a2c4147c6631445660723c349822e13fe"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_MULTI_GET</b> = 0b0001_0010</td></tr>
+<tr class="separator:a2c4147c6631445660723c349822e13fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accc991d43afc3c4f37687f682ad7f4d3"><td class="memItemLeft" align="right" valign="top"><a id="accc991d43afc3c4f37687f682ad7f4d3"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TENSOR_STORE_SIZE</b> = 0b0001_0011</td></tr>
+<tr class="separator:accc991d43afc3c4f37687f682ad7f4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Client request type codes. </p>
