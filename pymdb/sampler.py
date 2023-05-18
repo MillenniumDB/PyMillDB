@@ -17,6 +17,7 @@ class Sampler:
         ## Client instance.
         self.client = client
 
+    ## Returns a random subgraph
     def subgraph(self, num_seeds: int, num_neighbors: List[int]) -> Graph:
         # Send request
         msg = b""
@@ -29,8 +30,11 @@ class Sampler:
         # Handle response
         data, _ = self.client._recv()
         return packer.unpack_graph(data)
-    
-    def subgraph_edge_existance(self, num_preseeds: int, num_neighbors: List[int]) -> Graph:
+
+    ## Returns a random subgraph for edge existance prediction
+    def subgraph_edge_existance(
+        self, num_preseeds: int, num_neighbors: List[int]
+    ) -> Graph:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.SAMPLER_SUBGRAPH_EDGE_EXISTANCE)
