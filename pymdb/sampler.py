@@ -46,17 +46,3 @@ class Sampler:
         # Handle response
         data, _ = self.client._recv()
         return packer.unpack_graph(data)
-
-    ## Returns at most `num_seeds` node ids for being used as seeds.
-    def get_seeds(self, num_seeds: int) -> List[int]:
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.SAMPLER_GET_SEEDS)
-        msg += packer.pack_uint64(num_seeds)
-        self.client._send(msg)
-
-        # Handle response
-        data, _ = self.client._recv()
-        seed_ids_size = packer.unpack_uint64(data[0:8])
-        seed_ids = packer.unpack_uint64_vector(data[8 : 8 + 8 * seed_ids_size])
-        return seed_ids
