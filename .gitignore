@@ -2,7 +2,9 @@ __pycache__
 .vscode
 docs/**
 .ipynb_checkpoints
-# Ignore all but ipynb files in examples
+src/**.egg-info
+dist
+# Ignore all but ipynb and py files in examples
 examples/**
 !examples/**.ipynb
 !examples/**.py
