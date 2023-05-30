@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['requesttype_35',['RequestType',['../classpymdb_1_1protocol_1_1RequestType.html',1,'pymdb::protocol']]]
+  ['requesttype_35',['RequestType',['../classpymilldb_1_1protocol_1_1RequestType.html',1,'pymilldb::protocol']]]
 ];

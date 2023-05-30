@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['close_46',['close',['../classpymdb_1_1mdb__client_1_1MDBClient.html#a44f981e913c5f6c52f71ac93db067e59',1,'pymdb.mdb_client.MDBClient.close()'],['../classpymdb_1_1tensor__store_1_1TensorStore.html#aeafdeeac5df4abc0c5cd69e8e0b8f63e',1,'pymdb.tensor_store.TensorStore.close(self)']]],
-  ['contains_47',['contains',['../classpymdb_1_1tensor__store_1_1TensorStore.html#ac1e85006e13f09036a22b85f16ea139a',1,'pymdb::tensor_store::TensorStore']]],
-  ['create_48',['create',['../classpymdb_1_1tensor__store_1_1TensorStore.html#a4bd443d7a10c1a2b56c9c22249f0231b',1,'pymdb::tensor_store::TensorStore']]]
+  ['close_46',['close',['../classpymilldb_1_1mdb__client_1_1MDBClient.html#a231045cb789ffdd6f72fab71406b079a',1,'pymilldb.mdb_client.MDBClient.close()'],['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a6762670b6298e4fab39d1591cf3602e5',1,'pymilldb.tensor_store.TensorStore.close(self)']]],
+  ['contains_47',['contains',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a981810f0c49622da856c79794aaaf998',1,'pymilldb::tensor_store::TensorStore']]],
+  ['create_48',['create',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a15e32d7f27f8520e9511fd62d5741146',1,'pymilldb::tensor_store::TensorStore']]]
 ];

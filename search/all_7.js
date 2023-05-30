@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['mdbclient_19',['MDBClient',['../classpymdb_1_1mdb__client_1_1MDBClient.html',1,'pymdb::mdb_client']]],
-  ['multi_5fget_20',['multi_get',['../classpymdb_1_1tensor__store_1_1TensorStore.html#a02ebf3155c705a3415408457b4edd08d',1,'pymdb::tensor_store::TensorStore']]],
-  ['multi_5finsert_21',['multi_insert',['../classpymdb_1_1tensor__store_1_1TensorStore.html#ad1a2b52cf55e71f4197c0ee70199eb9f',1,'pymdb::tensor_store::TensorStore']]]
+  ['mdbclient_19',['MDBClient',['../classpymilldb_1_1mdb__client_1_1MDBClient.html',1,'pymilldb::mdb_client']]],
+  ['multi_5fget_20',['multi_get',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a3f69f288068b420907587e454a7eb333',1,'pymilldb::tensor_store::TensorStore']]],
+  ['multi_5finsert_21',['multi_insert',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#ac6251be7cde6dadf8316b4cf6f1bd478',1,'pymilldb::tensor_store::TensorStore']]]
 ];
