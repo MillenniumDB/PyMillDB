@@ -123,7 +123,7 @@ class TensorStore:
         return self
 
     ## Exit context manager.
-    def __exit__(self):
+    def __exit__(self, *_):
         self.close()
 
     ## Get tensors from the store with the pythonic syntax `store[key]`.
