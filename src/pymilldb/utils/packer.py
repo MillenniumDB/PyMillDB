@@ -17,7 +17,7 @@ def pack_uint64(i: int) -> bytes:
 
 
 def pack_string(string: str) -> bytes:
-    return string.encode("utf-8")
+    return string.encode("utf-8") + b"\x00"
 
 
 def pack_uint64_vector(vector: List[int]) -> bytes:
@@ -31,6 +31,13 @@ def pack_float_vector(vector: List[float]) -> bytes:
     data = b""
     for value in vector:
         data += struct.pack(">f", value)
+    return data
+
+
+def pack_string_vector(vector: List[str]) -> bytes:
+    data = b""
+    for string in vector:
+        data += pack_string(string)
     return data
 
 
