@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import TYPE_CHECKING, List, Union
 
 import torch
@@ -21,7 +22,6 @@ class TensorStore:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_EXISTS)
-        msg += packer.pack_uint64(len(name))
         msg += packer.pack_string(name)
         client._send(msg)
 
@@ -35,7 +35,6 @@ class TensorStore:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_IS_OPEN)
-        msg += packer.pack_uint64(len(name))
         msg += packer.pack_string(name)
         client._send(msg)
 
@@ -52,7 +51,6 @@ class TensorStore:
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_CREATE)
         msg += packer.pack_uint64(tensor_size)
-        msg += packer.pack_uint64(len(name))
         msg += packer.pack_string(name)
         client._send(msg)
 
@@ -65,7 +63,6 @@ class TensorStore:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_REMOVE)
-        msg += packer.pack_uint64(len(name))
         msg += packer.pack_string(name)
         client._send(msg)
 
@@ -85,6 +82,7 @@ class TensorStore:
         names = list()
         lo, hi = 0, 8
         num_stores = packer.unpack_uint64(data[lo:hi])
+        # TODO: Fix this "hack"
         lo, hi = hi, hi + 8 * num_stores
         name_sizes = packer.unpack_uint64_vector(data[lo:hi])
         for name_size in name_sizes:
@@ -127,31 +125,43 @@ class TensorStore:
         self.close()
 
     ## Get tensors from the store with the pythonic syntax `store[key]`.
-    def __getitem__(self, key: Union[int, List[int]]) -> torch.Tensor:
-        if isinstance(key, int):
-            return self.get(key)
-        else:
+    def __getitem__(self, key: Union[int, str, List[int], List[str]]) -> torch.Tensor:
+        if isinstance(key, Iterable):
             return self.multi_get(key)
+        else:
+            return self.get(key)
 
     ## Insert tensors into the store with the pythonic syntax `store[key] = value`.
-    def __setitem__(self, key: Union[int, List[int]], value: torch.Tensor) -> None:
-        if isinstance(key, int):
-            self.insert(key, value)
-        else:
+    def __setitem__(
+        self, key: Union[int, str, List[int], List[str]], value: torch.Tensor
+    ) -> None:
+        if isinstance(key, Iterable):
             self.multi_insert(key, value)
+        else:
+            self.insert(key, value)
 
     ## Returns `True` if the store contains the given key with the pythonic syntax `key in store`.
-    def __contains__(self, key: int) -> bool:
+    def __contains__(self, key: Union[int, str]) -> bool:
         return self.contains(key)
 
     ## Returns `True` if the store contains the given key.
     @decorators.check_closed
-    def contains(self, object_id: int) -> bool:
+    def contains(self, key: Union[int, str]) -> bool:
+        packed_key = b""
+        if isinstance(key, int):
+            packed_key += packer.pack_bool(True)
+            packed_key += packer.pack_uint64(key)
+        elif isinstance(key, str):
+            packed_key += packer.pack_bool(False)
+            packed_key += packer.pack_string(key)
+        else:
+            raise TypeError(f"Key must be int or str, got {type(key)}")
+
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_CONTAINS)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(object_id)
+        msg += packed_key
         self.client._send(msg)
 
         # Handle response
@@ -160,9 +170,19 @@ class TensorStore:
 
     ## Inserts a tensor into the store.
     @decorators.check_closed
-    def insert(self, object_id: int, tensor: torch.Tensor) -> None:
+    def insert(self, key: Union[int, str], tensor: torch.Tensor) -> None:
+        packed_key = b""
+        if isinstance(key, int):
+            packed_key += packer.pack_bool(True)
+            packed_key += packer.pack_uint64(key)
+        elif isinstance(key, str):
+            packed_key += packer.pack_bool(False)
+            packed_key += packer.pack_string(key)
+        else:
+            raise TypeError(f"Key must be int or str, got {type(key)}")
+
         if tensor.dtype != torch.float32:
-            raise ValueError(f"Tensor dtype must be torch.float32, got {tensor.dtype}")
+            raise ValueError(f"Tensor dtype must be torch.float32, got {type(tensor)}")
         if tensor.numel() != self.tensor_size:
             raise ValueError(
                 f"Tensor size ({tensor.numel()}) does not match tensor_size of the store ({self.tensor_size})"
@@ -172,7 +192,7 @@ class TensorStore:
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_INSERT)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(object_id)
+        msg += packed_key
         msg += packer.pack_float_vector(tensor.flatten())
         self.client._send(msg)
 
@@ -181,28 +201,40 @@ class TensorStore:
 
     ## Inserts multiple tensors into the store.
     @decorators.check_closed
-    def multi_insert(self, object_ids: List[int], tensors: torch.Tensor) -> None:
+    def multi_insert(
+        self, keys: Union[List[int], List[str]], tensors: torch.Tensor
+    ) -> None:
+        packed_key = b""
+        if all(isinstance(key, int) for key in keys):
+            packed_key += packer.pack_bool(True)
+            packed_key += packer.pack_uint64(len(keys))
+            packed_key += packer.pack_uint64_vector(keys)
+        elif all(isinstance(key, str) for key in keys):
+            packed_key += packer.pack_bool(False)
+            packed_key += packer.pack_string_vector(keys)
+        else:
+            raise TypeError(f"Key must be List[int] or List[str], got {type(keys)}")
+
         if tensors.dtype != torch.float32:
-            raise ValueError(f"Tensor dtype must be torch.float32, got {tensors.dtype}")
+            raise ValueError(f"Tensor dtype must be torch.float32, got {type(tensors)}")
         if len(tensors.size()) != 2:
             raise ValueError(
-                f"tensors must be 2-dimensional, but got {len(tensors.size())}-dimensional tensor"
+                f"Tensors must be 2-dimensional, but got {len(tensors.size())}-dimensional tensor"
             )
-        if len(object_ids) != tensors.size(0):
+        if len(keys) != tensors.size(0):
             raise ValueError(
-                f"The number of object_ids ({len(object_ids)}) does not match the tensors rows ({tensors.size(0)})"
+                f"The number of keys ({len(keys)}) does not match the tensors rows ({tensors.size(0)})"
             )
         if tensors.size(1) != self.tensor_size:
             raise ValueError(
-                f"tensors columns ({tensors.size(1)}) does not match tensor_size of the store ({self.tensor_size})"
+                f"Tensors columns ({tensors.size(1)}) does not match tensor_size of the store ({self.tensor_size})"
             )
 
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_MULTI_INSERT)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(len(object_ids))
-        msg += packer.pack_uint64_vector(object_ids)
+        msg += packed_key
         msg += packer.pack_float_vector(tensors.flatten())
         self.client._send(msg)
 
@@ -211,12 +243,22 @@ class TensorStore:
 
     ## Gets a tensor from the store.
     @decorators.check_closed
-    def get(self, object_id: int) -> torch.Tensor:
+    def get(self, key: Union[int, str]) -> torch.Tensor:
+        packed_key = b""
+        if isinstance(key, int):
+            packed_key += packer.pack_bool(True)
+            packed_key += packer.pack_uint64(key)
+        elif isinstance(key, str):
+            packed_key += packer.pack_bool(False)
+            packed_key += packer.pack_string(key)
+        else:
+            raise TypeError(f"Key must be int or str, got {type(key)}")
+
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_GET)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(object_id)
+        msg += packed_key
         self.client._send(msg)
 
         # Handle response
@@ -228,22 +270,32 @@ class TensorStore:
 
     ## Gets multiple tensors from the store.
     @decorators.check_closed
-    def multi_get(self, object_ids: List[int]) -> torch.Tensor:
+    def multi_get(self, keys: Union[List[int], List[str]]) -> torch.Tensor:
+        packed_key = b""
+        if all(isinstance(key, int) for key in keys):
+            packed_key += packer.pack_bool(True)
+            packed_key += packer.pack_uint64(len(keys))
+            packed_key += packer.pack_uint64_vector(keys)
+        elif all(isinstance(key, str) for key in keys):
+            packed_key += packer.pack_bool(False)
+            packed_key += packer.pack_string_vector(keys)
+        else:
+            raise TypeError(f"Key must be List[int] or List[str], got {type(keys)}")
+
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_MULTI_GET)
         msg += packer.pack_uint64(self._tensor_store_id)
-        msg += packer.pack_uint64(len(object_ids))
-        msg += packer.pack_uint64_vector(object_ids)
+        msg += packed_key
         self.client._send(msg)
 
         # Handle response
         data, _ = self.client._recv()
-        lo, hi = 0, 4 * self.tensor_size * len(object_ids)
+        lo, hi = 0, 4 * self.tensor_size * len(keys)
         return torch.tensor(
             data=packer.unpack_float_vector(data[lo:hi]),
             dtype=torch.float32,
-        ).reshape(len(object_ids), self.tensor_size)
+        ).reshape(len(keys), self.tensor_size)
 
     ## Returns the number of tensors in the store.
     @decorators.check_closed
@@ -262,7 +314,6 @@ class TensorStore:
         # Send request
         msg = b""
         msg += packer.pack_byte(RequestType.TENSOR_STORE_OPEN)
-        msg += packer.pack_uint64(len(self.name))
         msg += packer.pack_string(self.name)
         self.client._send(msg)
 
