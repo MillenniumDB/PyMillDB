@@ -105,7 +105,7 @@ class TensorStore:
 
     ## Get tensors from the store with the pythonic syntax `store[key]`.
     def __getitem__(self, key: Union[int, str, List[int], List[str]]) -> torch.Tensor:
-        if isinstance(key, Iterable):
+        if not isinstance(key, str) and  isinstance(key, Iterable):
             return self.multi_get(key)
         else:
             return self.get(key)
@@ -114,7 +114,7 @@ class TensorStore:
     def __setitem__(
         self, key: Union[int, str, List[int], List[str]], value: torch.Tensor
     ) -> None:
-        if isinstance(key, Iterable):
+        if not isinstance(key, str) and isinstance(key, Iterable):
             self.multi_insert(key, value)
         else:
             self.insert(key, value)
