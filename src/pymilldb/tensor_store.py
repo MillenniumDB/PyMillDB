@@ -69,27 +69,6 @@ class TensorStore:
         # Handle response
         client._recv()
 
-    ## Returns a list of all store names.
-    @staticmethod
-    def list(client: "MDBClient") -> List[str]:
-        # Send request
-        msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_LIST)
-        client._send(msg)
-
-        # Handle response
-        data, _ = client._recv()
-        names = list()
-        lo, hi = 0, 8
-        num_stores = packer.unpack_uint64(data[lo:hi])
-        # TODO: Fix this "hack"
-        lo, hi = hi, hi + 8 * num_stores
-        name_sizes = packer.unpack_uint64_vector(data[lo:hi])
-        for name_size in name_sizes:
-            lo, hi = hi, hi + name_size
-            names.append(packer.unpack_string(data[lo:hi]))
-        return names
-
     ## Constructor for opening an existing store.
     def __init__(self, client: "MDBClient", name: str) -> None:
         ## Client instance.
