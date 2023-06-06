@@ -2,7 +2,7 @@ import socket
 from typing import Tuple
 
 from . import protocol
-from .utils import decorators
+from .utils import decorators, packer
 
 
 ## Interface for stablishing a connection with the server for
@@ -49,8 +49,9 @@ class MDBClient:
             ) from e
 
     @decorators.check_closed
-    def _send(self, data: bytes) -> None:
-        self._sock.sendall(data)
+    def _send(self, request_type: protocol.RequestType, data: bytes) -> None:
+        header = packer.pack_byte(request_type) + packer.pack_uint64(len(data))
+        self._sock.sendall(header + data)
 
     @decorators.check_closed
     def _recv(self) -> Tuple[bytes, protocol.StatusCode]:

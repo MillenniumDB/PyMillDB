@@ -17,11 +17,12 @@ def pack_uint64(i: int) -> bytes:
 
 
 def pack_string(string: str) -> bytes:
-    return string.encode("utf-8")
+    return pack_uint64(len(string)) + string.encode("utf-8")
 
 
 def pack_uint64_vector(vector: List[int]) -> bytes:
     data = b""
+    data += pack_uint64(len(vector))
     for value in vector:
         data += pack_uint64(value)
     return data
@@ -29,8 +30,17 @@ def pack_uint64_vector(vector: List[int]) -> bytes:
 
 def pack_float_vector(vector: List[float]) -> bytes:
     data = b""
+    data += pack_uint64(len(vector))
     for value in vector:
         data += struct.pack(">f", value)
+    return data
+
+
+def pack_string_vector(vector: List[str]) -> bytes:
+    data = b""
+    data += pack_uint64(len(vector))
+    for value in vector:
+        data += pack_string(value)
     return data
 
 
@@ -73,8 +83,8 @@ def unpack_graph(data: bytes) -> Graph:
     lo, hi = hi, hi + 8 * num_edges
     edge_ids = unpack_uint64_vector(data[lo:hi])
 
-    edge_index = list()
-    for _ in range(num_edges):
-        lo, hi = hi, hi + 16
-        edge_index.append(unpack_uint64_vector(data[lo:hi]))
+    edge_index = [
+        unpack_uint64_vector(data[i : i + 16])
+        for i in range(hi, hi + 16 * num_edges, 16)
+    ]
     return Graph(seed_ids, node_ids, edge_ids, edge_index)
