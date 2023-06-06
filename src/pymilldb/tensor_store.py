@@ -235,7 +235,11 @@ class TensorStore:
 
         # Handle response
         data, _ = self.client._recv()
-        return torch.tensor(data=packer.unpack_float_vector(data), dtype=torch.float32)
+        vector_size = packer.unpack_uint64(data[0:8])
+        return torch.tensor(
+            data=packer.unpack_float_vector(data[8 : 8 + 8 * vector_size]),
+            dtype=torch.float32,
+        )
 
     ## Gets multiple tensors from the store.
     @decorators.check_closed
@@ -258,8 +262,9 @@ class TensorStore:
 
         # Handle response
         data, _ = self.client._recv()
+        vector_size = packer.unpack_uint64(data[0:8])
         return torch.tensor(
-            data=packer.unpack_float_vector(data),
+            data=packer.unpack_float_vector(data[8 : 8 + 8 * vector_size]),
             dtype=torch.float32,
         ).reshape(len(keys), self.tensor_size)
 

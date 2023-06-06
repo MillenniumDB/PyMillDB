@@ -65,8 +65,7 @@ def unpack_uint64_vector(data: bytes) -> List[int]:
 
 
 def unpack_float_vector(data: bytes) -> List[float]:
-    vector_size = unpack_uint64(data[0:8])
-    return [unpack_float(data[i : i + 4]) for i in range(8, 8 + 4 * vector_size, 4)]
+    return [unpack_float(data[i : i + 4]) for i in range(0, len(data), 4)]
 
 
 def unpack_graph(data: bytes) -> Graph:
@@ -84,8 +83,8 @@ def unpack_graph(data: bytes) -> Graph:
     lo, hi = hi, hi + 8 * num_edges
     edge_ids = unpack_uint64_vector(data[lo:hi])
 
-    edge_index = list()
-    for _ in range(num_edges):
-        lo, hi = hi, hi + 16
-        edge_index.append(unpack_uint64_vector(data[lo:hi]))
+    edge_index = [
+        unpack_uint64_vector(data[i : i + 16])
+        for i in range(hi, hi + 16 * num_edges, 16)
+    ]
     return Graph(seed_ids, node_ids, edge_ids, edge_index)

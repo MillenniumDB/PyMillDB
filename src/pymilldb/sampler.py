@@ -21,11 +21,9 @@ class Sampler:
     def subgraph(self, num_seeds: int, num_neighbors: List[int]) -> Graph:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.SAMPLER_SUBGRAPH)
         msg += packer.pack_uint64(num_seeds)
-        msg += packer.pack_uint64(len(num_neighbors))
         msg += packer.pack_uint64_vector(num_neighbors)
-        self.client._send(msg)
+        self.client._send(RequestType.SAMPLER_SUBGRAPH, msg)
 
         # Handle response
         data, _ = self.client._recv()
@@ -37,11 +35,9 @@ class Sampler:
     ) -> Graph:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.SAMPLER_SUBGRAPH_EDGE_EXISTANCE)
         msg += packer.pack_uint64(num_preseeds)
-        msg += packer.pack_uint64(len(num_neighbors))
         msg += packer.pack_uint64_vector(num_neighbors)
-        self.client._send(msg)
+        self.client._send(RequestType.SAMPLER_SUBGRAPH_EDGE_EXISTANCE, msg)
 
         # Handle response
         data, _ = self.client._recv()
