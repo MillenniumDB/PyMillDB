@@ -101,7 +101,7 @@ class TensorStore:
 
     ## Get tensors from the store with the pythonic syntax `store[key]`.
     def __getitem__(self, key: Union[int, str, List[int], List[str]]) -> torch.Tensor:
-        if not isinstance(key, str) and  isinstance(key, Iterable):
+        if not isinstance(key, str) and isinstance(key, Iterable):
             return self.multi_get(key)
         else:
             return self.get(key)
@@ -164,11 +164,10 @@ class TensorStore:
 
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_INSERT)
         msg += packer.pack_uint64(self._tensor_store_id)
         msg += packed_key
         msg += packer.pack_float_vector(tensor.flatten())
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_INSERT, msg)
 
         # Handle response
         self.client._recv()
@@ -230,17 +229,13 @@ class TensorStore:
 
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_GET)
         msg += packer.pack_uint64(self._tensor_store_id)
         msg += packed_key
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_GET, msg)
 
         # Handle response
         data, _ = self.client._recv()
-        lo, hi = 0, 4 * self.tensor_size
-        return torch.tensor(
-            data=packer.unpack_float_vector(data[lo:hi]), dtype=torch.float32
-        )
+        return torch.tensor(data=packer.unpack_float_vector(data), dtype=torch.float32)
 
     ## Gets multiple tensors from the store.
     @decorators.check_closed
@@ -276,9 +271,8 @@ class TensorStore:
     def size(self) -> int:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_SIZE)
         msg += packer.pack_uint64(self._tensor_store_id)
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_SIZE, msg)
 
         # Handle response
         data, _ = self.client._recv()

@@ -35,6 +35,7 @@ def pack_float_vector(vector: List[float]) -> bytes:
         data += struct.pack(">f", value)
     return data
 
+
 def unpack_bool(data: bytes) -> bool:
     return struct.unpack(">?", data)[0]
 
@@ -56,7 +57,8 @@ def unpack_uint64_vector(data: bytes) -> List[int]:
 
 
 def unpack_float_vector(data: bytes) -> List[float]:
-    return [unpack_float(data[i : i + 4]) for i in range(0, len(data), 4)]
+    vector_size = unpack_uint64(data[0:8])
+    return [unpack_float(data[i : i + 4]) for i in range(8, 8 + 4 * vector_size, 4)]
 
 
 def unpack_graph(data: bytes) -> Graph:

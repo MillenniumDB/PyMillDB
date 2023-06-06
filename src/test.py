@@ -21,11 +21,16 @@ with MDBClient() as client:
     else:
         print("xd not in ts")
 
-    # ts.size()
-    # #ts["Q1"] = torch.tensor([2] * 10, dtype=torch.float32)
-    # ts[2328696358397018112] = torch.tensor([2] * 10, dtype=torch.float32)
+    print("now the size is: ", ts.size())
+    ts["Q1"] = torch.tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=torch.float32)
+    ts["Q2"] = torch.tensor([1] * 10, dtype=torch.float)
+    ts[2328696358397018112] = torch.tensor([99] * 10, dtype=torch.float32)  # same as Q1
+    print("stored value for Q1:", ts["Q1"])
+    print("stored value for Q2:", ts["Q2"])
+    print("now the size is: ", ts.size())
+
     # print("Write")
     # # print("Write", ts["Q1"])
-    # 
+    #
     ts.close()
     print("Close")
