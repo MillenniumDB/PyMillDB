@@ -36,6 +36,14 @@ def pack_float_vector(vector: List[float]) -> bytes:
     return data
 
 
+def pack_string_vector(vector: List[str]) -> bytes:
+    data = b""
+    data += pack_uint64(len(vector))
+    for value in vector:
+        data += pack_string(value)
+    return data
+
+
 def unpack_bool(data: bytes) -> bool:
     return struct.unpack(">?", data)[0]
 

@@ -29,8 +29,10 @@ with MDBClient() as client:
     print("stored value for Q2:", ts["Q2"])
     print("now the size is: ", ts.size())
 
-    # print("Write")
-    # # print("Write", ts["Q1"])
-    #
+    print("multi_get:", ts[["Q1", "Q2"]])
+
+    ts[["Q1", "Q2"]] = torch.tensor([3] * 20, dtype=torch.float32).reshape(2, 10)
+    print("after multi_insert:", ts[["Q1", "Q2"]])
+
     ts.close()
     print("Close")

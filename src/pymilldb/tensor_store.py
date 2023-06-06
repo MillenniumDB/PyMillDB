@@ -205,11 +205,11 @@ class TensorStore:
 
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_MULTI_INSERT)
         msg += packer.pack_uint64(self._tensor_store_id)
         msg += packed_key
+        # Written as a plain vector, the server knows the matrix shape
         msg += packer.pack_float_vector(tensors.flatten())
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_MULTI_INSERT, msg)
 
         # Handle response
         self.client._recv()
@@ -243,7 +243,6 @@ class TensorStore:
         packed_key = b""
         if all(isinstance(key, int) for key in keys):
             packed_key += packer.pack_bool(True)
-            packed_key += packer.pack_uint64(len(keys))
             packed_key += packer.pack_uint64_vector(keys)
         elif all(isinstance(key, str) for key in keys):
             packed_key += packer.pack_bool(False)
@@ -253,16 +252,14 @@ class TensorStore:
 
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_MULTI_GET)
         msg += packer.pack_uint64(self._tensor_store_id)
         msg += packed_key
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_MULTI_GET, msg)
 
         # Handle response
         data, _ = self.client._recv()
-        lo, hi = 0, 4 * self.tensor_size * len(keys)
         return torch.tensor(
-            data=packer.unpack_float_vector(data[lo:hi]),
+            data=packer.unpack_float_vector(data),
             dtype=torch.float32,
         ).reshape(len(keys), self.tensor_size)
 
