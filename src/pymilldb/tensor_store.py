@@ -21,9 +21,8 @@ class TensorStore:
     def exists(client: "MDBClient", name: str) -> bool:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_EXISTS)
         msg += packer.pack_string(name)
-        client._send(msg)
+        client._send(RequestType.TENSOR_STORE_EXISTS, msg)
 
         # Handle response
         data, _ = client._recv()
@@ -34,9 +33,8 @@ class TensorStore:
     def is_open(client: "MDBClient", name: str) -> bool:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_IS_OPEN)
         msg += packer.pack_string(name)
-        client._send(msg)
+        client._send(RequestType.TENSOR_STORE_IS_OPEN, msg)
 
         # Handle response
         data, _ = client._recv()
@@ -49,10 +47,9 @@ class TensorStore:
             raise ValueError(f"tensor_size must be positive integer, got {tensor_size}")
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_CREATE)
         msg += packer.pack_uint64(tensor_size)
         msg += packer.pack_string(name)
-        client._send(msg)
+        client._send(RequestType.TENSOR_STORE_CREATE, msg)
 
         # Handle response
         client._recv()
@@ -62,9 +59,8 @@ class TensorStore:
     def remove(client: "MDBClient", name: str) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_REMOVE)
         msg += packer.pack_string(name)
-        client._send(msg)
+        client._send(RequestType.TENSOR_STORE_REMOVE, msg)
 
         # Handle response
         client._recv()
@@ -138,10 +134,9 @@ class TensorStore:
 
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_CONTAINS)
         msg += packer.pack_uint64(self._tensor_store_id)
         msg += packed_key
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_CONTAINS, msg)
 
         # Handle response
         data, _ = self.client._recv()
@@ -292,9 +287,8 @@ class TensorStore:
     def _open(self) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_OPEN)
         msg += packer.pack_string(self.name)
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_OPEN, msg)
 
         # Handle response
         data, _ = self.client._recv()
@@ -307,9 +301,8 @@ class TensorStore:
     def _close(self) -> None:
         # Send request
         msg = b""
-        msg += packer.pack_byte(RequestType.TENSOR_STORE_CLOSE)
         msg += packer.pack_uint64(self._tensor_store_id)
-        self.client._send(msg)
+        self.client._send(RequestType.TENSOR_STORE_CLOSE, msg)
 
         # Handle response
         self.client._recv()
