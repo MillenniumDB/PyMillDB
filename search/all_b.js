@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['sampler_26',['Sampler',['../classpymilldb_1_1sampler_1_1Sampler.html',1,'pymilldb::sampler']]],
-  ['size_27',['size',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a78c4fa09aa7781e6b2631a49ff73003c',1,'pymilldb::tensor_store::TensorStore']]],
-  ['statuscode_28',['StatusCode',['../classpymilldb_1_1protocol_1_1StatusCode.html',1,'pymilldb::protocol']]],
-  ['subgraph_29',['subgraph',['../classpymilldb_1_1sampler_1_1Sampler.html#a547d2f6c4cc68225ba25a6707a760348',1,'pymilldb::sampler::Sampler']]],
-  ['subgraph_5fedge_5fexistance_30',['subgraph_edge_existance',['../classpymilldb_1_1sampler_1_1Sampler.html#a9e2704deba65da8a7e6c53c5aee1b411',1,'pymilldb::sampler::Sampler']]]
+  ['tensor_5fsize_30',['tensor_size',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a9b2df2ab8c30d3e7e09986c7a733cf5f',1,'pymilldb::tensor_store::TensorStore']]],
+  ['tensorstore_31',['TensorStore',['../classpymilldb_1_1tensor__store_1_1TensorStore.html',1,'pymilldb::tensor_store']]]
 ];
