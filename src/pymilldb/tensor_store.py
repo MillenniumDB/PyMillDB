@@ -180,7 +180,6 @@ class TensorStore:
         packed_key = b""
         if all(isinstance(key, int) for key in keys):
             packed_key += packer.pack_bool(True)
-            packed_key += packer.pack_uint64(len(keys))
             packed_key += packer.pack_uint64_vector(keys)
         elif all(isinstance(key, str) for key in keys):
             packed_key += packer.pack_bool(False)
