@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['exists_13',['exists',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a5d4ea2ad2e37a2fefad85c12392123e0',1,'pymilldb::tensor_store::TensorStore']]]
+  ['dataedge_15',['DataEdge',['../classpymilldb_1_1graph_1_1DataEdge.html',1,'pymilldb::graph']]],
+  ['datanode_16',['DataNode',['../classpymilldb_1_1graph_1_1DataNode.html',1,'pymilldb::graph']]],
+  ['dump_5fmilldb_17',['dump_milldb',['../classpymilldb_1_1graph_1_1GraphBuilder.html#acb8566db5c05635395692ad44da6dbe0',1,'pymilldb::graph::GraphBuilder']]]
 ];

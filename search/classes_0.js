@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['graph_34',['Graph',['../classpymilldb_1_1utils_1_1graph_1_1Graph.html',1,'pymilldb::utils::graph']]]
+  ['dataedge_40',['DataEdge',['../classpymilldb_1_1graph_1_1DataEdge.html',1,'pymilldb::graph']]],
+  ['datanode_41',['DataNode',['../classpymilldb_1_1graph_1_1DataNode.html',1,'pymilldb::graph']]]
 ];
