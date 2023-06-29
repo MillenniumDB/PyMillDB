@@ -1,8 +1,7 @@
 import socket
 from typing import Tuple
 
-from . import protocol
-from .utils import decorators, packer
+from . import decorators, packer, protocol
 
 
 ## Interface for stablishing a connection with the server for

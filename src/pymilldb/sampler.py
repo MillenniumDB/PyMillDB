@@ -1,11 +1,32 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Tuple
 
+from . import packer
 from .protocol import RequestType
-from .utils import packer
-from .utils.graph import Graph
 
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
+
+## GraphSample is the output of a sample.
+class GraphSample:
+    def __init__(
+        self,
+        seed_ids: List[int],
+        node_ids: List[int],
+        edge_ids: List[int],
+        edge_index: List[Tuple[int, int]],
+    ):
+        self.num_seeds = len(seed_ids)
+        self.node_ids = seed_ids + node_ids
+        self.edge_ids = edge_ids
+        self.edge_index = edge_index
+
+    def __repr__(self) -> str:
+        return (
+            f"GraphSample(num_seeds={self.num_seeds}, "
+            f"node_ids=[{len(self.node_ids)}], "
+            f"edge_ids=[{len(self.edge_ids)}], "
+            f"edge_index=[{len(self.edge_index)}, 2])"
+        )
 
 ## Interface for generating samples from MillenniumDB.
 #
@@ -18,7 +39,7 @@ class Sampler:
         self.client = client
 
     ## Returns a random subgraph
-    def subgraph(self, num_seeds: int, num_neighbors: List[int]) -> Graph:
+    def subgraph(self, num_seeds: int, num_neighbors: List[int]) -> GraphSample:
         # Send request
         msg = b""
         msg += packer.pack_uint64(num_seeds)
@@ -32,7 +53,7 @@ class Sampler:
     ## Returns a random subgraph for edge existance prediction
     def subgraph_edge_existance(
         self, num_preseeds: int, num_neighbors: List[int]
-    ) -> Graph:
+    ) -> GraphSample:
         # Send request
         msg = b""
         msg += packer.pack_uint64(num_preseeds)

@@ -1,7 +1,7 @@
 import struct
 from typing import List
 
-from .graph import Graph
+from .sampler import GraphSample
 
 
 def pack_byte(b: int) -> bytes:
@@ -68,7 +68,7 @@ def unpack_float_vector(data: bytes) -> List[float]:
     return [unpack_float(data[i : i + 4]) for i in range(0, len(data), 4)]
 
 
-def unpack_graph(data: bytes) -> Graph:
+def unpack_graph(data: bytes) -> "GraphSample":
     lo, hi = 0, 8
     num_seeds = unpack_uint64(data[lo:hi])
     lo, hi = hi, hi + 8
@@ -87,4 +87,4 @@ def unpack_graph(data: bytes) -> Graph:
         unpack_uint64_vector(data[i : i + 16])
         for i in range(hi, hi + 16 * num_edges, 16)
     ]
-    return Graph(seed_ids, node_ids, edge_ids, edge_index)
+    return GraphSample(seed_ids, node_ids, edge_ids, edge_index)

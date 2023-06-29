@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING, List, Union
 
 import torch
 
+from . import decorators, packer
 from .protocol import RequestType
-from .utils import decorators, packer
 
 if TYPE_CHECKING:
     from .mdb_client import MDBClient

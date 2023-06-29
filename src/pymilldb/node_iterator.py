@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, List
 
+from . import packer
 from .protocol import RequestType, StatusCode
-from .utils import packer
 
 if TYPE_CHECKING:
     from .mdb_client import MDBClient
