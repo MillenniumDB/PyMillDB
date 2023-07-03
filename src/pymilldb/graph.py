@@ -28,44 +28,84 @@ def dump_properties_milldb(properties: PropertiesDict) -> str:
     return ret
 
 
-## DataNode represents a MillenniumDB Quad Model node
-class DataNode:
+## MillenniumDB's Quad Model node representation in GraphBuilder class
+class BuilderNode:
     def __init__(
         self,
         name: str,
         labels: List[str] = list(),
         properties: PropertiesDict = dict(),
-        node_id: int = 0,
     ):
-        self.name = name
-        self.labels = labels
-        self.properties = properties
-        ## Has no effect in GraphBuilder as ids are generated when creating the database
+        ## Node name
+        self.name: str = name
+        ## Node labels
+        self.labels: List[str] = labels
+        ## Node properties
+        self.properties: PropertiesDict = properties
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(name={self.name}, num_labels={len(self.labels)}, num_properties={len(self.properties)})"
+
+
+## MillenniumDB's Quad Model node representation in GraphExplorer class
+class ExplorerNode(BuilderNode):
+    def __init__(
+        self,
+        node_id: int,
+        name: str,
+        labels: List[str] = list(),
+        properties: PropertiesDict = dict(),
+    ):
+        super().__init__(name, labels, properties)
+        ## Node identifier
         self.node_id = node_id
 
     def __repr__(self) -> str:
-        return f"DataNode(name={self.name}, num_labels={len(self.labels)}, num_properties={len(self.properties)})"
+        return f"{self.__class__.__name__}(node_id={self.node_id}, name={self.name}, num_labels={len(self.labels)}, num_properties={len(self.properties)})"
 
 
-## DataEdge represents a MillenniumDB Quad Model edge
-class DataEdge:
+## MillenniumDB's Quad Model edge representation in GraphBuilder class
+#
+# Note that the source and target nodes are node names rather than identifiers
+class BuilderEdge:
     def __init__(
         self,
         source: str,
         target: str,
         edge_type: str,
         propeties: PropertiesDict = dict(),
-        edge_id: int = 0,
     ):
+        ## Source node name
         self.source = source
+        ## Target node name
         self.target = target
+        ## Edge type
         self.edge_type = edge_type
+        ## Edge properties
         self.properties = propeties
-        ## Has no effect in GraphBuilder as ids are generated when creating the database
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(source={self.source}, target={self.target}, edge_type={self.edge_type}, num_properties={len(self.properties)})"
+
+
+## MillenniumDB's Quad Model edge representation in GraphExplorer class.
+#
+# Note that the source and target nodes are identifiers rather than names
+class ExplorerEdge(BuilderEdge):
+    def __init__(
+        self,
+        edge_id: int,
+        source: int,
+        target: int,
+        edge_type: str,
+        propeties: PropertiesDict = dict(),
+    ):
+        super().__init__(source, target, edge_type, propeties)
+        ## Edge identifier
         self.edge_id = edge_id
 
     def __repr__(self) -> str:
-        return f"DataEdge(source={self.source}, target={self.target}, type={self.edge_type}, num_properties={len(self.properties)})"
+        return f"{self.__class__.__name__}(edge_id={self.edge_id}, source={self.source}, target={self.target}, edge_type={self.edge_type}, num_properties={len(self.properties)})"
 
 
 ## Interface for building and dumping graphs in MillenniumDB's Quad Model format
@@ -74,25 +114,25 @@ class DataEdge:
 class GraphBuilder:
     ## Constructor.
     def __init__(self):
-        self._nodes: Dict[str, "DataNode"] = dict()
-        self._edges: List["DataEdge"] = list()
+        self._nodes: Dict[str, BuilderNode] = dict()
+        self._edges: List[BuilderEdge] = list()
 
     @property
-    def nodes(self) -> List["DataNode"]:
+    def nodes(self) -> List[BuilderNode]:
         return list(self._nodes.values())
 
     @property
-    def edges(self) -> List["DataEdge"]:
+    def edges(self) -> List[BuilderEdge]:
         return self._edges
 
     ## Add a node to the graph
-    def add_node(self, node: "DataNode"):
+    def add_node(self, node: BuilderNode):
         if node.name in self._nodes:
             raise ValueError(f'Node "{node.name}" already exists in the graph.')
         self._nodes[node.name] = node
 
     ## Add an edge to the graph
-    def add_edge(self, edge: "DataEdge"):
+    def add_edge(self, edge: BuilderEdge):
         self._edges.append(edge)
 
     ## Dump the graph to a file in MillenniumDB's Quad Model format
@@ -126,7 +166,7 @@ class GraphBuilder:
                 f.write("\n")
 
     def __repr__(self) -> str:
-        return f"GraphBuilder(num_nodes={len(self.nodes)}, num_edges={len(self.edges)})"
+        return f"{self.__class__.__name__}(num_nodes={len(self.nodes)}, num_edges={len(self.edges)})"
 
 
 ## Interface for exploring graphs in MillenniumDB
@@ -136,9 +176,22 @@ class GraphExplorer:
         ## Client instance
         self.client = client
 
+    def get_node(self, node_id: int) -> ExplorerNode:
+        # Send request
+        msg = b""
+        msg += packer.pack_uint64(node_id)
+        self.client._send(RequestType.GRAPH_EXPLORER_GET_NODE, msg)
+
+        # Handle response
+        data, _ = self.client._recv()
+        return ExplorerNode(
+            node_id=packer.unpack_uint64(data[0:8]),
+            name=""
+        )
+
     def get_edges(
         self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
-    ) -> List[DataEdge]:
+    ) -> List[ExplorerEdge]:
         if direction not in ["outgoing", "incoming"]:
             raise ValueError('Direction must be either "outgoing" or "incoming".')
 
@@ -154,7 +207,7 @@ class GraphExplorer:
         edges = list()
         for i in range(0, len(data), 4 * 8):
             edges.append(
-                DataEdge(
+                ExplorerEdge(
                     source=packer.unpack_uint64(data[i : i + 8]),
                     target=packer.unpack_uint64(data[i + 8 : i + 16]),
                     edge_type=packer.unpack_uint64(data[i + 16 : i + 24]),

@@ -34,6 +34,7 @@ class RequestType(IntEnum):
     NODE_ITERATOR_NEXT   = 0b0001_0110
     # GRAPH EXPLORER
     GRAPH_EXPLORER_GET_EDGES = 0b0001_1000
+    GRAPH_EXPLORER_GET_NODE = 0b0001_1001
 
 
 ## Server response status codes.
