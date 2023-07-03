@@ -57,7 +57,10 @@ def unpack_float(data: bytes) -> float:
 
 
 def unpack_string(data: bytes) -> str:
-    return data.decode("utf-8")
+    null_index = data.find(b"\x00")
+    if null_index == -1:
+        raise ValueError("Invalid string: no null terminator")
+    return data[:null_index].decode("utf-8")
 
 
 def unpack_uint64_vector(data: bytes) -> List[int]:

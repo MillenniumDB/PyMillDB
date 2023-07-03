@@ -184,10 +184,15 @@ class GraphExplorer:
 
         # Handle response
         data, _ = self.client._recv()
-        return ExplorerNode(
-            node_id=packer.unpack_uint64(data[0:8]),
-            name=""
-        )
+
+        name = packer.unpack_string(data)
+        labels = list()
+        lo = len(name) + 1 # +1 for the null terminator
+        while lo < len(data):
+            label = packer.unpack_string(data[lo : ])
+            labels.append(label)
+            lo += len(label) + 1 # +1 for the null terminator
+        return ExplorerNode(node_id=node_id, name=name, labels=labels)
 
     def get_edges(
         self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
@@ -205,13 +210,19 @@ class GraphExplorer:
         data, _ = self.client._recv()
 
         edges = list()
-        for i in range(0, len(data), 4 * 8):
+        lo = 0
+        while lo < len(data):
+            source = packer.unpack_uint64(data[lo : lo + 8])
+            target = packer.unpack_uint64(data[lo + 8 : lo + 16])
+            edge_id = packer.unpack_uint64(data[lo + 16 : lo + 24])
+            edge_type = packer.unpack_string(data[lo + 24 :])
             edges.append(
                 ExplorerEdge(
-                    source=packer.unpack_uint64(data[i : i + 8]),
-                    target=packer.unpack_uint64(data[i + 8 : i + 16]),
-                    edge_type=packer.unpack_uint64(data[i + 16 : i + 24]),
-                    edge_id=packer.unpack_uint64(data[i + 24 : i + 32]),
+                    source=source,
+                    target=target,
+                    edge_type=edge_type,
+                    edge_id=edge_id,
                 )
             )
+            lo += 24 + len(edge_type) + 1 # +1 for the null terminator
         return edges
