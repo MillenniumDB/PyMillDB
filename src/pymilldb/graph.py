@@ -1,5 +1,5 @@
 import re
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Literal
 
 from . import packer
 from .protocol import RequestType
@@ -136,10 +136,16 @@ class GraphExplorer:
         ## Client instance
         self.client = client
 
-    def get_edges(self, node_id: int) -> List[DataEdge]:
+    def get_edges(
+        self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
+    ) -> List[DataEdge]:
+        if direction not in ["outgoing", "incoming"]:
+            raise ValueError('Direction must be either "outgoing" or "incoming".')
+
         # Send request
         msg = b""
         msg += packer.pack_uint64(node_id)
+        msg += packer.pack_bool(direction == "outgoing")
         self.client._send(RequestType.GRAPH_EXPLORER_GET_EDGES, msg)
 
         # Handle response
