@@ -52,15 +52,20 @@ def unpack_uint64(data: bytes) -> int:
     return struct.unpack(">Q", data)[0]
 
 
+def unpack_int64(data: bytes) -> int:
+    return struct.unpack(">q", data)[0]
+
+
 def unpack_float(data: bytes) -> float:
     return struct.unpack(">f", data)[0]
 
 
 def unpack_string(data: bytes) -> str:
-    null_index = data.find(b"\x00")
-    if null_index == -1:
-        raise ValueError("Invalid string: no null terminator")
-    return data[:null_index].decode("utf-8")
+    # TODO: Refactor to prevent slice-copy
+    i = 0
+    while data[i] != 0:
+        i += 1
+    return data[:i].decode("utf-8")
 
 
 def unpack_uint64_vector(data: bytes) -> List[int]:

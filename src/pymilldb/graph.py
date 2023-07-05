@@ -169,8 +169,8 @@ class GraphBuilder:
         return f"{self.__class__.__name__}(num_nodes={len(self.nodes)}, num_edges={len(self.edges)})"
 
 
-## Interface for exploring graphs in MillenniumDB
-class GraphExplorer:
+## Interface for walking across graphs in MillenniumDB
+class GraphWalker:
     ## Constructor
     def __init__(self, client: "MDBClient"):
         ## Client instance
@@ -180,19 +180,56 @@ class GraphExplorer:
         # Send request
         msg = b""
         msg += packer.pack_uint64(node_id)
-        self.client._send(RequestType.GRAPH_EXPLORER_GET_NODE, msg)
+        self.client._send(RequestType.GRAPH_WALKER_GET_NODE, msg)
 
         # Handle response
         data, _ = self.client._recv()
-
-        name = packer.unpack_string(data)
+        lo = 0
+        # TODO: Refactor to prevent slicing-copy strings
+        # Name
+        name = packer.unpack_string(data[lo:])
+        lo += len(name) + 1
+        # Labels
         labels = list()
-        lo = len(name) + 1 # +1 for the null terminator
-        while lo < len(data):
-            label = packer.unpack_string(data[lo : ])
+        num_labels = packer.unpack_uint64(data[lo : lo + 8])
+        lo += 8
+        # TODO: packer.unpack_labels?
+        for _ in range(num_labels):
+            label = packer.unpack_string(data[lo:])
+            lo += len(label) + 1
             labels.append(label)
-            lo += len(label) + 1 # +1 for the null terminator
-        return ExplorerNode(node_id=node_id, name=name, labels=labels)
+        # Properties
+        properties = dict()
+        num_properties = packer.unpack_uint64(data[lo : lo + 8])
+        lo += 8
+        # TODO: packer.unpack_properties?
+        for _ in range(num_properties):
+            # Key
+            key = packer.unpack_string(data[lo:])
+            lo += len(key) + 1
+            # Value
+            value_type_code = data[lo]
+            lo += 1
+            if value_type_code == 1:
+                # bool
+                value = packer.unpack_bool(data[lo : lo + 1])
+                lo += 1
+            elif value_type_code == 2:
+                # int64
+                value = packer.unpack_int64(data[lo : lo + 8])
+                lo += 8
+            elif value_type_code == 3:
+                # float
+                value = packer.unpack_float(data[lo : lo + 4])
+                lo += 4
+            elif value_type_code == 4:
+                # string
+                value = packer.unpack_string(data[lo:])
+                lo += len(value) + 1
+            else:
+                raise ValueError(f"Invalid property value type code: {value_type_code}")
+            properties[key] = value
+        return ExplorerNode(node_id=node_id, name=name, labels=labels, properties=properties)
 
     def get_edges(
         self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
@@ -204,7 +241,7 @@ class GraphExplorer:
         msg = b""
         msg += packer.pack_uint64(node_id)
         msg += packer.pack_bool(direction == "outgoing")
-        self.client._send(RequestType.GRAPH_EXPLORER_GET_EDGES, msg)
+        self.client._send(RequestType.GRAPH_WALKER_GET_EDGES, msg)
 
         # Handle response
         data, _ = self.client._recv()
@@ -224,5 +261,5 @@ class GraphExplorer:
                     edge_id=edge_id,
                 )
             )
-            lo += 24 + len(edge_type) + 1 # +1 for the null terminator
+            lo += 24 + len(edge_type) + 1  # +1 for the null terminator
         return edges
