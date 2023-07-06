@@ -61,11 +61,7 @@ def unpack_float(data: bytes) -> float:
 
 
 def unpack_string(data: bytes) -> str:
-    # TODO: Refactor to prevent slice-copy
-    i = 0
-    while data[i] != 0:
-        i += 1
-    return data[:i].decode("utf-8")
+    return data.decode("utf-8")
 
 
 def unpack_uint64_vector(data: bytes) -> List[int]:

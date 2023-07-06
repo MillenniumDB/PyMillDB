@@ -184,52 +184,54 @@ class GraphWalker:
 
         # Handle response
         data, _ = self.client._recv()
-        lo = 0
-        # TODO: Refactor to prevent slicing-copy strings
         # Name
-        name = packer.unpack_string(data[lo:])
-        lo += len(name) + 1
+        lo, hi = 0, data.index(b"\x00")
+        name = packer.unpack_string(data[lo:hi])
+        hi += 1
         # Labels
+        lo, hi = hi, hi + 8
+        num_labels = packer.unpack_uint64(data[lo:hi])
         labels = list()
-        num_labels = packer.unpack_uint64(data[lo : lo + 8])
-        lo += 8
-        # TODO: packer.unpack_labels?
         for _ in range(num_labels):
-            label = packer.unpack_string(data[lo:])
-            lo += len(label) + 1
+            lo, hi = hi, data.index(b"\x00", hi)
+            label = packer.unpack_string(data[lo:hi])
+            hi += 1
             labels.append(label)
         # Properties
+        lo, hi = hi, hi + 8
+        num_properties = packer.unpack_uint64(data[lo:hi])
         properties = dict()
-        num_properties = packer.unpack_uint64(data[lo : lo + 8])
-        lo += 8
-        # TODO: packer.unpack_properties?
         for _ in range(num_properties):
             # Key
-            key = packer.unpack_string(data[lo:])
-            lo += len(key) + 1
+            lo, hi = hi, data.index(b"\x00", hi)
+            key = packer.unpack_string(data[lo:hi])
+            hi += 1
             # Value
-            value_type_code = data[lo]
-            lo += 1
+            value_type_code = data[hi]
+            hi += 1
             if value_type_code == 1:
                 # bool
-                value = packer.unpack_bool(data[lo : lo + 1])
-                lo += 1
+                lo, hi = hi, hi + 1
+                value = packer.unpack_bool(data[lo:hi])
             elif value_type_code == 2:
                 # int64
-                value = packer.unpack_int64(data[lo : lo + 8])
-                lo += 8
+                lo, hi = hi, hi + 8
+                value = packer.unpack_int64(data[lo:hi])
             elif value_type_code == 3:
                 # float
-                value = packer.unpack_float(data[lo : lo + 4])
-                lo += 4
+                lo, hi = hi, hi + 4
+                value = packer.unpack_float(data[lo:hi])
             elif value_type_code == 4:
                 # string
-                value = packer.unpack_string(data[lo:])
-                lo += len(value) + 1
+                lo, hi = hi, data.index(b"\x00", hi)
+                value = packer.unpack_string(data[lo:hi])
+                hi += 1
             else:
                 raise ValueError(f"Invalid property value type code: {value_type_code}")
             properties[key] = value
-        return ExplorerNode(node_id=node_id, name=name, labels=labels, properties=properties)
+        return ExplorerNode(
+            node_id=node_id, name=name, labels=labels, properties=properties
+        )
 
     def get_edges(
         self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
@@ -247,19 +249,57 @@ class GraphWalker:
         data, _ = self.client._recv()
 
         edges = list()
-        lo = 0
-        while lo < len(data):
-            source = packer.unpack_uint64(data[lo : lo + 8])
-            target = packer.unpack_uint64(data[lo + 8 : lo + 16])
-            edge_id = packer.unpack_uint64(data[lo + 16 : lo + 24])
-            edge_type = packer.unpack_string(data[lo + 24 :])
+        lo, hi = 0, 0
+        while hi < len(data):
+            lo, hi = hi, hi + 8
+            source = packer.unpack_uint64(data[lo:hi])
+            lo, hi = hi, hi + 8
+            target = packer.unpack_uint64(data[lo:hi])
+            lo, hi = hi, hi + 8
+            edge_id = packer.unpack_uint64(data[lo:hi])
+            lo, hi = hi, data.index(b"\x00", hi)
+            edge_type = packer.unpack_string(data[lo:hi])
+            hi += 1
+            lo, hi = hi, hi + 8
+            num_properties = packer.unpack_uint64(data[lo:hi])
+            properties = dict()
+            for _ in range(num_properties):
+                # Key
+                lo, hi = hi, data.index(b"\x00", hi)
+                key = packer.unpack_string(data[lo:hi])
+                hi += 1
+                # Value
+                value_type_code = data[hi]
+                hi += 1
+                if value_type_code == 1:
+                    # bool
+                    lo, hi = hi, hi + 1
+                    value = packer.unpack_bool(data[lo:hi])
+                elif value_type_code == 2:
+                    # int64
+                    lo, hi = hi, hi + 8
+                    value = packer.unpack_int64(data[lo:hi])
+                elif value_type_code == 3:
+                    # float
+                    lo, hi = hi, hi + 4
+                    value = packer.unpack_float(data[lo:hi])
+                elif value_type_code == 4:
+                    # string
+                    lo, hi = hi, data.index(b"\x00", hi)
+                    value = packer.unpack_string(data[lo:hi])
+                    hi += 1
+                else:
+                    raise ValueError(
+                        f"Invalid property value type code: {value_type_code}"
+                    )
+                properties[key] = value
             edges.append(
                 ExplorerEdge(
                     source=source,
                     target=target,
                     edge_type=edge_type,
                     edge_id=edge_id,
+                    propeties=properties,
                 )
             )
-            lo += 24 + len(edge_type) + 1  # +1 for the null terminator
         return edges
