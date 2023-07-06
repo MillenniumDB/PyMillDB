@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['dataedge_40',['DataEdge',['../classpymilldb_1_1graph_1_1DataEdge.html',1,'pymilldb::graph']]],
-  ['datanode_41',['DataNode',['../classpymilldb_1_1graph_1_1DataNode.html',1,'pymilldb::graph']]]
+  ['builderedge_49',['BuilderEdge',['../classpymilldb_1_1graph_1_1BuilderEdge.html',1,'pymilldb::graph']]],
+  ['buildernode_50',['BuilderNode',['../classpymilldb_1_1graph_1_1BuilderNode.html',1,'pymilldb::graph']]]
 ];

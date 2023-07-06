@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['name_77',['name',['../classpymilldb_1_1tensor__store_1_1TensorStore.html#a0d2a39029f4aff8fe4d267034ea754af',1,'pymilldb::tensor_store::TensorStore']]]
+  ['edge_5fid_89',['edge_id',['../classpymilldb_1_1graph_1_1WalkerEdge.html#a3c0dfd760f2c833a251dc698cf383c68',1,'pymilldb::graph::WalkerEdge']]],
+  ['edge_5ftype_90',['edge_type',['../classpymilldb_1_1graph_1_1BuilderEdge.html#aad884070a2d49bc5dcdc8f923fed42e4',1,'pymilldb::graph::BuilderEdge']]]
 ];

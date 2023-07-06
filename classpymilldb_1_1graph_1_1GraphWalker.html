@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PyMillDB: pymilldb.graph.DataEdge Class Reference</title>
+<title>PyMillDB: pymilldb.graph.GraphWalker Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -61,48 +61,44 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>pymilldb</b></li><li class="navelem"><b>graph</b></li><li class="navelem"><a class="el" href="classpymilldb_1_1graph_1_1DataEdge.html">DataEdge</a></li>  </ul>
+<li class="navelem"><b>pymilldb</b></li><li class="navelem"><b>graph</b></li><li class="navelem"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html">GraphWalker</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="classpymilldb_1_1graph_1_1DataEdge-members.html">List of all members</a>  </div>
+<a href="classpymilldb_1_1graph_1_1GraphWalker-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">pymilldb.graph.DataEdge Class Reference</div>  </div>
+<div class="title">pymilldb.graph.GraphWalker Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classpymilldb_1_1graph_1_1DataEdge.html" title="DataEdge represents a MillenniumDB Quad Model edge.">DataEdge</a> represents a MillenniumDB Quad Model edge.  
- <a href="classpymilldb_1_1graph_1_1DataEdge.html#details">More...</a></p>
+<p>Interface for walking across graphs in MillenniumDB.  
+ <a href="classpymilldb_1_1graph_1_1GraphWalker.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad20f58e933dc7200cf45b76546b1da21"><td class="memItemLeft" align="right" valign="top"><a id="ad20f58e933dc7200cf45b76546b1da21"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, str source, str target, str edge_type, PropertiesDict propeties=dict())</td></tr>
-<tr class="separator:ad20f58e933dc7200cf45b76546b1da21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ebe69b70d0a30b5dcafb5dc1a0f13d3"><td class="memItemLeft" align="right" valign="top"><a id="a1ebe69b70d0a30b5dcafb5dc1a0f13d3"></a>
-str&#160;</td><td class="memItemRight" valign="bottom"><b>__repr__</b> (self)</td></tr>
-<tr class="separator:a1ebe69b70d0a30b5dcafb5dc1a0f13d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f59426abfc7d1fead20106fdc0525be"><td class="memItemLeft" align="right" valign="top"><a id="a8f59426abfc7d1fead20106fdc0525be"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html#a8f59426abfc7d1fead20106fdc0525be">__init__</a> (self, &quot;MDBClient&quot; client)</td></tr>
+<tr class="memdesc:a8f59426abfc7d1fead20106fdc0525be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:a8f59426abfc7d1fead20106fdc0525be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e169be9c65eb8cfd57f8303633ca980"><td class="memItemLeft" align="right" valign="top"><a id="a8e169be9c65eb8cfd57f8303633ca980"></a>
+<a class="el" href="classpymilldb_1_1graph_1_1WalkerNode.html">WalkerNode</a>&#160;</td><td class="memItemRight" valign="bottom"><b>get_node</b> (self, int node_id)</td></tr>
+<tr class="separator:a8e169be9c65eb8cfd57f8303633ca980"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a77fd215d8f6e7707f24e2b27def4f6"><td class="memItemLeft" align="right" valign="top"><a id="a8a77fd215d8f6e7707f24e2b27def4f6"></a>
+List[<a class="el" href="classpymilldb_1_1graph_1_1WalkerNode.html">WalkerNode</a>]&#160;</td><td class="memItemRight" valign="bottom"><b>get_edges</b> (self, int node_id, Literal[&quot;outgoing&quot;, &quot;incoming&quot;] direction=&quot;outgoing&quot;)</td></tr>
+<tr class="separator:a8a77fd215d8f6e7707f24e2b27def4f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a823cdaaec2a62a5602ad4834b67dce02"><td class="memItemLeft" align="right" valign="top"><a id="a823cdaaec2a62a5602ad4834b67dce02"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>source</b></td></tr>
-<tr class="separator:a823cdaaec2a62a5602ad4834b67dce02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8096788e9a38c6d891e99e2b82fb1aaf"><td class="memItemLeft" align="right" valign="top"><a id="a8096788e9a38c6d891e99e2b82fb1aaf"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>target</b></td></tr>
-<tr class="separator:a8096788e9a38c6d891e99e2b82fb1aaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d2bedcfccf721fc5b8912b29e036e13"><td class="memItemLeft" align="right" valign="top"><a id="a0d2bedcfccf721fc5b8912b29e036e13"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>edge_type</b></td></tr>
-<tr class="separator:a0d2bedcfccf721fc5b8912b29e036e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58d132131a21e6a12c15273f5ce1f67a"><td class="memItemLeft" align="right" valign="top"><a id="a58d132131a21e6a12c15273f5ce1f67a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>properties</b></td></tr>
-<tr class="separator:a58d132131a21e6a12c15273f5ce1f67a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5eb9f8ace5a1be206188efe3760e2232"><td class="memItemLeft" align="right" valign="top"><a id="a5eb9f8ace5a1be206188efe3760e2232"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html#a5eb9f8ace5a1be206188efe3760e2232">client</a></td></tr>
+<tr class="memdesc:a5eb9f8ace5a1be206188efe3760e2232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Client instance. <br /></td></tr>
+<tr class="separator:a5eb9f8ace5a1be206188efe3760e2232"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classpymilldb_1_1graph_1_1DataEdge.html" title="DataEdge represents a MillenniumDB Quad Model edge.">DataEdge</a> represents a MillenniumDB Quad Model edge. </p>
+<div class="textblock"><p>Interface for walking across graphs in MillenniumDB. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/pymilldb/graph.py</li>
 </ul>
