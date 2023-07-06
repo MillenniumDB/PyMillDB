@@ -26,7 +26,7 @@ class TensorStore:
 
         # Handle response
         data, _ = client._recv()
-        return packer.unpack_bool(data[0:8])
+        return packer.unpack_bool(data, 0)
 
     ## Returns `True` if the store is open.
     @staticmethod
@@ -38,7 +38,7 @@ class TensorStore:
 
         # Handle response
         data, _ = client._recv()
-        return packer.unpack_bool(data[0:8])
+        return packer.unpack_bool(data, 0)
 
     ## Creates a new store on disk.
     @staticmethod
@@ -140,7 +140,7 @@ class TensorStore:
 
         # Handle response
         data, _ = self.client._recv()
-        return packer.unpack_bool(data[0:8])
+        return packer.unpack_bool(data, 0)
 
     ## Inserts a tensor into the store.
     @decorators.check_closed
@@ -234,9 +234,11 @@ class TensorStore:
 
         # Handle response
         data, _ = self.client._recv()
-        vector_size = packer.unpack_uint64(data[0:8])
+        lo, hi = 0, 8
+        vector_size = packer.unpack_uint64(data, lo, hi)
+        lo, hi = hi, hi + 4 * vector_size
         return torch.tensor(
-            data=packer.unpack_float_vector(data[8 : 8 + 8 * vector_size]),
+            data=packer.unpack_float_vector(data, lo, hi),
             dtype=torch.float32,
         )
 
@@ -261,9 +263,11 @@ class TensorStore:
 
         # Handle response
         data, _ = self.client._recv()
-        vector_size = packer.unpack_uint64(data[0:8])
+        lo, hi = 0, 8
+        vector_size = packer.unpack_uint64(data, lo, hi)
+        lo, hi = hi, hi + 4 * vector_size
         return torch.tensor(
-            data=packer.unpack_float_vector(data[8 : 8 + 8 * vector_size]),
+            data=packer.unpack_float_vector(data, lo, hi),
             dtype=torch.float32,
         ).reshape(len(keys), self.tensor_size)
 
@@ -277,7 +281,7 @@ class TensorStore:
 
         # Handle response
         data, _ = self.client._recv()
-        return packer.unpack_uint64(data[0:8])
+        return packer.unpack_uint64(data, 0, 8)
 
     def _open(self) -> None:
         # Send request
@@ -288,9 +292,9 @@ class TensorStore:
         # Handle response
         data, _ = self.client._recv()
         lo, hi = 0, 8
-        self._tensor_store_id = packer.unpack_uint64(data[lo:hi])
+        self._tensor_store_id = packer.unpack_uint64(data, lo, hi)
         lo, hi = hi, hi + 8
-        self.tensor_size = packer.unpack_uint64(data[lo:hi])
+        self.tensor_size = packer.unpack_uint64(data, lo, hi)
         self._closed = False
 
     def _close(self) -> None:
