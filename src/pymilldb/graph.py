@@ -176,10 +176,18 @@ class GraphWalker:
         ## Client instance
         self.client = client
 
-    def get_node(self, node_id: int) -> WalkerNode:
+    ## Describe a node by its identifier or name
+    def get_node(self, node_id: int | str) -> WalkerNode:
         # Send request
         msg = b""
-        msg += packer.pack_uint64(node_id)
+        if isinstance(node_id, int):
+            msg += packer.pack_bool(True)
+            msg += packer.pack_uint64(node_id)
+        elif isinstance(node_id, str):
+            msg += packer.pack_bool(False)
+            msg += packer.pack_string(node_id)
+        else:
+            raise TypeError(f"node_id must be int or str, got {type(node_id)}")
         self.client._send(RequestType.GRAPH_WALKER_GET_NODE, msg)
 
         # Handle response
@@ -233,6 +241,7 @@ class GraphWalker:
             node_id=node_id, name=name, labels=labels, properties=properties
         )
 
+    ## Get all outgoing or incoming edges from a node by its identifier or name
     def get_edges(
         self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
     ) -> List[WalkerNode]:
@@ -241,8 +250,14 @@ class GraphWalker:
 
         # Send request
         msg = b""
-        msg += packer.pack_uint64(node_id)
-        msg += packer.pack_bool(direction == "outgoing")
+        if isinstance(node_id, int):
+            msg += packer.pack_bool(True)
+            msg += packer.pack_uint64(node_id)
+        elif isinstance(node_id, str):
+            msg += packer.pack_bool(False)
+            msg += packer.pack_string(node_id)
+        else:
+            raise TypeError(f"node_id must be int or str, got {type(node_id)}")
         self.client._send(RequestType.GRAPH_WALKER_GET_EDGES, msg)
 
         # Handle response
