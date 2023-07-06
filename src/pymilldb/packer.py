@@ -44,51 +44,51 @@ def pack_string_vector(vector: List[str]) -> bytes:
     return data
 
 
-def unpack_bool(data: bytes) -> bool:
-    return struct.unpack(">?", data)[0]
+def unpack_bool(data: bytes, index: int) -> bool:
+    return bool(data[index])
 
 
-def unpack_uint64(data: bytes) -> int:
-    return struct.unpack(">Q", data)[0]
+def unpack_uint64(data: bytes, start: int, end: int) -> int:
+    return struct.unpack(">Q", data[start:end])[0]
 
 
-def unpack_int64(data: bytes) -> int:
-    return struct.unpack(">q", data)[0]
+def unpack_int64(data: bytes, start: int, end: int) -> int:
+    return struct.unpack(">q", data[start:end])[0]
 
 
-def unpack_float(data: bytes) -> float:
-    return struct.unpack(">f", data)[0]
+def unpack_float(data: bytes, start: int, end: int) -> float:
+    return struct.unpack(">f", data[start:end])[0]
 
 
-def unpack_string(data: bytes) -> str:
-    return data.decode("utf-8")
+def unpack_string(data: bytes, start: int, end: int) -> str:
+    return data[start:end].decode("utf-8")
 
 
-def unpack_uint64_vector(data: bytes) -> List[int]:
-    return [unpack_uint64(data[i : i + 8]) for i in range(0, len(data), 8)]
+def unpack_uint64_vector(data: bytes, start: int, end: int) -> List[int]:
+    return [unpack_uint64(data, i, i + 8) for i in range(start, end, 8)]
 
 
-def unpack_float_vector(data: bytes) -> List[float]:
-    return [unpack_float(data[i : i + 4]) for i in range(0, len(data), 4)]
+def unpack_float_vector(data: bytes, start: int, end: int) -> List[float]:
+    return [unpack_float(data, i, i + 4) for i in range(start, end, 4)]
 
 
 def unpack_graph(data: bytes) -> "GraphSample":
     lo, hi = 0, 8
-    num_seeds = unpack_uint64(data[lo:hi])
+    num_seeds = unpack_uint64(data, lo, hi)
     lo, hi = hi, hi + 8
-    num_nodes = unpack_uint64(data[lo:hi])
+    num_nodes = unpack_uint64(data, lo, hi)
     lo, hi = hi, hi + 8
-    num_edges = unpack_uint64(data[lo:hi])
+    num_edges = unpack_uint64(data, lo, hi)
 
     lo, hi = hi, hi + 8 * num_seeds
-    seed_ids = unpack_uint64_vector(data[lo:hi])
+    seed_ids = unpack_uint64_vector(data, lo, hi)
     lo, hi = hi, hi + 8 * num_nodes
-    node_ids = unpack_uint64_vector(data[lo:hi])
+    node_ids = unpack_uint64_vector(data, lo, hi)
     lo, hi = hi, hi + 8 * num_edges
-    edge_ids = unpack_uint64_vector(data[lo:hi])
+    edge_ids = unpack_uint64_vector(data, lo, hi)
 
     edge_index = [
-        unpack_uint64_vector(data[i : i + 16])
+        unpack_uint64_vector(data, i, i + 16)
         for i in range(hi, hi + 16 * num_edges, 16)
     ]
     return GraphSample(seed_ids, node_ids, edge_ids, edge_index)

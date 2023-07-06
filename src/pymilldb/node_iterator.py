@@ -27,7 +27,7 @@ class NodeIterator:
         self.client._send(RequestType.NODE_ITERATOR_CREATE, msg)
 
         data, _ = self.client._recv()
-        self._node_iterator_id = packer.unpack_uint64(data[0:8])
+        self._node_iterator_id = packer.unpack_uint64(data, 0, 8)
 
     def __iter__(self) -> "NodeIterator":
         msg = b""
@@ -36,7 +36,7 @@ class NodeIterator:
 
         self.client._recv()
         return self
-    
+
     def __next__(self) -> List[int]:
         msg = b""
         msg += packer.pack_uint64(self._node_iterator_id)
@@ -47,6 +47,7 @@ class NodeIterator:
         if status == StatusCode.END_OF_ITERATION:
             raise StopIteration
 
-        num_node_ids = packer.unpack_uint64(data[0:8])
-        lo, hi = 8, 8 + 8 * num_node_ids
-        return packer.unpack_uint64_vector(data[lo:hi])
+        lo, hi = 0, 8
+        num_node_ids = packer.unpack_uint64(data, lo, hi)
+        lo, hi = hi, hi + 8 * num_node_ids
+        return packer.unpack_uint64_vector(data, lo, hi)

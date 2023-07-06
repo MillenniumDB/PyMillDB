@@ -186,45 +186,45 @@ class GraphWalker:
         data, _ = self.client._recv()
         # Name
         lo, hi = 0, data.index(b"\x00")
-        name = packer.unpack_string(data[lo:hi])
+        name = packer.unpack_string(data, lo, hi)
         hi += 1
         # Labels
         lo, hi = hi, hi + 8
-        num_labels = packer.unpack_uint64(data[lo:hi])
+        num_labels = packer.unpack_uint64(data, lo, hi)
         labels = list()
         for _ in range(num_labels):
             lo, hi = hi, data.index(b"\x00", hi)
-            label = packer.unpack_string(data[lo:hi])
+            label = packer.unpack_string(data, lo, hi)
             hi += 1
             labels.append(label)
         # Properties
         lo, hi = hi, hi + 8
-        num_properties = packer.unpack_uint64(data[lo:hi])
+        num_properties = packer.unpack_uint64(data, lo, hi)
         properties = dict()
         for _ in range(num_properties):
             # Key
             lo, hi = hi, data.index(b"\x00", hi)
-            key = packer.unpack_string(data[lo:hi])
+            key = packer.unpack_string(data, lo, hi)
             hi += 1
             # Value
             value_type_code = data[hi]
             hi += 1
             if value_type_code == 1:
                 # bool
-                lo, hi = hi, hi + 1
-                value = packer.unpack_bool(data[lo:hi])
+                value = packer.unpack_bool(data, hi)
+                hi += 1
             elif value_type_code == 2:
                 # int64
                 lo, hi = hi, hi + 8
-                value = packer.unpack_int64(data[lo:hi])
+                value = packer.unpack_int64(data, lo, hi)
             elif value_type_code == 3:
                 # float
                 lo, hi = hi, hi + 4
-                value = packer.unpack_float(data[lo:hi])
+                value = packer.unpack_float(data, lo, hi)
             elif value_type_code == 4:
                 # string
                 lo, hi = hi, data.index(b"\x00", hi)
-                value = packer.unpack_string(data[lo:hi])
+                value = packer.unpack_string(data, lo, hi)
                 hi += 1
             else:
                 raise ValueError(f"Invalid property value type code: {value_type_code}")
@@ -252,41 +252,41 @@ class GraphWalker:
         lo, hi = 0, 0
         while hi < len(data):
             lo, hi = hi, hi + 8
-            source = packer.unpack_uint64(data[lo:hi])
+            source = packer.unpack_uint64(data, lo, hi)
             lo, hi = hi, hi + 8
-            target = packer.unpack_uint64(data[lo:hi])
+            target = packer.unpack_uint64(data, lo, hi)
             lo, hi = hi, hi + 8
-            edge_id = packer.unpack_uint64(data[lo:hi])
+            edge_id = packer.unpack_uint64(data, lo, hi)
             lo, hi = hi, data.index(b"\x00", hi)
-            edge_type = packer.unpack_string(data[lo:hi])
+            edge_type = packer.unpack_string(data, lo, hi)
             hi += 1
             lo, hi = hi, hi + 8
-            num_properties = packer.unpack_uint64(data[lo:hi])
+            num_properties = packer.unpack_uint64(data, lo, hi)
             properties = dict()
             for _ in range(num_properties):
                 # Key
                 lo, hi = hi, data.index(b"\x00", hi)
-                key = packer.unpack_string(data[lo:hi])
+                key = packer.unpack_string(data, lo, hi)
                 hi += 1
                 # Value
                 value_type_code = data[hi]
                 hi += 1
                 if value_type_code == 1:
                     # bool
-                    lo, hi = hi, hi + 1
-                    value = packer.unpack_bool(data[lo:hi])
+                    value = packer.unpack_bool(data, hi)
+                    hi += 1
                 elif value_type_code == 2:
                     # int64
                     lo, hi = hi, hi + 8
-                    value = packer.unpack_int64(data[lo:hi])
+                    value = packer.unpack_int64(data, lo, hi)
                 elif value_type_code == 3:
                     # float
                     lo, hi = hi, hi + 4
-                    value = packer.unpack_float(data[lo:hi])
+                    value = packer.unpack_float(data, lo, hi)
                 elif value_type_code == 4:
                     # string
                     lo, hi = hi, data.index(b"\x00", hi)
-                    value = packer.unpack_string(data[lo:hi])
+                    value = packer.unpack_string(data, lo, hi)
                     hi += 1
                 else:
                     raise ValueError(
