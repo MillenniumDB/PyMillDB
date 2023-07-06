@@ -47,8 +47,8 @@ class BuilderNode:
         return f"{self.__class__.__name__}(name={self.name}, num_labels={len(self.labels)}, num_properties={len(self.properties)})"
 
 
-## MillenniumDB's Quad Model node representation in GraphExplorer class
-class ExplorerNode(BuilderNode):
+## MillenniumDB's Quad Model node representation in GraphWalker class
+class WalkerNode(BuilderNode):
     def __init__(
         self,
         node_id: int,
@@ -73,7 +73,7 @@ class BuilderEdge:
         source: str,
         target: str,
         edge_type: str,
-        propeties: PropertiesDict = dict(),
+        properties: PropertiesDict = dict(),
     ):
         ## Source node name
         self.source = source
@@ -82,16 +82,16 @@ class BuilderEdge:
         ## Edge type
         self.edge_type = edge_type
         ## Edge properties
-        self.properties = propeties
+        self.properties = properties
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(source={self.source}, target={self.target}, edge_type={self.edge_type}, num_properties={len(self.properties)})"
 
 
-## MillenniumDB's Quad Model edge representation in GraphExplorer class.
+## MillenniumDB's Quad Model edge representation in GraphWalker class.
 #
 # Note that the source and target nodes are identifiers rather than names
-class ExplorerEdge(BuilderEdge):
+class WalkerEdge(BuilderEdge):
     def __init__(
         self,
         edge_id: int,
@@ -176,7 +176,7 @@ class GraphWalker:
         ## Client instance
         self.client = client
 
-    def get_node(self, node_id: int) -> ExplorerNode:
+    def get_node(self, node_id: int) -> WalkerNode:
         # Send request
         msg = b""
         msg += packer.pack_uint64(node_id)
@@ -229,13 +229,13 @@ class GraphWalker:
             else:
                 raise ValueError(f"Invalid property value type code: {value_type_code}")
             properties[key] = value
-        return ExplorerNode(
+        return WalkerNode(
             node_id=node_id, name=name, labels=labels, properties=properties
         )
 
     def get_edges(
         self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
-    ) -> List[ExplorerEdge]:
+    ) -> List[WalkerNode]:
         if direction not in ["outgoing", "incoming"]:
             raise ValueError('Direction must be either "outgoing" or "incoming".')
 
@@ -294,7 +294,7 @@ class GraphWalker:
                     )
                 properties[key] = value
             edges.append(
-                ExplorerEdge(
+                WalkerEdge(
                     source=source,
                     target=target,
                     edge_type=edge_type,
