@@ -28,18 +28,6 @@ class TensorStore:
         data, _ = client._recv()
         return packer.unpack_bool(data, 0)
 
-    ## Returns `True` if the store is open.
-    @staticmethod
-    def is_open(client: "MDBClient", name: str) -> bool:
-        # Send request
-        msg = b""
-        msg += packer.pack_string(name)
-        client._send(RequestType.TENSOR_STORE_IS_OPEN, msg)
-
-        # Handle response
-        data, _ = client._recv()
-        return packer.unpack_bool(data, 0)
-
     ## Creates a new store on disk.
     @staticmethod
     def create(client: "MDBClient", name: str, tensor_size: int) -> None:
@@ -107,9 +95,7 @@ class TensorStore:
             return self.get(key)
 
     ## Insert tensors into the store with the pythonic syntax `store[key] = value`.
-    def __setitem__(
-        self, key: Union[int, str, List[int], List[str]], value: torch.Tensor
-    ) -> None:
+    def __setitem__(self, key: Union[int, str, List[int], List[str]], value: torch.Tensor) -> None:
         if not isinstance(key, str) and isinstance(key, Iterable):
             self.multi_insert(key, value)
         else:
@@ -157,10 +143,6 @@ class TensorStore:
 
         if tensor.dtype != torch.float32:
             raise ValueError(f"Tensor dtype must be torch.float32, got {type(tensor)}")
-        if tensor.numel() != self.tensor_size:
-            raise ValueError(
-                f"Tensor size ({tensor.numel()}) does not match tensor_size of the store ({self.tensor_size})"
-            )
 
         # Send request
         msg = b""
@@ -174,9 +156,7 @@ class TensorStore:
 
     ## Inserts multiple tensors into the store.
     @decorators.check_closed
-    def multi_insert(
-        self, keys: Union[List[int], List[str]], tensors: torch.Tensor
-    ) -> None:
+    def multi_insert(self, keys: Union[List[int], List[str]], tensors: torch.Tensor) -> None:
         packed_key = b""
         if all(isinstance(key, int) for key in keys):
             packed_key += packer.pack_bool(True)
@@ -190,17 +170,7 @@ class TensorStore:
         if tensors.dtype != torch.float32:
             raise ValueError(f"Tensor dtype must be torch.float32, got {type(tensors)}")
         if len(tensors.size()) != 2:
-            raise ValueError(
-                f"Tensors must be 2-dimensional, but got {len(tensors.size())}-dimensional tensor"
-            )
-        if len(keys) != tensors.size(0):
-            raise ValueError(
-                f"The number of keys ({len(keys)}) does not match the tensors rows ({tensors.size(0)})"
-            )
-        if tensors.size(1) != self.tensor_size:
-            raise ValueError(
-                f"Tensors columns ({tensors.size(1)}) does not match tensor_size of the store ({self.tensor_size})"
-            )
+            raise ValueError(f"Tensors must be 2-dimensional, but got {len(tensors.size())}-dimensional tensor")
 
         # Send request
         msg = b""
