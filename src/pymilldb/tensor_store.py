@@ -143,10 +143,6 @@ class TensorStore:
 
         if tensor.dtype != torch.float32:
             raise ValueError(f"Tensor dtype must be torch.float32, got {type(tensor)}")
-        if tensor.numel() != self.tensor_size:
-            raise ValueError(
-                f"Tensor size ({tensor.numel()}) does not match tensor_size of the store ({self.tensor_size})"
-            )
 
         # Send request
         msg = b""
@@ -175,12 +171,6 @@ class TensorStore:
             raise ValueError(f"Tensor dtype must be torch.float32, got {type(tensors)}")
         if len(tensors.size()) != 2:
             raise ValueError(f"Tensors must be 2-dimensional, but got {len(tensors.size())}-dimensional tensor")
-        if len(keys) != tensors.size(0):
-            raise ValueError(f"The number of keys ({len(keys)}) does not match the tensors rows ({tensors.size(0)})")
-        if tensors.size(1) != self.tensor_size:
-            raise ValueError(
-                f"Tensors columns ({tensors.size(1)}) does not match tensor_size of the store ({self.tensor_size})"
-            )
 
         # Send request
         msg = b""
