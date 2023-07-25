@@ -253,7 +253,7 @@ class GraphWalker:
         return packer.unpack_uint64_vector(data, 0, len(data))
 
     ## Get all edge_ids with a given type. Optionally filter it by a node_id and its direction
-    def get_edges_by_type(
+    def get_edge_ids_by_type(
         self, edge_type: str, node_id: int = None, direction: Literal["outgoing", "incoming"] = None
     ) -> List[int]:
         # Send request
@@ -273,8 +273,8 @@ class GraphWalker:
                 msg += packer.pack_string(node_id)
             else:
                 raise TypeError(f"node_id must be int or str, got {type(node_id)}")
-            msg += packer.pack_string(direction == "outgoing")
-        self.client._send(RequestType.GRAPH_WALKER_GET_EDGES_BY_TYPE, msg)
+            msg += packer.pack_bool(direction == "outgoing")
+        self.client._send(RequestType.GRAPH_WALKER_GET_EDGE_IDS_BY_TYPE, msg)
 
         # Handle response
         data, _ = self.client._recv()
