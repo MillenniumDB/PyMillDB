@@ -87,10 +87,17 @@ def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <a class="el" href="classpymilldb_1_1graph_1_1WalkerNode.html">WalkerNode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html#aa91a0699d7d747745f981a4687618ba2">get_node</a> (self, int|str node_id)</td></tr>
 <tr class="memdesc:aa91a0699d7d747745f981a4687618ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe a node by its identifier or name. <br /></td></tr>
 <tr class="separator:aa91a0699d7d747745f981a4687618ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a77fd215d8f6e7707f24e2b27def4f6"><td class="memItemLeft" align="right" valign="top"><a id="a8a77fd215d8f6e7707f24e2b27def4f6"></a>
-List[<a class="el" href="classpymilldb_1_1graph_1_1WalkerNode.html">WalkerNode</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html#a8a77fd215d8f6e7707f24e2b27def4f6">get_edges</a> (self, int node_id, Literal[&quot;outgoing&quot;, &quot;incoming&quot;] direction=&quot;outgoing&quot;)</td></tr>
-<tr class="memdesc:a8a77fd215d8f6e7707f24e2b27def4f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all outgoing or incoming edges from a node by its identifier or name. <br /></td></tr>
-<tr class="separator:a8a77fd215d8f6e7707f24e2b27def4f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaedfc61e7dddfe5c8f2236b7ccdbff29"><td class="memItemLeft" align="right" valign="top"><a id="aaedfc61e7dddfe5c8f2236b7ccdbff29"></a>
+List[int]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html#aaedfc61e7dddfe5c8f2236b7ccdbff29">get_node_ids_by_label</a> (self, str label)</td></tr>
+<tr class="memdesc:aaedfc61e7dddfe5c8f2236b7ccdbff29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all node_ids with a given label. <br /></td></tr>
+<tr class="separator:aaedfc61e7dddfe5c8f2236b7ccdbff29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa6ea2747333d4e2ca28480a6ebe7dd1"><td class="memItemLeft" align="right" valign="top">List[int]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html#aaa6ea2747333d4e2ca28480a6ebe7dd1">get_edge_ids_by_type</a> (self, str edge_type, int node_id=None, Literal[&quot;outgoing&quot;, &quot;incoming&quot;] direction=None)</td></tr>
+<tr class="memdesc:aaa6ea2747333d4e2ca28480a6ebe7dd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all edge_ids with a given type.  <a href="classpymilldb_1_1graph_1_1GraphWalker.html#aaa6ea2747333d4e2ca28480a6ebe7dd1">More...</a><br /></td></tr>
+<tr class="separator:aaa6ea2747333d4e2ca28480a6ebe7dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8d675138c6727a3b2d07f40049bfdd0"><td class="memItemLeft" align="right" valign="top"><a id="ae8d675138c6727a3b2d07f40049bfdd0"></a>
+List[<a class="el" href="classpymilldb_1_1graph_1_1WalkerNode.html">WalkerNode</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpymilldb_1_1graph_1_1GraphWalker.html#ae8d675138c6727a3b2d07f40049bfdd0">get_edges</a> (self, int|str node_id, Literal[&quot;outgoing&quot;, &quot;incoming&quot;] direction)</td></tr>
+<tr class="memdesc:ae8d675138c6727a3b2d07f40049bfdd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all outgoing or incoming edges from a node by its identifier or name. <br /></td></tr>
+<tr class="separator:ae8d675138c6727a3b2d07f40049bfdd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -101,7 +108,51 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface for walking across graphs in MillenniumDB. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="aaa6ea2747333d4e2ca28480a6ebe7dd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa6ea2747333d4e2ca28480a6ebe7dd1">&#9670;&nbsp;</a></span>get_edge_ids_by_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> List[int] pymilldb.graph.GraphWalker.get_edge_ids_by_type </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str&#160;</td>
+          <td class="paramname"><em>edge_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &#160;</td>
+          <td class="paramname"><em>node_id</em> = <code>None</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Literal[&quot;outgoing&quot;, &quot;incoming&quot;] &#160;</td>
+          <td class="paramname"><em>direction</em> = <code>None</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get all edge_ids with a given type. </p>
+<p>Optionally filter it by a node_id and its direction </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/pymilldb/graph.py</li>
 </ul>
 </div><!-- contents -->
