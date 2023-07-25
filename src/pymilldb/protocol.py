@@ -33,6 +33,7 @@ class RequestType(IntEnum):
     # GRAPH EXPLORER
     GRAPH_WALKER_GET_EDGES = 0b0001_0001
     GRAPH_WALKER_GET_NODE = 0b0001_0010
+    GRAPH_WALKER_GET_NODE_IDS_BY_LABEL = 0b0001_0011
 
 
 ## Server response status codes.

@@ -22,9 +22,7 @@ def dump_properties_milldb(properties: PropertiesDict) -> str:
         elif value_type == bool:
             ret += f" {k}:{str(v).lower()}"
         else:
-            print(
-                f'Skipping property with type "{value_type}". Only str, int, float and bool are supported.'
-            )
+            print(f'Skipping property with type "{value_type}". Only str, int, float and bool are supported.')
     return ret
 
 
@@ -176,36 +174,7 @@ class GraphWalker:
         ## Client instance
         self.client = client
 
-    ## Describe a node by its identifier or name
-    def get_node(self, node_id: int | str) -> WalkerNode:
-        # Send request
-        msg = b""
-        if isinstance(node_id, int):
-            msg += packer.pack_bool(True)
-            msg += packer.pack_uint64(node_id)
-        elif isinstance(node_id, str):
-            msg += packer.pack_bool(False)
-            msg += packer.pack_string(node_id)
-        else:
-            raise TypeError(f"node_id must be int or str, got {type(node_id)}")
-        self.client._send(RequestType.GRAPH_WALKER_GET_NODE, msg)
-
-        # Handle response
-        data, _ = self.client._recv()
-        # Name
-        lo, hi = 0, data.index(b"\x00")
-        name = packer.unpack_string(data, lo, hi)
-        hi += 1
-        # Labels
-        lo, hi = hi, hi + 8
-        num_labels = packer.unpack_uint64(data, lo, hi)
-        labels = list()
-        for _ in range(num_labels):
-            lo, hi = hi, data.index(b"\x00", hi)
-            label = packer.unpack_string(data, lo, hi)
-            hi += 1
-            labels.append(label)
-        # Properties
+    def _unpack_properties(self, data: bytes, hi: int) -> PropertiesDict:
         lo, hi = hi, hi + 8
         num_properties = packer.unpack_uint64(data, lo, hi)
         properties = dict()
@@ -237,17 +206,10 @@ class GraphWalker:
             else:
                 raise ValueError(f"Invalid property value type code: {value_type_code}")
             properties[key] = value
-        return WalkerNode(
-            node_id=node_id, name=name, labels=labels, properties=properties
-        )
+        return properties, lo, hi
 
-    ## Get all outgoing or incoming edges from a node by its identifier or name
-    def get_edges(
-        self, node_id: int, direction: Literal["outgoing", "incoming"] = "outgoing"
-    ) -> List[WalkerNode]:
-        if direction not in ["outgoing", "incoming"]:
-            raise ValueError('Direction must be either "outgoing" or "incoming".')
-
+    ## Describe a node by its identifier or name
+    def get_node(self, node_id: int | str) -> WalkerNode:
         # Send request
         msg = b""
         if isinstance(node_id, int):
@@ -258,6 +220,81 @@ class GraphWalker:
             msg += packer.pack_string(node_id)
         else:
             raise TypeError(f"node_id must be int or str, got {type(node_id)}")
+        self.client._send(RequestType.GRAPH_WALKER_GET_NODE, msg)
+
+        # Handle response
+        data, _ = self.client._recv()
+        # Name
+        lo, hi = 0, data.index(b"\x00")
+        name = packer.unpack_string(data, lo, hi)
+        hi += 1
+        # Labels
+        lo, hi = hi, hi + 8
+        num_labels = packer.unpack_uint64(data, lo, hi)
+        labels = list()
+        for _ in range(num_labels):
+            lo, hi = hi, data.index(b"\x00", hi)
+            label = packer.unpack_string(data, lo, hi)
+            hi += 1
+            labels.append(label)
+        # Properties
+        properties, _, _ = self._unpack_properties(data, hi)
+        return WalkerNode(node_id=node_id, name=name, labels=labels, properties=properties)
+
+    ## Get all node_ids with a given label
+    def get_node_ids_by_label(self, label: str) -> List[int]:
+        # Send request
+        msg = b""
+        msg += packer.pack_string(label)
+        self.client._send(RequestType.GRAPH_WALKER_GET_NODE_IDS_BY_LABEL, msg)
+
+        # Handle response
+        data, _ = self.client._recv()
+        return packer.unpack_uint64_vector(data, 0, len(data))
+
+    ## Get all edge_ids with a given type. Optionally filter it by a node_id and its direction
+    def get_edges_by_type(
+        self, edge_type: str, node_id: int = None, direction: Literal["outgoing", "incoming"] = None
+    ) -> List[int]:
+        # Send request
+        msg = b""
+        msg += packer.pack_string(edge_type)
+        if node_id is None:
+            msg += packer.pack_bool(False)
+        else:
+            if direction not in ["outgoing", "incoming"]:
+                raise ValueError('Direction must be either "outgoing" or "incoming".')
+            msg += packer.pack_bool(True)
+            if isinstance(node_id, int):
+                msg += packer.pack_bool(True)
+                msg += packer.pack_uint64(node_id)
+            elif isinstance(node_id, str):
+                msg += packer.pack_bool(False)
+                msg += packer.pack_string(node_id)
+            else:
+                raise TypeError(f"node_id must be int or str, got {type(node_id)}")
+            msg += packer.pack_string(direction == "outgoing")
+        self.client._send(RequestType.GRAPH_WALKER_GET_EDGES_BY_TYPE, msg)
+
+        # Handle response
+        data, _ = self.client._recv()
+        return packer.unpack_uint64_vector(data, 0, len(data))
+
+    ## Get all outgoing or incoming edges from a node by its identifier or name
+    def get_edges(self, node_id: int | str, direction: Literal["outgoing", "incoming"]) -> List[WalkerNode]:
+        if direction not in ["outgoing", "incoming"]:
+            raise ValueError('Direction must be either "outgoing" or "incoming".')
+        # Send request
+        msg = b""
+        if isinstance(node_id, int):
+            msg += packer.pack_bool(True)
+            msg += packer.pack_uint64(node_id)
+        elif isinstance(node_id, str):
+            msg += packer.pack_bool(False)
+            msg += packer.pack_string(node_id)
+        else:
+            raise TypeError(f"node_id must be int or str, got {type(node_id)}")
+        msg += packer.pack_bool(direction == "outgoing")
         self.client._send(RequestType.GRAPH_WALKER_GET_EDGES, msg)
 
         # Handle response
@@ -275,39 +312,7 @@ class GraphWalker:
             lo, hi = hi, data.index(b"\x00", hi)
             edge_type = packer.unpack_string(data, lo, hi)
             hi += 1
-            lo, hi = hi, hi + 8
-            num_properties = packer.unpack_uint64(data, lo, hi)
-            properties = dict()
-            for _ in range(num_properties):
-                # Key
-                lo, hi = hi, data.index(b"\x00", hi)
-                key = packer.unpack_string(data, lo, hi)
-                hi += 1
-                # Value
-                value_type_code = data[hi]
-                hi += 1
-                if value_type_code == 1:
-                    # bool
-                    value = packer.unpack_bool(data, hi)
-                    hi += 1
-                elif value_type_code == 2:
-                    # int64
-                    lo, hi = hi, hi + 8
-                    value = packer.unpack_int64(data, lo, hi)
-                elif value_type_code == 3:
-                    # float
-                    lo, hi = hi, hi + 4
-                    value = packer.unpack_float(data, lo, hi)
-                elif value_type_code == 4:
-                    # string
-                    lo, hi = hi, data.index(b"\x00", hi)
-                    value = packer.unpack_string(data, lo, hi)
-                    hi += 1
-                else:
-                    raise ValueError(
-                        f"Invalid property value type code: {value_type_code}"
-                    )
-                properties[key] = value
+            properties, lo, hi = self._unpack_properties(data, hi)
             edges.append(
                 WalkerEdge(
                     source=source,
